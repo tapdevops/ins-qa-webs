@@ -4,8 +4,8 @@ RUN apt-get update && \
     apt-get clean
 
 # Copy
-COPY test-docker-ins-web /var/www/html/
-COPY vhost-ferd.conf /etc/apache2/sites-available/000-default.conf
+COPY tapmi /var/www/html/
+COPY vhost.conf /etc/apache2/sites-available/000-default.conf
 
 # Change mode 777 HTML folder
 RUN chmod 777 -R /var/www/html/
