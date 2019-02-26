@@ -6,7 +6,7 @@ services:
       dockerfile: Dockerfile
     image: tapmiweb
     ports:
-      - 8181:80 
+      - 3013:80 
  # app:
  #   build:
  #     context: ./
