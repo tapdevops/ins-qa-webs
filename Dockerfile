@@ -3,7 +3,7 @@ FROM php:7.0-apache
 RUN apt-get update && \
     apt-get clean
 
-# Copy
+# Copy #
 COPY tapmi /var/www/html/
 COPY vhost.conf /etc/apache2/sites-available/000-default.conf
 
