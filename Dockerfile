@@ -22,4 +22,4 @@ RUN cp /var/www/html/env-example /var/www/html/.env
 RUN docker-php-ext-install mbstring pdo pdo_mysql
 RUN chown -R www-data:www-data /var/www/html/
 RUN a2enmod rewrite
-
+EXPOSE 3014
