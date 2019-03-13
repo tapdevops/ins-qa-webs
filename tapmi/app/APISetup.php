@@ -20,14 +20,14 @@ class APISetup extends Model {
 	 */
 	public static function url() {
 
-		$env = 'dev';
+		$env = 'prod';
 
 		$data = array(
 			"dev" => array(
 				"msa" => array(
 					"ins" => array(
-						"auth" => "http://149.129.245.230:3008",
-						"hectarestatement" => "http://149.129.245.230:3009",
+						"auth" => "http://149.129.250.199:3008",
+						"hectarestatement" => "149.129.250.199:3009",
 					)
 				)
 			),
