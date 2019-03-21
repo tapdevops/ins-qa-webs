@@ -71,19 +71,17 @@ class AuthController extends Controller {
 
 			// Kondisi username dan password sudah terdaftar dalam sistem.
 			if ( $logindata->status == true ) {
-				$req->session()->put(
-					[
-						'IS_LOGIN' => true,
-						'USERNAME' => $logindata->data->USERNAME,
-						'NIK' => $logindata->data->NIK,
-						'ACCESS_TOKEN' => $logindata->data->ACCESS_TOKEN,
-						'JOB_CODE' => $logindata->data->JOB_CODE,
-						'USER_AUTH_CODE' => $logindata->data->USER_AUTH_CODE,
-						'REFFERENCE_ROLE' => $logindata->data->REFFERENCE_ROLE,
-						'USER_ROLE' => $logindata->data->USER_ROLE,
-						'LOCATION_CODE' => $logindata->data->LOCATION_CODE
-					]
-				);
+				$req->session()->put( [
+					'IS_LOGIN' => true,
+					'USERNAME' => $logindata->data->USERNAME,
+					'NIK' => $logindata->data->NIK,
+					'ACCESS_TOKEN' => $logindata->data->ACCESS_TOKEN,
+					'JOB_CODE' => $logindata->data->JOB_CODE,
+					'USER_AUTH_CODE' => $logindata->data->USER_AUTH_CODE,
+					'REFFERENCE_ROLE' => $logindata->data->REFFERENCE_ROLE,
+					'USER_ROLE' => $logindata->data->USER_ROLE,
+					'LOCATION_CODE' => $logindata->data->LOCATION_CODE
+				] );
 				$data['status'] = true;
 				$data['message'] = 'Login berhasil, mengarahkan ke halaman utama...';
 			}

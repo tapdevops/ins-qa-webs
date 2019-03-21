@@ -46,6 +46,7 @@ Route::group( [ 'middleware' => 'web' ], function() {
 		Route::get( '/report', 'ReportController@index' );
 		Route::get( '/report/download', 'ReportController@download' );
 		Route::post( '/report/download', 'ReportController@download_proses' );
+		Route::post( '/report/generate', 'ReportController@generate_proses' );
 		Route::get( '/report/search-region', 'ReportController@search_region' );
 		Route::get( '/report/search-comp', 'ReportController@search_comp' );
 		Route::get( '/report/search-est', 'ReportController@search_est' );

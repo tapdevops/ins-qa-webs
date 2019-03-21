@@ -143,8 +143,7 @@ class ReportController extends Controller {
 		}
 		// Report Inspeksi
 		else if ( Input::get( 'REPORT_TYPE' ) == 'INSPEKSI' ) {
-			#self::download_excel_inspeksi( $setup );
-			print 'INSPEKSI';
+			self::download_excel_inspeksis( $setup );
 		}
 		// Report Class Block
 		else if ( Input::get( 'REPORT_TYPE' ) == 'CLASS_BLOCK_AFD_ESTATE' ) {
@@ -152,8 +151,6 @@ class ReportController extends Controller {
 			$setup['START_DATE'] = date( 'Ym', strtotime( $date ) ).'00';
 			$setup['END_DATE'] = date( 'Ymt', strtotime( $date ) );
 			self::generate_class_block( $setup );
-
-			#print_r( $_POST );
 		}
 	}
 
@@ -1296,6 +1293,7 @@ class ReportController extends Controller {
 		$content_pemupukan = array();
 		$content_panen = array();
 		$inspection_header = array();
+		//$inspection_detail = Data::web_report_inspection_find( $query_finding )['items'];
 		$inspection_detail = Data::web_report_inspection_find( $query_finding )['items'];
 		$count_inspection = array();
 		$_bobot_all = 0;
@@ -1323,6 +1321,7 @@ class ReportController extends Controller {
 			
 		}
 
+
 		foreach( $content as $content_key ) {
 			$cc[$content_key['CONTENT_CODE']]['CONTENT_NAME'] = $content_key['CONTENT_CODE'];
 			$cc[$content_key['CONTENT_CODE']]['CONTENT_NAME'] = $content_key['CONTENT_NAME'];
@@ -1345,11 +1344,13 @@ class ReportController extends Controller {
 			}
 		}
 
+		
 		$status = false;
 		$i = 0;
 		foreach ( $inspection_detail as $ins_detail ) {
 			$date_inspeksi = substr( $ins_detail['INSPECTION_DATE'], 0, 8 );
 			$hectarestatement =  Data::web_report_land_use_findone( $ins_detail['WERKS'].$ins_detail['AFD_CODE'].$ins_detail['BLOCK_CODE'] );
+			
 			$inspektor_data = Data::user_find_one( ( String ) $ins_detail['INSERT_USER'] )['items'];
 			$baris_start_ins = date( 'Y-m-d H:i:s', strtotime( $ins_detail['START_INSPECTION'] ) );
 			$baris_end_ins = date( 'Y-m-d H:i:s', strtotime( $ins_detail['END_INSPECTION'] ) );
@@ -1390,7 +1391,7 @@ class ReportController extends Controller {
 
 			
 			$client = new \GuzzleHttp\Client();
-			$res = $client->request( 'POST', 'http://149.129.245.230:3013/api/report/inspection-baris', [
+			$res = $client->request( 'POST', 'http://149.129.250.199:3013/api/report/inspection-baris', [
 				"headers" => [
 					"Authorization" => 'Bearer '.session( 'ACCESS_TOKEN' ),
 					"Content-Type" => 'application/json'
@@ -1433,6 +1434,7 @@ class ReportController extends Controller {
 			else {
 				print $ins_detail['BLOCK_INSPECTION_CODE'].' - OK.<br />';
 			}
+
 			
 			$i++;
 		}

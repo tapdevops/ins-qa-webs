@@ -271,7 +271,7 @@ class APIData extends Model {
 	# 										     ▁ ▂ ▄ ▅ ▆ ▇ █ WEB REPORT - INSPEKSI - Find
 	# -------------------------------------------------------------------------------------
 	public static function web_report_inspection_find( $query = array() ) {
-
+		
 		$url_query = '';
 		if ( !empty( $query ) > 0 ) {
 			$i = 1;
@@ -291,7 +291,7 @@ class APIData extends Model {
 
 		$data['items'] = array();
 		$url = self::url( 'url_api_ins_msa_auth' ).'/api/web-report/inspection?'.$url_query;
-
+		
 		$client = APISetup::ins_rest_client( 'GET', $url );
 		if ( isset( $client['status'] ) && $client['status'] == true ) {
 			if ( count( $client['data'] ) > 0 ) {

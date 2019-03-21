@@ -352,6 +352,9 @@
 			} );
 			
 			$( "#generate-report" ).click( function() {
+				form.attr( "action", "{{ url( '/report/generate' ) }}" );
+				form.submit();
+				/*
 				$.ajax({
 					type: "POST",
 					url: "{{ url( '/report/generate' ) }}",
@@ -362,7 +365,7 @@
 					error: function() {
 						alert( 'Error Cuy' );
 					}
-				});
+				});*/
 
 				//return false;
 			} );

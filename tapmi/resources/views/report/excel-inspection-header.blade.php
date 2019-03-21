@@ -58,7 +58,7 @@
 				<td>{{ $inspection['BLOCK_NAME'] }}</td>
 				<td style="text-align: center;">{{ $inspection['MATURITY_STATUS'] }}</td>
 				<td style="text-align: center;">{{ date( 'd-m-Y', strtotime( $inspection['INSPECTION_DATE'] ) ) }}</td>
-				<td style="text-align: center;">{{ $inspection['JUMLAH_DETAIL'] }}</td>
+				<td style="text-align: center;">{{ $inspection['JUMLAH_INSPEKSI'] }}</td>
 				<td style="text-align: center;">{{ date( 'Y.m', strtotime( $inspection['INSPECTION_DATE'] ) ) }}</td>
 				<td style="text-align: center;">{{ ( strlen( intval( ( $inspection['LAMA_INSPEKSI'] / 60 ) ) ) == 1 ? '0'.intval( ( $inspection['LAMA_INSPEKSI'] / 60 ) ) : intval( ( $inspection['LAMA_INSPEKSI'] / 60 ) ) ).':'.( strlen( ( $inspection['LAMA_INSPEKSI'] % 60 ) ) == 1 ? '0'.( $inspection['LAMA_INSPEKSI'] % 60 ) : ( $inspection['LAMA_INSPEKSI'] % 60 ) ) }}</td>
 
