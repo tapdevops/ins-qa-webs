@@ -113,17 +113,6 @@
 					</select>
 				</div>
 			</div>
-
-			<!--div class="form-group m-form__group row">
-				<div class="col-lg-6">
-					<label>Location <span class="text-danger">*</span></label>
-					<input type="text" class="form-control m-input" name="LOCATION" autocomplete="off" placeholder="...">
-					<span class="m-form__help">
-						Contoh: 4121A / 2121,4121 / ALL
-					</span>
-				</div>
-			</div-->
-
 		</div>
 		<div class="m-portlet__foot m-portlet__no-border m-portlet__foot--fit">
 			<div class="m-form__actions m-form__actions--solid">
@@ -132,7 +121,8 @@
 						
 					</div>
 					<div class="col-lg-6 m--align-right">
-						<a id="submit-report" href="javascript:;" class="btn btn-primary"><i class="fa fa-file-excel-o"></i> Download Excel</button>
+						<a id="generate-report" href="javascript:;" class="btn btn-warning"><i class="fa fa-refresh"></i> Generate Report</a>
+						<a id="submit-report" href="javascript:;" class="btn btn-primary"><i class="fa fa-file-excel-o"></i> Download Excel</a>
 						<a href="{{ url( '/report/' ) }}" class="btn btn-secondary">Cancel</a>
 					</div>
 				</div>
@@ -144,13 +134,6 @@
 @section( 'scripts' )
 	<script src="{{ url( 'assets/default-template/assets/custom/components/forms/widgets/bootstrap-daterangepicker.js' ) }}" type="text/javascript"></script>
 	<script type="text/javascript">
-
-		function x() {
-			alert(
-				$( "#select-comp" ).val()
-			)
-		}
-
 		function select2ajax( id, url, placeholder ) {
 			$( id ).select2( {
 				placeholder: placeholder,
@@ -227,11 +210,6 @@
 				url = "{{ url('report/search-block?q=') }}";
 			}
 
-			console.log( "URL :" );
-			console.log(url)
-			console.log( "VALUE :" );
-			console.log(value)
-
 			$.get( url + value, function( jsondata ) {
 				console.log( "JSONDATA :" );
 				console.log(jsondata)
@@ -256,29 +234,14 @@
 				case 'TEMUAN':
 					$( "#report-date-month" ).hide();
 					$( "#report-date-full" ).show();
-					//$( "#report-hs-region" ).show();
-					//$( "#report-hs-comp" ).show();
-					//$( "#report-hs-est" ).show();
-					//$( "#report-hs-afd" ).show();
-					//$( "#report-hs-block" ).show();
 				break;
 				case 'INSPEKSI':
 					$( "#report-date-month" ).hide();
 					$( "#report-date-full" ).show();
-					//$( "#report-hs-region" ).show();
-					//$( "#report-hs-comp" ).show();
-					//$( "#report-hs-est" ).show();
-					//$( "#report-hs-afd" ).show();
-					//$( "#report-hs-block" ).show();
 				break;
 				case 'CLASS_BLOCK_AFD_ESTATE':
 					$( "#report-date-month" ).show();
 					$( "#report-date-full" ).hide();
-					//$( "#report-hs-region" ).show();
-					//$( "#report-hs-comp" ).show();
-					//$( "#report-hs-est" ).show();
-					//$( "#report-hs-afd" ).hide();
-					//$( "#report-hs-block" ).hide();
 				break;
 			}
 		}
@@ -353,6 +316,7 @@
 			var form = $( "#form" );
 
 			$( "#submit-report" ).click( function() {
+
 				var next = false;
 				if ( $( "#report-select" ).val() != 'CLASS_BLOCK_AFD_ESTATE' ) {
 					if ( $( "#report-start-date" ).val() != '' && $( "#report-end-date" ).val() != '' ) {
@@ -364,8 +328,12 @@
 					
 				}
 				else if ( $( "#report-select" ).val() == 'CLASS_BLOCK_AFD_ESTATE' ) {
-					//alert( 'OK' );
-					next = true;
+					if ( $( "#select-ba" ).val().length > 0 && $( "#select-afd" ).val() == 0 && $( "#select-block" ).val() == 0 ) {
+						next = true;
+					}
+					else {
+						toastr.error( "Report Class Block hanya bisa diambil dari BA Code.", "Validasi Gagal!");
+					}
 				}
 				
 				if ( next == true ) {
@@ -375,9 +343,7 @@
 						bg : '#ffffff',
 						color : '#3d3d3d'
 					} );
-
 					toastr.success( "Mendownload report..." , "Info");
-
 					window.setTimeout( function() {
 						form.waitMe( 'hide' );
 					}, 1000 );
@@ -385,6 +351,21 @@
 				}
 			} );
 			
+			$( "#generate-report" ).click( function() {
+				$.ajax({
+					type: "POST",
+					url: "{{ url( '/report/generate' ) }}",
+					data: "_token={{ csrf_token() }}&REPORT_TYPE=" + $( "#report-select" ).val() + "&DATE_MONTH=" + $( "#m_datepicker_2" ).val() + "&START_DATE=" + $( "#report-start-date" ).val() + "&END_DATE=" + $( "#report-end-date" ).val() + "&REGION_CODE=" + $( "#select-region" ).val() + "&COMP_CODE=" + $( "#select-comp" ).val() + "&BA_CODE=" + $( "#select-ba" ).val() + "&AFD_CODE=" + $( "#select-afd" ).val() + "&BLOCK_CODE=" + $( "#select-block" ).val(),
+					success: function( results ) {
+					    alert(results); // show response from the php script.
+					},
+					error: function() {
+						alert( 'Error Cuy' );
+					}
+				});
+
+				//return false;
+			} );
 
 		} );
 	</script>

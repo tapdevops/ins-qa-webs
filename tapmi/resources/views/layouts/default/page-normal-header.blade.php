@@ -378,18 +378,13 @@
 															</span>
 														</li>
 														<li class="m-nav__item">
-															<a href="profile.html" class="m-nav__link">
+															<!--a href="{{ url( 'profile' ) }}" class="m-nav__link"-->
+															<a href="javascript:;" class="m-nav__link" data-toggle="modal" data-target="#m_modal_6">
+
 																<i class="m-nav__link-icon flaticon-profile-1"></i>
 																<span class="m-nav__link-title">
 																	<span class="m-nav__link-wrap">
-																		<span class="m-nav__link-text">
-																			My Profile
-																		</span>
-																		<span class="m-nav__link-badge">
-																			<span class="m-badge m-badge--success">
-																				2
-																			</span>
-																		</span>
+																		<span class="m-nav__link-text">My Profile</span>
 																	</span>
 																</span>
 															</a>
@@ -474,3 +469,41 @@
 		</div>
 	</div>
 </header>
+<div class="modal fade" id="m_modal_6" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-body"><br /><br />
+				<table class="table table-bordered">
+					<tr>
+						<td colspan="2"><center>Profile</center></td>
+					</tr>
+					<tr>
+						<td>Username</td>
+						<td>{{ strtoupper( session( 'USERNAME' ) ) }}</td>
+					</tr>
+					<tr>
+						<td>NIK</td>
+						<td>{{ strtoupper( session( 'NIK' ) ) }}</td>
+					</tr>
+					<tr>
+						<td>Job</td>
+						<td>{{ strtoupper( session( 'JOB_CODE' ) ) }}</td>
+					</tr>
+					<tr>
+						<td>User Role</td>
+						<td>{{ str_replace( '_', ' ', strtoupper( session( 'USER_ROLE' ) ) ) }}</td>
+					</tr>
+					<tr>
+						<td>Lokasi</td>
+						<td>{{ strtoupper( session( 'LOCATION_CODE' ) ) }}</td>
+					</tr>
+				</table>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">
+					Close
+				</button>
+			</div>
+		</div>
+	</div>
+</div>

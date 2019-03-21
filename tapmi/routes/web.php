@@ -16,7 +16,7 @@ Route::group( [ 'middleware' => 'web' ], function() {
 	Route::post( '/login', 'AuthController@login_proses' );
 	Route::group( [ 'middleware' => 'session' ], function() {
 
-		# Authuser_search_find
+		# Auth
 		Route::get( '/logout', 'AuthController@logout' );
 
 		# Dashboard
@@ -32,6 +32,7 @@ Route::group( [ 'middleware' => 'web' ], function() {
 		Route::get( '/modules/create', 'ModulesController@create' );
 		Route::post( '/modules/create', 'ModulesController@create_proses' );
 		Route::get( '/modules/setup-menu/{id}', 'ModulesController@setup_menu' );
+		Route::get( '/modules/setup-menu', 'ModulesController@setup_menu' );
 
 		# Master User
 		Route::get( '/user', 'UserController@index' );

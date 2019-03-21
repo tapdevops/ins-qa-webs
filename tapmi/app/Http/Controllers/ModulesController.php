@@ -53,19 +53,14 @@ class ModulesController extends Controller {
 		return view( 'modules.create' );
 	}
 
-	#   		 									  			   ▁ ▂ ▄ ▅ ▆ ▇ █ Setup Menu
+	#   		 									  	        ▁ ▂ ▄ ▅ ▆ ▇ █ Generate Menu
 	# -------------------------------------------------------------------------------------
-	public function setup_menu( Request $req ) {
-
-		if ( $req->id == '' ) {
-			$response['status'] = false;
-			$response['message'] = 'User Role kosong!';
-		}
-		else {
+	public function generate_menu( $id = '' ) {
+		if ( $id != '' ) {
 			/*═════════════════════════════════════════════════════════════════╗
 			║ Set Variabel           										   ║
 			╚═════════════════════════════════════════════════════════════════*/
-			$user_role = '/'.$req->id;
+			$user_role = '/'.$id;
 			$modules_data = Data::modules_find_by_job( $user_role );
 			$menu_data = array();
 			$menu_data_1 = array();
@@ -82,7 +77,6 @@ class ModulesController extends Controller {
 			if ( count( $modules_data ) > 0 ) {
 				$i = 0;
 				foreach( $modules_data as $menu ) {
-
 					$menu_code = explode( '.', $menu['MODULE_CODE'] );
 					$array_key_1 = (String) $menu_code[0];
 					$array_key_2 = (String) $menu_code[0].$menu_code[1];
@@ -145,14 +139,13 @@ class ModulesController extends Controller {
 				$_02 = 1;
 				foreach ( $menu_data as $kmd => $md ) {
 					if ( isset( $md['02'] ) ) {
-
 						// Menu 1
-						if ( isset( $md1['MODULE_NAME'] ) ):
 						foreach ( $md['02']['DATA'] as $md1 ) {
+							
 							$active = '';
 							$html_menu_02 .= '<li class="m-menu__item '.$active.'  m-menu__item--submenu m-menu__item--tabs"  m-menu-submenu-toggle="tab" aria-haspopup="true">';
 							$html_menu_02 .= '<a  href="javascript:;" class="m-menu__link m-menu__toggle">';
-							$html_menu_02 .= '<span class="m-menu__link-text">'.$md1['MODULE_NAME'].'</span>';
+							$html_menu_02 .= '<span class="m-menu__link-text">'.( isset( $md1['MODULE_NAME'] ) ? $md1['MODULE_NAME'] : 'Unknown' ).'</span>';
 							$html_menu_02 .= '<i class="m-menu__hor-arrow la la-angle-down"></i>';
 							$html_menu_02 .= '<i class="m-menu__ver-arrow la la-angle-right"></i>';
 							$html_menu_02 .= '</a>';
@@ -237,7 +230,6 @@ class ModulesController extends Controller {
 
 							$html_menu_02 .= '</li>';
 						}
-						endif;
 						$_02++;
 					}
 				}
@@ -247,19 +239,51 @@ class ModulesController extends Controller {
 				/*═════════════════════════════════════════════════════════════════╗
 				║ Save to disk            										   ║
 				╚═════════════════════════════════════════════════════════════════*/
-				Storage::disk( 'resources' )->put( 'layouts/default/header-menu-02-'.$req->id.'.blade.php', $html_menu_02 );
+				Storage::disk( 'resources' )->put( 'layouts/default/header-menu-02-'.$id.'.blade.php', $html_menu_02 );
 				
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+		else {
+			return false;
+		}
+	}
+
+	#   		 									  			   ▁ ▂ ▄ ▅ ▆ ▇ █ Setup Menu
+	# -------------------------------------------------------------------------------------
+	public function setup_menu( Request $req ) {
+
+		if ( $req->id == '' ) {
+			$data_parameter = Data::parameter_find( '?PARAMETER_GROUP=USER_ROLE' );
+			$response['status'] = true;
+			$response['message'] = '';
+			foreach( $data_parameter as $parameter ) {
+				if ( self::generate_menu( $parameter['PARAMETER_NAME'] ) == true ) {
+					$response['message'][$parameter['PARAMETER_NAME']] = 'Success! Menu berhasil digenerate.';
+				}
+				else {
+					$response['message'][$parameter['PARAMETER_NAME']] = 'Error! Menu gagal digenerate.';
+				}
+			}
+		}
+		else {
+			if ( self::generate_menu( $req->id ) == true ) {
 				$response['status'] = true;
-				$response['message'] = 'Success!';
+				$response['message'] = 'Success! Menu berhasil digenerate.';
 			}
 			else {
 				$response['status'] = false;
-				$response['message'] = 'Error! Gagal membentuk menu.';
+				$response['message'] = 'Error! Menu gagal digenerate.';
 			}
 		}
 
 		return response()->json( $response );
 	}
+
+
 
 	#   		 								           ▁ ▂ ▄ ▅ ▆ ▇ █ User Authorization
 	# -------------------------------------------------------------------------------------

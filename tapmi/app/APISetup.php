@@ -20,7 +20,7 @@ class APISetup extends Model {
 	 */
 	public static function url() {
 
-		$env = 'prod';
+		$env = 'dev';
 
 		$data = array(
 			"dev" => array(
@@ -28,6 +28,7 @@ class APISetup extends Model {
 					"ins" => array(
 						"auth" => "http://149.129.250.199:3008",
 						"hectarestatement" => "149.129.250.199:3009",
+						"report" => "http://149.129.250.199:3013",
 					)
 				)
 			),
@@ -36,6 +37,7 @@ class APISetup extends Model {
 					"ins" => array(
 						"auth" => "http://149.129.244.86:3008",
 						"hectarestatement" => "http://149.129.244.86:3009",
+						"report" => "http://149.129.250.199:3013",
 					)
 				)
 			),
@@ -43,7 +45,8 @@ class APISetup extends Model {
 				"msa" => array(
 					"ins" => array(
 						"auth" => "http://app.tap-agri.com/mobileinspection/ins-msa-auth",
-						"hectarestatement" => "http://app.tap-agri.com/mobileinspection/ins-msa-hectarestatement"
+						"hectarestatement" => "http://app.tap-agri.com/mobileinspection/ins-msa-hectarestatement",
+						"report" => "http://149.129.250.199:3013",
 					)
 				)
 			)

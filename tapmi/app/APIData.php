@@ -26,6 +26,10 @@ class APIData extends Model {
 			case 'url_api_ins_msa_hectarestatement': 
 				return APISetup::url()['msa']['ins']['hectarestatement'];
 			break;
+			# API INSPEKSI - MSA - REPORT
+			case 'url_api_ins_msa_report': 
+				return APISetup::url()['msa']['ins']['report'];
+			break;
 			# DEFAULT
 			default:
 				return '';
@@ -245,6 +249,23 @@ class APIData extends Model {
 
 		return $data;
 
+	}
+
+	# 									   ▁ ▂ ▄ ▅ ▆ ▇ █ WEB REPORT - INSPEKSI BARIS - Find
+	# -------------------------------------------------------------------------------------
+	public static function web_report_inspection_baris_find( $parameter ) {
+
+		$data['items'] = array();
+		$url = self::url( 'url_api_ins_msa_report' ).'/api/report/inspection-baris'.$parameter;
+		$client = APISetup::ins_rest_client( 'GET', $url );
+		
+		if ( isset( $client['status'] ) && $client['status'] == true ) {
+			if ( count( $client['data'] ) > 0 ) {
+				$data['items'] = $client['data'];
+			}
+		}
+
+		return $data;
 	}
 
 	# 										     ▁ ▂ ▄ ▅ ▆ ▇ █ WEB REPORT - INSPEKSI - Find

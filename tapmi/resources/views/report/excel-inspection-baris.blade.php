@@ -40,8 +40,8 @@
 			<th style="text-align: center;">Nilai {{ $content['CONTENT_NAME'] }}</th>
 		@endforeach
 	</tr>
-	@if ( count( $inspection_data ) > 0 )
-		@foreach ( $inspection_data as $inspection )
+	@if ( count( $inspection_baris ) > 0 )
+		@foreach ( $inspection_baris as $inspection )
 			@if ( isset( $inspection['BLOCK_INSPECTION_CODE'] ) )
 				<tr>
 					<td style="text-align: center;">{{ $inspection['BLOCK_INSPECTION_CODE'] }}</td>
@@ -51,11 +51,11 @@
 					<td style="text-align: center;">{{ $inspection['BLOCK_CODE'] }}</td>
 					<td>{{ $inspection['BLOCK_NAME'] }}</td>
 					<td style="text-align: center;">{{ date( 'Y-m-d', strtotime( $inspection['INSPECTION_DATE'] ) ) }}</td>
-					<td style="text-align: center;">{{ $inspection['LAMA_INSPEKSI'] }}</td>
+					<td style="text-align: center;">{{ ( strlen( intval( ( $inspection['LAMA_INSPEKSI'] / 60 ) ) ) == 1 ? '0'.intval( ( $inspection['LAMA_INSPEKSI'] / 60 ) ) : intval( ( $inspection['LAMA_INSPEKSI'] / 60 ) ) ).':'.( strlen( ( $inspection['LAMA_INSPEKSI'] % 60 ) ) == 1 ? '0'.( $inspection['LAMA_INSPEKSI'] % 60 ) : ( $inspection['LAMA_INSPEKSI'] % 60 ) ) }}</td>
 					<td style="text-align: center;">{{ $inspection['AREAL'] }}</td>
-					<td style="text-align: center;">{{ $inspection['INSPEKTOR']['EMPLOYEE_NIK'] }}</td>
-					<td>{{ $inspection['INSPEKTOR']['FULLNAME'] }}</td>
-					<td>{{ $inspection['INSPEKTOR']['JOB'] }}</td>
+					<td style="text-align: center;">{{ $inspection['REPORTER_NIK'] }}</td>
+					<td>{{ $inspection['REPORTER_FULLNAME'] }}</td>
+					<td>{{ $inspection['REPORTER_JOB'] }}</td>
 					<td style="text-align: center;">{{ date( 'Y.m', strtotime( $inspection['INSPECTION_DATE'] ) ) }}</td>
 					<td style="text-align: center;">{{ $inspection['MATURITY_STATUS'] }}</td>
 					<td>{{ $inspection['LAT_START_INSPECTION'] }}</td>
@@ -68,29 +68,29 @@
 						@endif
 					@endforeach
 					@foreach ( $content_pemupukan as $kcp => $cp )
-						@if ( isset( $inspection['CONTENT'][$kcp] ) )
-							<td style="text-align: center;">{{ $inspection['CONTENT'][$kcp] }}</td>
+						@if ( isset( $inspection['CONTENT'][0][$kcp] ) )
+							<td style="text-align: center;">{{ $inspection['CONTENT'][0][$kcp] }}</td>
 						@else
 							<td style="text-align: center;"></td>
 						@endif
 					@endforeach
 					@foreach ( $content_perawatan_bobot as $kcp => $cp )
-						@if ( isset( $inspection['CONTENT_PERAWATAN'][$kcp] ) )
-							<td style="text-align: center;">{{ ( $inspection['CONTENT'][$kcp] != '0' ? $inspection['CONTENT'][$kcp] : '' ) }}</td>
+						@if ( isset( $inspection['CONTENT_PERAWATAN'][0][$kcp] ) )
+							<td style="text-align: center;">{{ ( $inspection['CONTENT'][0][$kcp] != '0' ? $inspection['CONTENT'][0][$kcp] : '' ) }}</td>
 						@else
 							<td style="text-align: center;"></td>
 						@endif
 					@endforeach
 					@foreach ( $content_perawatan as $kcp => $cp )
-						@if ( isset( $inspection['CONTENT'][$kcp] ) )
-							<td style="text-align: center;">{{ ( $inspection['CONTENT'][$kcp] == '0' ? '' : $inspection['CONTENT'][$kcp] ) }}</td>
+						@if ( isset( $inspection['CONTENT'][0][$kcp] ) )
+							<td style="text-align: center;">{{ ( $inspection['CONTENT'][0][$kcp] == '0' ? '' : $inspection['CONTENT'][0][$kcp] ) }}</td>
 						@else
 							<td style="text-align: center;"></td>
 						@endif
 					@endforeach
 					@foreach ( $content_perawatan_bobot as $kcp => $cp )
-						@if ( isset( $inspection['CONTENT_PERAWATAN'][$kcp] ) )
-							<td style="text-align: center;">{{ $inspection['CONTENT_PERAWATAN'][$kcp] }}</td>
+						@if ( isset( $inspection['CONTENT_PERAWATAN'][0][$kcp] ) )
+							<td style="text-align: center;">{{ $inspection['CONTENT_PERAWATAN'][0][$kcp] }}</td>
 						@else
 							<td style="text-align: center;">0</td>
 						@endif
