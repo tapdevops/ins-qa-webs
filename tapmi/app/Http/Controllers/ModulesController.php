@@ -265,12 +265,12 @@ class ModulesController extends Controller {
 				print_r( $parameter );
 				print '</pre>';
 				
-				if ( isset( $parameter['PARAMETER_NAME'] ) && $parameter['PARAMETER_NAME'] != '' ) {
-					if ( self::generate_menu( $parameter['PARAMETER_NAME'] ) == true ) {
-						$response['message'][ $parameter['PARAMETER_NAME']] = 'Success! Menu berhasil digenerate.';
+				if ( isset( (string) $parameter['PARAMETER_NAME'] ) && (string) $parameter['PARAMETER_NAME'] != '' ) {
+					if ( self::generate_menu( (string) $parameter['PARAMETER_NAME'] ) == true ) {
+						$response['message'][ (string) $parameter['PARAMETER_NAME']] = 'Success! Menu berhasil digenerate.';
 					}
 					else {
-						$response['message'][ $parameter['PARAMETER_NAME']] = 'Error! Menu gagal digenerate.';
+						$response['message'][ (string) $parameter['PARAMETER_NAME']] = 'Error! Menu gagal digenerate.';
 					}
 				}
 				
