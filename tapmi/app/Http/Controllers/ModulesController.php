@@ -261,11 +261,13 @@ class ModulesController extends Controller {
 			$response['status'] = true;
 			$response['message'] = '';
 			foreach( $data_parameter as $parameter ) {
-				if ( self::generate_menu( $parameter['PARAMETER_NAME'] ) == true ) {
-					$response['message'][$parameter['PARAMETER_NAME']] = 'Success! Menu berhasil digenerate.';
-				}
-				else {
-					$response['message'][$parameter['PARAMETER_NAME']] = 'Error! Menu gagal digenerate.';
+				if ( isset( $parameter['PARAMETER_NAME'] ) && $parameter['PARAMETER_NAME'] != '' ) {
+					if ( self::generate_menu(  String() $parameter['PARAMETER_NAME'] ) == true ) {
+						$response['message'][ String() $parameter['PARAMETER_NAME']] = 'Success! Menu berhasil digenerate.';
+					}
+					else {
+						$response['message'][ String() $parameter['PARAMETER_NAME']] = 'Error! Menu gagal digenerate.';
+					}
 				}
 			}
 		}
