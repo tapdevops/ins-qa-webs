@@ -91,6 +91,14 @@ class ReportController extends Controller {
 		else if ( Input::get( 'REPORT_TYPE' ) == 'INSPEKSI' ) {
 			self::download_excel_inspeksi( $setup );
 		}
+		// Report EBCC Validation
+		else if ( Input::get( 'REPORT_TYPE' ) == 'EBCC_VALIDATION' ) {
+			print '<h1>EBCC Validation</h1>';
+			print '<pre>';
+			print_r( $setup );
+			print '<pre>';
+			//self::download_excel_inspeksi( $setup );
+		}
 		// Report Class Block
 		else if ( Input::get( 'REPORT_TYPE' ) == 'CLASS_BLOCK_AFD_ESTATE' ) {
 			$date = date( 'Ymd', strtotime( Input::get( 'DATE_MONTH' ) ) );

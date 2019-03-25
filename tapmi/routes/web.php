@@ -56,3 +56,4 @@ Route::group( [ 'middleware' => 'web' ], function() {
 		Route::get( '/data/user-search', 'DataController@user_search_find' );
 	});
 });
+
