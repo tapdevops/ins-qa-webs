@@ -22,6 +22,10 @@ class APIData extends Model {
 			case 'url_api_ins_msa_auth': 
 				return APISetup::url()['msa']['ins']['auth'];
 			break;
+			# API INSPEKSI - MSA - EBCC VALIDATION
+			case 'url_api_ins_msa_ebccvalidation': 
+				return APISetup::url()['msa']['ins']['ebccvalidation'];
+			break;
 			# API INSPEKSI - MSA - HECTARE STATEMENT
 			case 'url_api_ins_msa_hectarestatement': 
 				return APISetup::url()['msa']['ins']['hectarestatement'];
@@ -57,6 +61,20 @@ class APIData extends Model {
 	# -------------------------------------------------------------------------------------
 	public static function content_find( $parameter = '' ) {
 		$url = self::url( 'url_api_ins_msa_auth' ).'/api/content'.$parameter;
+		$client = APISetup::ins_rest_client( 'GET', $url );
+		$data = [];
+		if ( $client['status'] == true ) {
+			if ( isset( $client['data'] ) ) {
+				$data = $client['data'];
+			}
+		}
+		return $data;
+	}
+
+	# 												    	  ▁ ▂ ▄ ▅ ▆ ▇ █ KUALITAS - Find
+	# -------------------------------------------------------------------------------------
+	public static function kualitas_find( $parameter = '' ) {
+		$url = self::url( 'url_api_ins_msa_ebccvalidation' ).'/ebcc/kualitas'.$parameter;
 		$client = APISetup::ins_rest_client( 'GET', $url );
 		$data = [];
 		if ( $client['status'] == true ) {
@@ -214,6 +232,15 @@ class APIData extends Model {
 
 		return $items;
 
+	}
+
+	public static function web_report_ebcc_validation_find( $parameter = '' ) {
+
+		$data['items'] = array();
+		$url = self::url( 'url_api_ins_msa_ebccvalidation' ).'/report/web/per-baris'.$parameter;
+		$client = APISetup::ins_rest_client( 'GET', $url );
+
+		return $client;
 	}
 
 	# 										      ▁ ▂ ▄ ▅ ▆ ▇ █ WEB REPORT - FINDING - Find

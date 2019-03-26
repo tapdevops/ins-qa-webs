@@ -93,11 +93,22 @@ class ReportController extends Controller {
 		}
 		// Report EBCC Validation
 		else if ( Input::get( 'REPORT_TYPE' ) == 'EBCC_VALIDATION' ) {
-			print '<h1>EBCC Validation</h1>';
-			print '<pre>';
-			print_r( $setup );
-			print '<pre>';
-			//self::download_excel_inspeksi( $setup );
+			if ( Input::get( 'REGION_CODE' ) != '' && Input::get( 'COMP_CODE' ) == '' ) {
+				$setup['WERKS_AFD_BLOCK_CODE'] = substr( Input::get( 'REGION_CODE' ), 1, 1 );
+			}
+			else if ( Input::get( 'COMP_CODE' ) != '' && Input::get( 'BA_CODE' ) == '' ) {
+				$setup['WERKS_AFD_BLOCK_CODE'] = Input::get( 'COMP_CODE' );
+			}
+			else if ( Input::get( 'BA_CODE' ) != '' && Input::get( 'AFD_CODE' ) == '' ) {
+				$setup['WERKS_AFD_BLOCK_CODE'] = Input::get( 'BA_CODE' );
+			}
+			else if ( Input::get( 'BA_CODE' ) != '' && Input::get( 'AFD_CODE' ) != '' &&  Input::get( 'BLOCK_CODE' ) == '' ) {
+				$setup['WERKS_AFD_BLOCK_CODE'] = Input::get( 'AFD_CODE' );
+			}
+			else if ( Input::get( 'AFD_CODE' ) != '' && Input::get( 'BLOCK_CODE' ) != '' ) {
+				$setup['WERKS_AFD_BLOCK_CODE'] = Input::get( 'BLOCK_CODE' );
+			}
+			self::download_excel_ebcc_validation( $setup );
 		}
 		// Report Class Block
 		else if ( Input::get( 'REPORT_TYPE' ) == 'CLASS_BLOCK_AFD_ESTATE' ) {
@@ -107,6 +118,8 @@ class ReportController extends Controller {
 			self::download_excel_class_block( $setup );
 		}
 	}
+
+
 	
 	public function generate_proses( Request $req ) {
 
@@ -172,8 +185,142 @@ class ReportController extends Controller {
 
 
 
+	public function download_excel_ebcc_validation( $data ) {
 
+		$kualitas_jjg_hasilpanen = Data::kualitas_find( '?UOM=JJG&GROUP_KUALITAS=HASIL PANEN' );
+		$kualitas_jjg_hasilpanen_check = [];
+		foreach ( $kualitas_jjg_hasilpanen as $jjg_hasilpanen ) {
+			$kualitas_jjg_hasilpanen_check[] = $jjg_hasilpanen['ID_KUALITAS'];
+		}
 
+		/*
+		print '<pre>';
+		print_r( $kualitas_jjg_hasilpanen_check );
+		print '<pre>';
+		if ( in_array( '19', $kualitas_jjg_hasilpanen_check ) ) {
+			print 'Yes';
+		}
+		else {
+			print 'No';
+		}
+		dd();
+		*/
+
+		$kualitas_penalty_tph = Data::kualitas_find( '?UOM=TPH&GROUP_KUALITAS=PENALTY DI TPH' );
+		$kualitas_penalty_tph_check = [];
+		foreach ( $kualitas_penalty_tph as $penalty_tph ) {
+			$kualitas_penalty_tph_check[] = $penalty_tph['ID_KUALITAS'];
+		}
+		/*
+		print '<pre>';
+		print_r( $kualitas_penalty_tph_check );
+		print '</pre>';
+		dd();
+		*/
+
+		$kualitas_jjg_kondisibuah = Data::kualitas_find( '?UOM=JJG&GROUP_KUALITAS=KONDISI BUAH' );
+		$kualitas_jjg_kondisibuah_check = [];
+		foreach ( $kualitas_jjg_kondisibuah as $jjg_kondisibuah ) {
+			$kualitas_jjg_kondisibuah_check[] = $jjg_kondisibuah['ID_KUALITAS'];
+		}
+		/*
+		print '<pre>';
+		print_r( $kualitas_jjg_kondisibuah_check );
+		print '</pre>';
+		dd();
+		*/
+
+		$results = [];
+		$results['data'] = [];
+		$results['periode'] = date( 'Ym', strtotime( $data['START_DATE'] ) );
+		$results['kualitas_jjg_hasilpanen'] = $kualitas_jjg_hasilpanen;
+		$results['kualitas_jjg_kondisibuah'] = $kualitas_jjg_kondisibuah;
+		$results['kualitas_penalty_tph'] = $kualitas_penalty_tph;
+
+		$ebcc_validation = Data::web_report_ebcc_validation_find( '/'.$data['WERKS_AFD_BLOCK_CODE'].'/'.$data['START_DATE'].'/'.$data['END_DATE'] );
+
+		$i = 0;
+		foreach ( $ebcc_validation['data'] as $ebcc ) {
+			$results['data'][$i]['EBCC_VALIDATION_CODE'] = $ebcc['EBCC_VALIDATION_CODE'];
+			$results['data'][$i]['WERKS_AFD_CODE'] = $ebcc['WERKS_AFD_CODE'];
+			$results['data'][$i]['WERKS_AFD_BLOCK_CODE'] = $ebcc['WERKS_AFD_BLOCK_CODE'];
+			$results['data'][$i]['WERKS'] = $ebcc['WERKS'];
+			$results['data'][$i]['EST_NAME'] = '';
+			$results['data'][$i]['AFD_CODE'] = $ebcc['AFD_CODE'];
+			$results['data'][$i]['BLOCK_CODE'] = $ebcc['BLOCK_CODE'];
+			$results['data'][$i]['BLOCK_NAME'] = '';
+			$results['data'][$i]['MATURITY_STATUS'] = '';
+			$results['data'][$i]['NO_TPH'] = $ebcc['NO_TPH'];
+			$results['data'][$i]['STATUS_TPH_SCAN'] = $ebcc['STATUS_TPH_SCAN'];
+			$results['data'][$i]['ALASAN_MANUAL'] = $ebcc['ALASAN_MANUAL'];
+			$results['data'][$i]['TANGGAL_VALIDASI'] = date( 'd-m-Y', strtotime( $ebcc['INSERT_TIME'] ) );
+			$results['data'][$i]['LAT_TPH'] = $ebcc['LAT_TPH'];
+			$results['data'][$i]['LON_TPH'] = $ebcc['LON_TPH'];
+			$results['data'][$i]['DELIVERY_CODE'] = $ebcc['DELIVERY_CODE'];
+			$results['data'][$i]['STATUS_DELIVERY_CODE'] = $ebcc['STATUS_DELIVERY_CODE'];
+			$results['data'][$i]['NIK_VALIDATOR'] = '';
+			$results['data'][$i]['NAMA_VALIDATOR'] = '';
+			$results['data'][$i]['JABATAN_VALIDATOR'] = '';
+
+			# Kualitas: { UOM: "JJG", GROUP_KUALITAS: "HASIL PANEN" }
+			$results['data'][$i]['HASIL_JJG_HASILPANEN'] = [];
+			foreach ( $kualitas_jjg_hasilpanen_check as $jjg_hasilpanen_check ) {
+				$results['data'][$i]['HASIL_JJG_HASILPANEN']['_'.$jjg_hasilpanen_check] = 0;
+			}
+
+			# Kualitas: { UOM: "JJG", GROUP_KUALITAS: "KONDISI BUAH" }
+			$results['data'][$i]['HASIL_JJG_KONDISIBUAH'] = [];
+			foreach ( $kualitas_jjg_kondisibuah_check as $jjg_kondisibuah_check ) {
+				$results['data'][$i]['HASIL_JJG_KONDISIBUAH']['_'.$jjg_kondisibuah_check] = 0;
+			}
+
+			# Kualitas: { UOM: "TPH", GROUP_KUALITAS: "PENALTY DI TPH" }
+			$results['data'][$i]['PENALTY_DI_TPH'] = [];
+			foreach ( $kualitas_penalty_tph_check as $penalty_tph_check ) {
+				$results['data'][$i]['PENALTY_DI_TPH']['_'.$penalty_tph_check] = 0;
+			}
+
+			foreach ( $ebcc['DETAIL'] as $detail ) {
+				# Kualitas: { UOM: "JJG", GROUP_KUALITAS: "HASIL PANEN" }
+				if ( in_array( $detail['ID_KUALITAS'], $kualitas_jjg_hasilpanen_check ) ) {
+					$results['data'][$i]['HASIL_JJG_HASILPANEN']['_'.$detail['ID_KUALITAS']] = $detail['JUMLAH'];
+				}
+
+				# Kualitas: { UOM: "JJG", GROUP_KUALITAS: "KONDISI BUAH" }
+				if ( in_array( $detail['ID_KUALITAS'], $kualitas_jjg_kondisibuah_check ) ) {
+					$results['data'][$i]['HASIL_JJG_KONDISIBUAH']['_'.$detail['ID_KUALITAS']] = $detail['JUMLAH'];
+				}
+
+				# Kualitas: { UOM: "TPH", GROUP_KUALITAS: "PENALTY DI TPH" }
+				if ( in_array( $detail['ID_KUALITAS'], $kualitas_penalty_tph_check ) ) {
+					$results['data'][$i]['PENALTY_DI_TPH']['_'.$detail['ID_KUALITAS']] = $detail['JUMLAH'];
+				}
+			}
+
+			$hectarestatement =  Data::web_report_land_use_findone( $ebcc['WERKS_AFD_BLOCK_CODE'] );
+			if ( !empty( $hectarestatement ) ) {
+				$results['data'][$i]['EST_NAME'] = $hectarestatement['EST_NAME'];
+				$results['data'][$i]['BLOCK_NAME'] = $hectarestatement['BLOCK_NAME'];
+				$results['data'][$i]['MATURITY_STATUS'] = $hectarestatement['MATURITY_STATUS'];
+			}
+
+			$validator = Data::user_find_one( ( String ) $ebcc['INSERT_USER'] )['items'];
+			if ( !empty( $validator ) ) {
+				$results['data'][$i]['NIK_VALIDATOR'] = $validator['EMPLOYEE_NIK'];
+				$results['data'][$i]['NAMA_VALIDATOR'] = $validator['FULLNAME'];
+				$results['data'][$i]['JABATAN_VALIDATOR'] = str_replace( '_', ' ', $validator['JOB'] );
+			}
+
+			$i++;
+		}
+		
+		Excel::create( 'Report-EBCC-Validation', function( $excel ) use ( $results ) {
+			$excel->sheet( 'Per Baris', function( $sheet ) use ( $results ) {
+				$sheet->loadView( 'report.excel-ebcc-validation', $results );
+			} );
+		} )->export( 'xls' );
+
+	}
 
 
 
