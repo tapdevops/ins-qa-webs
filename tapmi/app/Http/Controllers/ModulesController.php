@@ -56,6 +56,8 @@ class ModulesController extends Controller {
 	#   		 									  	        ▁ ▂ ▄ ▅ ▆ ▇ █ Generate Menu
 	# -------------------------------------------------------------------------------------
 	public function generate_menu( $id = '' ) {
+
+
 		if ( $id != '' ) {
 			/*═════════════════════════════════════════════════════════════════╗
 			║ Set Variabel           										   ║
@@ -70,6 +72,10 @@ class ModulesController extends Controller {
 			$menu_data_5 = array();
 			$html_menu_01 = '';
 			$html_menu_02 = '';
+			$urls = 'http://149.129.250.199/ins-webs/tapmi/public/';
+			if ( $urls == '' ) {
+				$urls = url();
+			}
 
 			/*═════════════════════════════════════════════════════════════════╗
 			║ Set Array Menu           										   ║
@@ -186,7 +192,7 @@ class ModulesController extends Controller {
 
 												foreach ( $md3['DATA'] as $md4 ) {
 													$html_menu_02 .= '<li class="m-menu__item "  m-menu-link-redirect="1" aria-haspopup="true">';
-													$html_menu_02 .= '<a  href="'.url( $md2['ITEM_NAME'] ).'" class="m-menu__link ">';
+													$html_menu_02 .= '<a  href="'.$urls.$md2['ITEM_NAME'].'" class="m-menu__link ">';
 													$html_menu_02 .= '<span class="m-menu__link-text">'.$md2['MODULE_NAME'].'</span>';
 													$html_menu_02 .= '</a>';
 													$html_menu_02 .= '</li>';
@@ -198,7 +204,7 @@ class ModulesController extends Controller {
 											}
 											else {
 												$html_menu_02 .= '<li class="m-menu__item "  aria-haspopup="true">';
-												$html_menu_02 .= '<a  href="'.url( $md3['ITEM_NAME'] ).'" class="m-menu__link ">';
+												$html_menu_02 .= '<a  href="'.$urls.$md3['ITEM_NAME'].'" class="m-menu__link ">';
 												$html_menu_02 .= '<i class="m-menu__link-icon '.$md2['ICON'].'"></i>';
 												$html_menu_02 .= '<span class="m-menu__link-title">';
 												$html_menu_02 .= '<span class="m-menu__link-wrap">';
@@ -216,7 +222,7 @@ class ModulesController extends Controller {
 									}
 									else {
 										$html_menu_02 .= '<li class="m-menu__item "  m-menu-link-redirect="1" aria-haspopup="true">';
-										$html_menu_02 .= '<a  href="'.url( $md2['ITEM_NAME'] ).'" class="m-menu__link ">';
+										$html_menu_02 .= '<a  href="'.$urls.$md2['ITEM_NAME'].'" class="m-menu__link ">';
 										$html_menu_02 .= '<i class="m-menu__link-icon '.$md2['ICON'].'"></i>';
 										$html_menu_02 .= '<span class="m-menu__link-text">'.$md2['MODULE_NAME'].'</span>';
 										$html_menu_02 .= '</a>';
@@ -261,9 +267,6 @@ class ModulesController extends Controller {
 			$response['status'] = true;
 			$response['message'] = '';
 			foreach( $data_parameter as $parameter ) {
-				print '<pre>';
-				print_r( $parameter );
-				print '</pre>';
 				
 				if ( self::generate_menu( (string)$parameter['PARAMETER_NAME'] ) == true ) {
 					$response['message'][ (string)$parameter['PARAMETER_NAME']] = 'Success! Menu berhasil digenerate.';
