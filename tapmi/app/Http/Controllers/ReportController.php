@@ -175,16 +175,6 @@ class ReportController extends Controller {
 		}
 	}
 
-
-
-
-
-
-
-
-
-
-
 	public function download_excel_ebcc_validation( $data ) {
 
 		$kualitas_jjg_hasilpanen = Data::kualitas_find( '?UOM=JJG&GROUP_KUALITAS=HASIL PANEN' );
