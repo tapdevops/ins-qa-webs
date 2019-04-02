@@ -109,7 +109,8 @@
 		};
 
 		jQuery(document).ready(function() {
-			datatable.init()
+			datatable.init();
+			MobileInspection.set_active_menu( '{{ $active_menu }}' );
 		});
 	</script>
 @endsection

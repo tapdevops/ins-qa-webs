@@ -28,8 +28,10 @@ class ModulesController extends Controller {
 
 	protected $url_api_ins_msa_auth;
 	protected $url_api_ins_msa_hectarestatement;
+	protected $active_menu;
 
 	public function __construct() {
+		$this->active_menu = '_'.str_replace( '.', '', '02.02.00.00.00' ).'_';
 		$this->url_api_ins_msa_auth = APISetup::url()['msa']['ins']['auth'];
 		$this->url_api_ins_msa_hectarestatement = APISetup::url()['msa']['ins']['hectarestatement'];
 	}
@@ -41,6 +43,7 @@ class ModulesController extends Controller {
 	#
 	public function index() {
 		$data['modules'] = Data::modules_find();
+		$data['active_menu'] = $this->active_menu;
 		return view( 'modules.index', $data );
 	}
 
@@ -73,9 +76,11 @@ class ModulesController extends Controller {
 			$html_menu_01 = '';
 			$html_menu_02 = '';
 			#$urls = 'http://149.129.250.199/ins-webs/tapmi/public/';
-			$urls = 'http://inspection.tap-agri.com:3014/';
+			#$urls = 'http://inspection.tap-agri.com:3014/';
+			$urls = '';
+
 			if ( $urls == '' ) {
-				$urls = url();
+				$urls = url( '' ).'/';
 			}
 
 			/*═════════════════════════════════════════════════════════════════╗
@@ -95,6 +100,7 @@ class ModulesController extends Controller {
 						$menu_data['DATA'][$array_key_1]['MODULE_CODE'] = $menu['MODULE_CODE'];
 						$menu_data['DATA'][$array_key_1]['PARAMETER_NAME'] = $menu['PARAMETER_NAME'];
 						$menu_data['DATA'][$array_key_1]['STATUS'] = $menu['STATUS'];
+						$menu_data['DATA'][$array_key_1]['MODULE_CODE'] = $menu['MODULE_CODE'];
 						$menu_data['DATA'][$array_key_1]['MODULE_NAME'] = $menu['MODULE_NAME'];
 						$menu_data['DATA'][$array_key_1]['ITEM_NAME'] = $menu['ITEM_NAME'];
 						$menu_data['DATA'][$array_key_1]['ICON'] = $menu['ICON'];
@@ -103,37 +109,42 @@ class ModulesController extends Controller {
 						$menu_data['DATA'][$array_key_1]['DATA'][$array_key_2]['MODULE_CODE'] = $menu['MODULE_CODE'];
 						$menu_data['DATA'][$array_key_1]['DATA'][$array_key_2]['PARAMETER_NAME'] = $menu['PARAMETER_NAME'];
 						$menu_data['DATA'][$array_key_1]['DATA'][$array_key_2]['STATUS'] = $menu['STATUS'];
-						$menu_data['DATA'][$array_key_1]['DATA'][$array_key_2]['MODULE_NAME'] = $menu['MODULE_NAME'];
-						$menu_data['DATA'][$array_key_1]['DATA'][$array_key_2]['ITEM_NAME'] = $menu['ITEM_NAME'];
-						$menu_data['DATA'][$array_key_1]['DATA'][$array_key_2]['ICON'] = $menu['ICON'];
+						$menu_data['DATA'][$array_key_1]['DATA'][$array_key_2]['MODULE_NAME'] = ( isset( $menu['MODULE_NAME'] ) ? $menu['MODULE_NAME'] : '' );
+						$menu_data['DATA'][$array_key_1]['DATA'][$array_key_2]['ITEM_NAME'] = ( isset( $menu['ITEM_NAME'] ) ? $menu['ITEM_NAME'] : '' );
+						$menu_data['DATA'][$array_key_1]['DATA'][$array_key_2]['ICON'] = ( isset( $menu['ICON'] ) ? $menu['ICON'] : '' );
+						$menu_data['DATA'][$array_key_1]['DATA'][$array_key_2]['MODULE_CODE'] = ( isset( $menu['MODULE_CODE'] ) ? $menu['MODULE_CODE'] : '' );
 					}
 					else if ( $menu_code[3] == '00' ) { // Menu 3
 						$menu_data['DATA'][$array_key_1]['DATA'][$array_key_2]['DATA'][$array_key_3]['MODULE_CODE'] = $menu['MODULE_CODE'];
 						$menu_data['DATA'][$array_key_1]['DATA'][$array_key_2]['DATA'][$array_key_3]['PARAMETER_NAME'] = $menu['PARAMETER_NAME'];
 						$menu_data['DATA'][$array_key_1]['DATA'][$array_key_2]['DATA'][$array_key_3]['STATUS'] = $menu['STATUS'];
-						$menu_data['DATA'][$array_key_1]['DATA'][$array_key_2]['DATA'][$array_key_3]['MODULE_NAME'] = $menu['MODULE_NAME'];
-						$menu_data['DATA'][$array_key_1]['DATA'][$array_key_2]['DATA'][$array_key_3]['ITEM_NAME'] = $menu['ITEM_NAME'];
-						$menu_data['DATA'][$array_key_1]['DATA'][$array_key_2]['DATA'][$array_key_3]['ICON'] = $menu['ICON'];
+						$menu_data['DATA'][$array_key_1]['DATA'][$array_key_2]['DATA'][$array_key_3]['MODULE_NAME'] = ( isset( $menu['MODULE_NAME'] ) ? $menu['MODULE_NAME'] : '' );
+						$menu_data['DATA'][$array_key_1]['DATA'][$array_key_2]['DATA'][$array_key_3]['ITEM_NAME'] = ( isset( $menu['ITEM_NAME'] ) ? $menu['ITEM_NAME'] : '' );
+						$menu_data['DATA'][$array_key_1]['DATA'][$array_key_2]['DATA'][$array_key_3]['ICON'] = ( isset( $menu['ICON'] ) ? $menu['ICON'] : '' );
+						$menu_data['DATA'][$array_key_1]['DATA'][$array_key_2]['DATA'][$array_key_3]['MODULE_CODE'] = ( isset( $menu['MODULE_CODE'] ) ? $menu['MODULE_CODE'] : '' );
 					}
 					else if ( $menu_code[4] == '00' ) { // Menu 4
 						$menu_data['DATA'][$array_key_1]['DATA'][$array_key_2]['DATA'][$array_key_3]['DATA'][$array_key_4]['MODULE_CODE'] = $menu['MODULE_CODE'];
 						$menu_data['DATA'][$array_key_1]['DATA'][$array_key_2]['DATA'][$array_key_3]['DATA'][$array_key_4]['PARAMETER_NAME'] = $menu['PARAMETER_NAME'];
 						$menu_data['DATA'][$array_key_1]['DATA'][$array_key_2]['DATA'][$array_key_3]['DATA'][$array_key_4]['STATUS'] = $menu['STATUS'];
-						$menu_data['DATA'][$array_key_1]['DATA'][$array_key_2]['DATA'][$array_key_3]['DATA'][$array_key_4]['MODULE_NAME'] = $menu['MODULE_NAME'];
-						$menu_data['DATA'][$array_key_1]['DATA'][$array_key_2]['DATA'][$array_key_3]['DATA'][$array_key_4]['ITEM_NAME'] = $menu['ITEM_NAME'];
-						$menu_data['DATA'][$array_key_1]['DATA'][$array_key_2]['DATA'][$array_key_3]['DATA'][$array_key_4]['ICON'] = $menu['ICON'];
+						$menu_data['DATA'][$array_key_1]['DATA'][$array_key_2]['DATA'][$array_key_3]['DATA'][$array_key_4]['MODULE_NAME'] = ( isset( $menu['MODULE_NAME'] ) ? $menu['MODULE_NAME'] : '' );
+						$menu_data['DATA'][$array_key_1]['DATA'][$array_key_2]['DATA'][$array_key_3]['DATA'][$array_key_4]['ITEM_NAME'] = ( isset( $menu['ITEM_NAME'] ) ? $menu['ITEM_NAME'] : '' );
+						$menu_data['DATA'][$array_key_1]['DATA'][$array_key_2]['DATA'][$array_key_3]['DATA'][$array_key_4]['ICON'] = ( isset( $menu['ICON'] ) ? $menu['ICON'] : '' );
+						$menu_data['DATA'][$array_key_1]['DATA'][$array_key_2]['DATA'][$array_key_3]['DATA'][$array_key_4]['MODULE_CODE'] = ( isset( $menu['MODULE_CODE'] ) ? $menu['MODULE_CODE'] : '' );
 					}
 					else if ( $menu_code[4] != '00' ) { // Menu 5
 						$array_key = $array_key_5;
 						$menu_data['DATA'][$array_key_1]['DATA'][$array_key_2]['DATA'][$array_key_3]['DATA'][$array_key_4]['DATA'][$array_key_5]['MODULE_CODE'] = $menu['MODULE_CODE'];
 						$menu_data['DATA'][$array_key_1]['DATA'][$array_key_2]['DATA'][$array_key_3]['DATA'][$array_key_4]['DATA'][$array_key_5]['PARAMETER_NAME'] = $menu['PARAMETER_NAME'];
 						$menu_data['DATA'][$array_key_1]['DATA'][$array_key_2]['DATA'][$array_key_3]['DATA'][$array_key_4]['DATA'][$array_key_5]['STATUS'] = $menu['STATUS'];
-						$menu_data['DATA'][$array_key_1]['DATA'][$array_key_2]['DATA'][$array_key_3]['DATA'][$array_key_4]['DATA'][$array_key_5]['MODULE_NAME'] = $menu['MODULE_NAME'];
-						$menu_data['DATA'][$array_key_1]['DATA'][$array_key_2]['DATA'][$array_key_3]['DATA'][$array_key_4]['DATA'][$array_key_5]['ITEM_NAME'] = $menu['ITEM_NAME'];
-						$menu_data['DATA'][$array_key_1]['DATA'][$array_key_2]['DATA'][$array_key_3]['DATA'][$array_key_4]['DATA'][$array_key_5]['ICON'] = $menu['ICON'];
+						$menu_data['DATA'][$array_key_1]['DATA'][$array_key_2]['DATA'][$array_key_3]['DATA'][$array_key_4]['DATA'][$array_key_5]['MODULE_NAME'] = ( isset( $menu['MODULE_NAME'] ) ? $menu['MODULE_NAME'] : '' );
+						$menu_data['DATA'][$array_key_1]['DATA'][$array_key_2]['DATA'][$array_key_3]['DATA'][$array_key_4]['DATA'][$array_key_5]['ITEM_NAME'] = ( isset( $menu['ITEM_NAME'] ) ? $menu['ITEM_NAME'] : '' );
+						$menu_data['DATA'][$array_key_1]['DATA'][$array_key_2]['DATA'][$array_key_3]['DATA'][$array_key_4]['DATA'][$array_key_5]['ICON'] = ( isset( $menu['ICON'] ) ? $menu['ICON'] : '' );
+						$menu_data['DATA'][$array_key_1]['DATA'][$array_key_2]['DATA'][$array_key_3]['DATA'][$array_key_4]['DATA'][$array_key_5]['MODULE_CODE'] = ( isset( $menu['MODULE_CODE'] ) ? $menu['MODULE_CODE'] : '' );
 					}
 				}
 			}
+
 
 			/*═════════════════════════════════════════════════════════════════╗
 			║ Set HTML Menu           										   ║
@@ -141,16 +152,16 @@ class ModulesController extends Controller {
 			║ parameter.           									  		   ║
 			╚═════════════════════════════════════════════════════════════════*/
 			if ( !empty( $menu_data ) ) {
-				$html_menu_02 .= '<ul class="m-menu__nav  m-menu__nav--submenu-arrow ">';
+				$html_menu_02 .= '<ul id="master-menu" class="m-menu__nav  m-menu__nav--submenu-arrow ">';
 				$_01 = 1;
 				$_02 = 1;
 				foreach ( $menu_data as $kmd => $md ) {
 					if ( isset( $md['02'] ) ) {
 						// Menu 1
 						foreach ( $md['02']['DATA'] as $md1 ) {
-							
+							$class = ( isset( $md1['MODULE_CODE'] )  ? '_'.str_replace( '.', '', $md1['MODULE_CODE'] ).'_' : '_unknown' );
 							$active = '';
-							$html_menu_02 .= '<li class="m-menu__item '.$active.'  m-menu__item--submenu m-menu__item--tabs"  m-menu-submenu-toggle="tab" aria-haspopup="true">';
+							$html_menu_02 .= '<li id="'.$class.'" class="m-menu__item '.$active.'  m-menu__item--submenu m-menu__item--tabs"  m-menu-submenu-toggle="tab" aria-haspopup="true">';
 							$html_menu_02 .= '<a  href="javascript:;" class="m-menu__link m-menu__toggle">';
 							$html_menu_02 .= '<span class="m-menu__link-text">'.( isset( $md1['MODULE_NAME'] ) ? $md1['MODULE_NAME'] : 'Unknown' ).'</span>';
 							$html_menu_02 .= '<i class="m-menu__hor-arrow la la-angle-down"></i>';

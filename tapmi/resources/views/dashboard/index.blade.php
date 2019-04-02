@@ -16,3 +16,8 @@
 		</div>
 	</div-->
 @endsection
+@section( 'scripts' )
+	<script type="text/javascript">
+		MobileInspection.set_active_menu( '{{ $active_menu }}' );
+	</script>
+@endsection

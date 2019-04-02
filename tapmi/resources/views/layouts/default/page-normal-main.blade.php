@@ -103,6 +103,7 @@
 		<script src="{{ url( 'assets/default-template/assets/custom/components/forms/widgets/select2.js' ) }}" type="text/javascript"></script>
 		<script src="{{ url( 'assets/default-template/assets/custom/components/forms/widgets/bootstrap-switch.js' ) }}" type="text/javascript"></script>
 		<script type="text/javascript" src="{{ url( 'assets/vendor/jquery-loading-overlay/script.min.js' ) }}"></script>
+		<script type="text/javascript" src="{{ url( 'assets/mobile-inspection.js' ) }}"></script>
 		@yield( 'scripts' )
 		<script>
 			$(window).on('load', function() {

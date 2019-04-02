@@ -26,10 +26,17 @@
 
 class DashboardController extends Controller {
 
+	protected $active_menu;
+
+	public function __construct() {
+		$this->active_menu = '_'.str_replace( '.', '', '02.01.00.00.00' ).'_';
+	}
+
 	#   		 									  		            ▁ ▂ ▄ ▅ ▆ ▇ █ Index
 	# -------------------------------------------------------------------------------------
 	public function index() {
-		return view( 'dashboard.index' );
+		$data['active_menu'] = $this->active_menu;
+		return view( 'dashboard.index', $data );
 	}
 
 }

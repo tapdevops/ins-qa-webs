@@ -29,8 +29,10 @@ class ReportController extends Controller {
 
 	protected $url_api_ins_msa_auth;
 	protected $url_api_ins_msa_hectarestatement;
+	protected $active_menu;
 
 	public function __construct() {
+		$this->active_menu = '_'.str_replace( '.', '', '02.03.00.00.00' ).'_';
 		$this->url_api_ins_msa_auth = APISetup::url()['msa']['ins']['auth'];
 		$this->url_api_ins_msa_hectarestatement = APISetup::url()['msa']['ins']['hectarestatement'];
 		$this->url_api_ins_msa_report = APISetup::url()['msa']['ins']['report'];
@@ -43,7 +45,7 @@ class ReportController extends Controller {
 	public function download() {
 		$url_region_data = $this->url_api_ins_msa_hectarestatement.'/region/all';
 		$data['region_data'] = APISetup::ins_rest_client( 'GET', $url_region_data );
-
+		$data['active_menu'] = $this->active_menu;
 		return view( 'report.download', $data );
 	}
 
@@ -243,7 +245,7 @@ class ReportController extends Controller {
 			$results['data'][$i]['NO_TPH'] = $ebcc['NO_TPH'];
 			$results['data'][$i]['STATUS_TPH_SCAN'] = $ebcc['STATUS_TPH_SCAN'];
 			$results['data'][$i]['ALASAN_MANUAL'] = $ebcc['ALASAN_MANUAL'];
-			$results['data'][$i]['TANGGAL_VALIDASI'] = date( 'd-m-Y', strtotime( $ebcc['INSERT_TIME'] ) );
+			$results['data'][$i]['TANGGAL_VALIDASI'] = date( 'd M Y', strtotime( $ebcc['INSERT_TIME'] ) );
 			$results['data'][$i]['LAT_TPH'] = $ebcc['LAT_TPH'];
 			$results['data'][$i]['LON_TPH'] = $ebcc['LON_TPH'];
 			$results['data'][$i]['DELIVERY_CODE'] = $ebcc['DELIVERY_CODE'];
