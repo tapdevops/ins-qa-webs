@@ -71,6 +71,21 @@ class APIData extends Model {
 		return $data;
 	}
 
+	#										   ▁ ▂ ▄ ▅ ▆ ▇ █ Hectare Statement Block - Find
+	# -------------------------------------------------------------------------------------
+	public static function hectarestatement_block_find( $parameter = '' ) {
+		$url = self::url( 'url_api_ins_msa_hectarestatement' ).'/block/q?WERKS='.$parameter;
+
+		$client = APISetup::ins_rest_client( 'GET', $url );
+		$data = [];
+		if ( $client['status'] == true ) {
+			if ( isset( $client['data'] ) ) {
+				$data = $client['data'];
+			}
+		}
+		return $data;
+	}
+
 	# 												    	  ▁ ▂ ▄ ▅ ▆ ▇ █ KUALITAS - Find
 	# -------------------------------------------------------------------------------------
 	public static function kualitas_find( $parameter = '' ) {
@@ -243,6 +258,23 @@ class APIData extends Model {
 		return $client;
 	}
 
+	# 									   ▁ ▂ ▄ ▅ ▆ ▇ █ WEB REPORT - INSPEKSI BARIS - Find
+	# -------------------------------------------------------------------------------------
+	public static function web_report_class_block_find( $parameter ) {
+
+		$data['items'] = array();
+		$url = self::url( 'url_api_ins_msa_report' ).'/api/report/class-block/periode'.$parameter;
+		$client = APISetup::ins_rest_client( 'GET', $url );
+		
+		if ( isset( $client['status'] ) && $client['status'] == true ) {
+			if ( count( $client['data'] ) > 0 ) {
+				$data['items'] = $client['data'];
+			}
+		}
+
+		return $data;
+	}
+
 	# 										      ▁ ▂ ▄ ▅ ▆ ▇ █ WEB REPORT - FINDING - Find
 	# -------------------------------------------------------------------------------------
 	public static function web_report_finding_find( $query = array() ) {
@@ -346,10 +378,24 @@ class APIData extends Model {
 		return $data;
 	}
 
-	# 											 ▁ ▂ ▄ ▅ ▆ ▇ █ WEB REPORT - INSPEKSI - Find
+	# 											 ▁ ▂ ▄ ▅ ▆ ▇ █ WEB REPORT - KRITERIA - Find One
 	# -------------------------------------------------------------------------------------
 	public static function web_report_inspection_kriteria_findone( $parameter ) {
 		$url = self::url( 'url_api_ins_msa_auth' ).'/api/web-report/inspection/kriteria/'.$parameter;
+		$client = APISetup::ins_rest_client( 'GET', $url );
+		$data = [];
+		if ( $client['status'] == true ) {
+			if ( isset( $client['data'] ) ) {
+				$data = $client['data'];
+			}
+		}
+		return $data;
+	}
+
+	# 											 ▁ ▂ ▄ ▅ ▆ ▇ █ WEB REPORT - KRITERIA - Find
+	# -------------------------------------------------------------------------------------
+	public static function web_report_inspection_kriteria_find() {
+		$url = self::url( 'url_api_ins_msa_auth' ).'/api/kriteria/';
 		$client = APISetup::ins_rest_client( 'GET', $url );
 		$data = [];
 		if ( $client['status'] == true ) {

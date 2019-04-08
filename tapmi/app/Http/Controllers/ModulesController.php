@@ -53,7 +53,8 @@ class ModulesController extends Controller {
 	# Fungsi untuk membuat module baru.
 	#
 	public function create() {
-		return view( 'modules.create' );
+		$data['active_menu'] = $this->active_menu;
+		return view( 'modules.create', $data );
 	}
 
 	#   		 									  	        ▁ ▂ ▄ ▅ ▆ ▇ █ Generate Menu
@@ -75,9 +76,9 @@ class ModulesController extends Controller {
 			$menu_data_5 = array();
 			$html_menu_01 = '';
 			$html_menu_02 = '';
-			#$urls = 'http://149.129.250.199/ins-webs/tapmi/public/';
+			$urls = 'http://149.129.250.199/ins-webs/tapmi/public/';
 			#$urls = 'http://inspection.tap-agri.com:3014/';
-			$urls = '';
+			#$urls = '';
 
 			if ( $urls == '' ) {
 				$urls = url( '' ).'/';
@@ -312,6 +313,7 @@ class ModulesController extends Controller {
 		$data['modules'] = Data::modules_find();
 		$data['parameter'] = Data::parameter_find( '?PARAMETER_GROUP=USER_ROLE' );
 		$data['user_authorization'] = array();
+		$data['active_menu'] = $this->active_menu;
 		$i = 0;
 
 		foreach ( Data::user_authorization_find() as $ua ) {
