@@ -67,7 +67,6 @@
 				<div class="col-lg-6">
 					<label>Refference Role <span class="text-danger">*</span></label>
 					<select class="form-control m-select2 mi-select2" name="REFFERENCE_ROLE" data-placeholder="...">
-						<option value="NATIONAL">NATIONAL</option>
 						@foreach ( $refrole as $q )
 							@if ( $user['REF_ROLE'] == $q['ID'] )
 								<option value="{{ $q['ID'] }}" selected>{{ $q['TEXT'] }}</option>
