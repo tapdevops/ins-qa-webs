@@ -1,4 +1,4 @@
-version: '3'
+version: '1'
 services:
   app:
     build:
@@ -6,7 +6,7 @@ services:
       dockerfile: Dockerfile
     image: tapmiweb
     ports:
-      - 3014:80 
+      - 4014:80 
  # app:
  #   build:
  #     context: ./
