@@ -305,6 +305,11 @@ class ReportController extends Controller {
 
 			$i++;
 		}
+
+		print '<pre>';
+		print_r( $results['data'] );
+		print '</pre>';
+		dd();
 		
 		Excel::create( 'Report-EBCC-Validation', function( $excel ) use ( $results ) {
 			$excel->sheet( 'Per Baris', function( $sheet ) use ( $results ) {
