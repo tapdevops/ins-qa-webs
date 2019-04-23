@@ -129,7 +129,7 @@
 							console.log( 'Error Response' );
 						}
 						$("#contents").waitMe( 'hide' );
-					}, 2000 );
+					}, 500 );
 				},
 				error: function() {
 					alert( 'Error AJAX' );

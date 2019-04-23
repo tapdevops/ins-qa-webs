@@ -34,8 +34,8 @@
 					<select id="report-select" class="form-control m-select2 mi-select2" name="REPORT_TYPE" onchange="return reportGroup( this.value )" data-placeholder="...">
 						<option value="FINDING" selected="selected">TEMUAN</option>
 						<option value="INSPEKSI">INSPEKSI</option>
-						<option value="EBCC_VALIDATION">EBCC VALIDATION</option>
-						<option value="CLASS_BLOCK_AFD_ESTATE">CLASS, BLOCK, AFD, &amp; ESTATE</option>
+						<!--option value="EBCC_VALIDATION">EBCC VALIDATION</option>
+						<option value="CLASS_BLOCK_AFD_ESTATE">CLASS, BLOCK, AFD, &amp; ESTATE</option-->
 					</select>
 				</div>
 			</div>
@@ -122,7 +122,7 @@
 						
 					</div>
 					<div class="col-lg-6 m--align-right">
-						<a id="generate-report" href="javascript:;" class="btn btn-warning"><i class="fa fa-refresh"></i> Generate Report</a>
+						<!--a id="generate-report" href="javascript:;" class="btn btn-warning"><i class="fa fa-refresh"></i> Generate Report</a-->
 						<a id="submit-report" href="javascript:;" class="btn btn-primary"><i class="fa fa-file-excel-o"></i> Download Excel</a>
 						<a href="{{ url( '/report/' ) }}" class="btn btn-secondary">Cancel</a>
 					</div>

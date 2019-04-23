@@ -24,45 +24,56 @@ use App\APIData as Data;
 class UserController extends Controller {
 
 	protected $api;
+	protected $active_menu;
 
 	#   		 								  				  ▁ ▂ ▄ ▅ ▆ ▇ █ CONSTRUCTOR
 	# -------------------------------------------------------------------------------------
 	public function __construct() {
 		$this->url_api_ins_msa_auth = APISetup::url()['msa']['ins']['auth'];
+		$this->active_menu = '_'.str_replace( '.', '', '02.05.00.00.00' ).'_';
 	}
 
 	#   		 								  				        ▁ ▂ ▄ ▅ ▆ ▇ █ INDEX
 	# -------------------------------------------------------------------------------------
 	public function index() {
 
-		$data['master_user'] = array();
-		if ( !empty( Data::user_find() ) ) {
-			$i = 0;
-			foreach ( Data::user_find() as $q ) {
-				if ( isset( $q['JOB'] ) && isset( $q['FULLNAME'] ) ) {
-					$data['master_user'][$i]['USER_AUTH_CODE'] = $q['USER_AUTH_CODE'];
-					$data['master_user'][$i]['EMPLOYEE_NIK'] = $q['EMPLOYEE_NIK'];
-					$data['master_user'][$i]['USER_ROLE'] = $q['USER_ROLE'];
-					$data['master_user'][$i]['LOCATION_CODE'] = $q['LOCATION_CODE'];
-					$data['master_user'][$i]['REF_ROLE'] = $q['REF_ROLE'];
-					$data['master_user'][$i]['JOB'] = $q['JOB'];
-					$data['master_user'][$i]['FULLNAME'] = $q['FULLNAME'];
+		$allowed_role = array( "ADMIN" );
+		$data['active_menu'] = $this->active_menu;
 
-					$i++;
+		if ( in_array( session('USER_ROLE'), $allowed_role ) ) {
+			$data['master_user'] = array();
+			if ( !empty( Data::user_find() ) ) {
+				$i = 0;
+				foreach ( Data::user_find() as $q ) {
+					if ( isset( $q['JOB'] ) && isset( $q['FULLNAME'] ) ) {
+						$data['master_user'][$i]['USER_AUTH_CODE'] = $q['USER_AUTH_CODE'];
+						$data['master_user'][$i]['EMPLOYEE_NIK'] = $q['EMPLOYEE_NIK'];
+						$data['master_user'][$i]['USER_ROLE'] = $q['USER_ROLE'];
+						$data['master_user'][$i]['LOCATION_CODE'] = $q['LOCATION_CODE'];
+						$data['master_user'][$i]['REF_ROLE'] = $q['REF_ROLE'];
+						$data['master_user'][$i]['JOB'] = $q['JOB'];
+						$data['master_user'][$i]['FULLNAME'] = $q['FULLNAME'];
+
+						$i++;
+					}
+					
 				}
-				
 			}
-		}
 
-		return view( 'user.index', $data );
+			return view( 'user.index', $data );
+		}
 		
 	}
 
 	#   		 								  				  ▁ ▂ ▄ ▅ ▆ ▇ █ CREATE USER
 	# -------------------------------------------------------------------------------------
 	public function create() {
-		$data['parameter'] = Data::parameter_find( '?PARAMETER_GROUP=USER_ROLE' );
-		return view( 'user.create', $data );
+		$allowed_role = array( "ADMIN" );
+
+		if ( in_array( session('USER_ROLE'), $allowed_role ) ) {
+			$data['parameter'] = Data::parameter_find( '?PARAMETER_GROUP=USER_ROLE' );
+			return view( 'user.create', $data );
+		}
 	}
 
 	#   		 								  		   ▁ ▂ ▄ ▅ ▆ ▇ █ CREATE USER PROSES

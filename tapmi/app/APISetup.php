@@ -28,8 +28,8 @@ class APISetup extends Model {
 					"ins" => array(
 						"auth" => "http://149.129.250.199:3008",
 						"hectarestatement" => "149.129.250.199:3009",
-						"report" => "http://localhost:3013",
-						"ebccvalidation" => "http://localhost:3014",
+						"report" => "http://149.129.250.199:3013",
+						"ebccvalidation" => "http://149.129.250.199:3014",
 					)
 				)
 			),
@@ -48,7 +48,7 @@ class APISetup extends Model {
 					"ins" => array(
 						"auth" => "http://app.tap-agri.com/mobileinspection/ins-msa-auth",
 						"hectarestatement" => "http://app.tap-agri.com/mobileinspection/ins-msa-hectarestatement",
-						"report" => "http://149.129.250.199:3013",
+						"report" => "http://app.tap-agri.com/mobileinspection/ins-msa-reports",
 						"ebccvalidation" => "http://149.129.250.199:3014",
 					)
 				)

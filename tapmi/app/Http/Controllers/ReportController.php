@@ -39,14 +39,22 @@ class ReportController extends Controller {
 	}
 
 	public function index() {
-		return view( 'report.index' );
+		$allowed_role = array( "ADMIN" );
+
+		if ( in_array( session('USER_ROLE'), $allowed_role ) ) {
+			return view( 'report.index' );
+		}
 	}
 
 	public function download() {
-		$url_region_data = $this->url_api_ins_msa_hectarestatement.'/region/all';
-		$data['region_data'] = APISetup::ins_rest_client( 'GET', $url_region_data );
-		$data['active_menu'] = $this->active_menu;
-		return view( 'report.download', $data );
+		$allowed_role = array( "ADMIN" );
+
+		if ( in_array( session('USER_ROLE'), $allowed_role ) ) {
+			$url_region_data = $this->url_api_ins_msa_hectarestatement.'/region/all';
+			$data['region_data'] = APISetup::ins_rest_client( 'GET', $url_region_data );
+			$data['active_menu'] = $this->active_menu;
+			return view( 'report.download', $data );
+		}
 	}
 
 	public function download_proses( Request $req ) {
@@ -878,6 +886,7 @@ class ReportController extends Controller {
 		}
 		
 		$inspection_baris = Data::web_report_inspection_baris_find( '/'.$parameter.'/'.$data['START_DATE'].'/'.$data['END_DATE'] )['items'];
+
 		$inspection_header = array();
 		$content = Data::web_report_inspection_content_find();
 		$content_perawatan = array();
@@ -1256,6 +1265,8 @@ class ReportController extends Controller {
 		$inspection_header = array();
 		//$inspection_detail = Data::web_report_inspection_find( $query_finding )['items'];
 		$inspection_detail = Data::web_report_inspection_find( $query_finding )['items'];
+
+
 		$count_inspection = array();
 		$_bobot_all = 0;
 		$_bobot_tbm0 = 0;
@@ -1352,7 +1363,7 @@ class ReportController extends Controller {
 
 			
 			$client = new \GuzzleHttp\Client();
-			$res = $client->request( 'POST', 'http://localhost:3013/api/report/inspection-baris', [
+			$res = $client->request( 'POST', $this->url_api_ins_msa_report.'/api/report/inspection-baris', [
 				"headers" => [
 					"Authorization" => 'Bearer '.session( 'ACCESS_TOKEN' ),
 					"Content-Type" => 'application/json'
