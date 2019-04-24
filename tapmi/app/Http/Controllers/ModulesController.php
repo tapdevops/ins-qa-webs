@@ -147,7 +147,6 @@ class ModulesController extends Controller {
 				}
 			}
 
-
 			/*═════════════════════════════════════════════════════════════════╗
 			║ Set HTML Menu           										   ║
 			║ Untuk menyusun HTML berdasarkan User Role sesuai dengan input.   ║

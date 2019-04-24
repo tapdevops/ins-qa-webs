@@ -60,9 +60,10 @@
 					<td style="text-align: center;">{{ $inspection['MATURITY_STATUS'] }}</td>
 					<td>{{ $inspection['LAT_START_INSPECTION'] }}</td>
 					<td>{{ $inspection['LONG_START_INSPECTION'] }}</td>
+
 					@foreach ( $content_panen as $kcp => $cp )
-						@if ( isset( $inspection['CONTENT_PANEN'][$kcp] ) )
-							<td style="text-align: center;">{{ $inspection['CONTENT_PANEN'][$kcp] }}</td>
+						@if ( isset( $inspection['CONTENT_PANEN'][0][$kcp] ) )
+							<td style="text-align: center;">{{ $inspection['CONTENT_PANEN'][0][$kcp] }}</td>
 						@else
 							<td style="text-align: center;">0</td>
 						@endif

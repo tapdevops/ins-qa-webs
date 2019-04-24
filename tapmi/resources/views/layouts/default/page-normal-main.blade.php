@@ -19,10 +19,10 @@
 		<link href="{{ url( 'assets/default-template/assets/vendors/custom/fullcalendar/fullcalendar.bundle.css' ) }}" rel="stylesheet" type="text/css" />
 		<link href="{{ url( 'assets/default-template/assets/vendors/base/vendors.bundle.css' ) }}" rel="stylesheet" type="text/css" />
 		<link href="{{ url( 'assets/default-template/8/app/base/style.bundle.css' ) }}" rel="stylesheet" type="text/css" />
-		<link rel="shortcut icon" href="{{ url( 'assets/default-template/assets/demo/default/media/img/logo/favicon.ico' ) }}" />
+		<link rel="shortcut icon" href="{{ url( 'assets/favicon.ico' ) }}" />
 		<link rel="stylesheet" type="text/css" href="{{ url( 'assets/vendor/jquery-loading-overlay/style.min.css' ) }}">
 	</head>
-	<body style="background-image: url('{{url('assets/default-template/8/app/media/img/bg/bg-7.jpg')}}')"  class="m-page--fluid m-page--loading-enabled m-page--loading m-header--fixed m-header--fixed-mobile m-footer--push m-aside--offcanvas-default"  >
+	<body style="background-image: url('{{url('assets/background.jpg')}}')"  class="m-page--fluid m-page--loading-enabled m-page--loading m-header--fixed m-header--fixed-mobile m-footer--push m-aside--offcanvas-default"  >
 
 		<div class="m-page-loader m-page-loader--base">
 			<div class="m-blockui">

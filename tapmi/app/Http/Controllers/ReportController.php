@@ -887,6 +887,11 @@ class ReportController extends Controller {
 		
 		$inspection_baris = Data::web_report_inspection_baris_find( '/'.$parameter.'/'.$data['START_DATE'].'/'.$data['END_DATE'] )['items'];
 
+		#print '<pre>';
+		#print_r( $inspection_baris );
+		#print '</pre>';
+		#dd();
+
 		$inspection_header = array();
 		$content = Data::web_report_inspection_content_find();
 		$content_perawatan = array();
@@ -1054,9 +1059,16 @@ class ReportController extends Controller {
 							$inspection_header[$header_id]['DATA_JUMLAH_RAWAT'][$content_code] += $perawatan_value;
 						}
 						else if ( $cc[$content_code]['CATEGORY'] == 'PANEN' ) {
+							/*
+							print $content_code.' -> '.$value.'<br />';
+							print '<pre>';
+							print_r( $cc[$content_code] );
+							print '</pre><hr /><br />';
 							if ( isset( $cc[$content_code]['LABEL'][$value] ) ) {
 								$inspection_header[$header_id]['DATA_JUMLAH_PANEN'][$content_code] += $value;
 							}
+							*/
+							$inspection_header[$header_id]['DATA_JUMLAH_PANEN'][$content_code] += $value;
 						}
 						else if ( $cc[$content_code]['CATEGORY'] == 'PEMUPUKAN' ) {
 							if ( isset( $cc[$content_code]['LABEL'][$value] ) ) {
@@ -1135,6 +1147,38 @@ class ReportController extends Controller {
 			array_column( $inspection_header, 'INSPECTION_DATE' ), SORT_ASC,
 			$inspection_header
 		);
+
+		/*
+		print '<h1>Inspection Baris<hr /></h1>';
+		print '<table>';
+		print '<tr>';
+		foreach ( $content_panen as $cpk => $cp ) {
+			print '<td>'.$cp['CONTENT_NAME'].'</td>';
+		}
+		print '</tr>';
+
+		foreach ( $inspection_baris as $ibk => $ib ) {
+			print '<tr>';
+			foreach ( $content_panen as $zpk => $zp ) {
+				print '<td>'.$ib['CONTENT_PANEN'][0][$zpk].'</td>';
+			}
+			print '</tr>';
+		}
+
+
+
+		print '</table>';
+		print '<pre>';
+		#print_r( $inspection_baris[0] );
+		print '</pre>';
+		dd();
+
+		*/
+
+		//print '<pre>';
+		//print_r( $inspection_header );
+		//print '</pre>';
+		//dd();
 
 		$data['inspection_baris'] = $inspection_baris;
 		$data['inspection_header'] = $inspection_header;
