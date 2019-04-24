@@ -39,22 +39,22 @@ class ReportController extends Controller {
 	}
 
 	public function index() {
-		$allowed_role = array( "ADMIN" );
+		//$allowed_role = array( "ADMIN" );
 
-		if ( in_array( session('USER_ROLE'), $allowed_role ) ) {
+		//if ( in_array( session('USER_ROLE'), $allowed_role ) ) {
 			return view( 'report.index' );
-		}
+		//}
 	}
 
 	public function download() {
-		$allowed_role = array( "ADMIN" );
+		//$allowed_role = array( "ADMIN" );
 
-		if ( in_array( session('USER_ROLE'), $allowed_role ) ) {
+		//if ( in_array( session('USER_ROLE'), $allowed_role ) ) {
 			$url_region_data = $this->url_api_ins_msa_hectarestatement.'/region/all';
 			$data['region_data'] = APISetup::ins_rest_client( 'GET', $url_region_data );
 			$data['active_menu'] = $this->active_menu;
 			return view( 'report.download', $data );
-		}
+		//}
 	}
 
 	public function download_proses( Request $req ) {
