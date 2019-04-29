@@ -11,7 +11,7 @@
 		<th style="text-align: center;">Block Deskripsi</th>
 		<th style="text-align: center;">Tanggal Inspeksi</th>
 		<th style="text-align: center;">Lama Inspeksi</th>
-		<th style="text-align: center;">Areal No</th>
+		<th style="text-align: center;">Baris</th>
 		<th style="text-align: center;">NIK Reporter</th>
 		<th style="text-align: center;">Nama Reporter</th>
 		<th style="text-align: center;">Jabatan Reporter</th>

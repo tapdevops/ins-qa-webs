@@ -1285,7 +1285,7 @@ class ReportController extends Controller {
 
 		# Generate to excel file
 		Excel::create( 'Report-Finding', function( $excel ) use ( $data ) {
-			$excel->sheet( 'Per Baris', function( $sheet ) use ( $data ) {
+			$excel->sheet( 'Temuan', function( $sheet ) use ( $data ) {
 				$sheet->loadView( 'report.excel-finding', $data );
 			} );
 		} )->export( 'xls' );
