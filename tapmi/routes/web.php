@@ -55,5 +55,8 @@ Route::group( [ 'middleware' => 'web' ], function() {
 		
 		Route::get( '/data/user-search', 'DataController@user_search_find' );
 	});
+
+	// Cron URL
+	Route::get( '/cron/generate/inspeksi', 'ReportController@cron_generate_inspeksi' );
 });
 

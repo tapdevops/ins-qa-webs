@@ -174,7 +174,11 @@ class ReportController extends Controller {
 		}
 		// Report Inspeksi
 		else if ( Input::get( 'REPORT_TYPE' ) == 'INSPEKSI' ) {
-			self::download_excel_inspeksis( $setup );
+
+			// print '<pre>';
+			// print_r( $setup );
+			// print '</pre>';dd();
+			self::generate_excel_inspeksi( $setup );
 		}
 		// Report Class Block
 		else if ( Input::get( 'REPORT_TYPE' ) == 'CLASS_BLOCK_AFD_ESTATE' ) {
@@ -886,12 +890,6 @@ class ReportController extends Controller {
 		}
 		
 		$inspection_baris = Data::web_report_inspection_baris_find( '/'.$parameter.'/'.$data['START_DATE'].'/'.$data['END_DATE'] )['items'];
-
-		#print '<pre>';
-		#print_r( $inspection_baris );
-		#print '</pre>';
-		#dd();
-
 		$inspection_header = array();
 		$content = Data::web_report_inspection_content_find();
 		$content_perawatan = array();
@@ -1059,15 +1057,6 @@ class ReportController extends Controller {
 							$inspection_header[$header_id]['DATA_JUMLAH_RAWAT'][$content_code] += $perawatan_value;
 						}
 						else if ( $cc[$content_code]['CATEGORY'] == 'PANEN' ) {
-							/*
-							print $content_code.' -> '.$value.'<br />';
-							print '<pre>';
-							print_r( $cc[$content_code] );
-							print '</pre><hr /><br />';
-							if ( isset( $cc[$content_code]['LABEL'][$value] ) ) {
-								$inspection_header[$header_id]['DATA_JUMLAH_PANEN'][$content_code] += $value;
-							}
-							*/
 							$inspection_header[$header_id]['DATA_JUMLAH_PANEN'][$content_code] += $value;
 						}
 						else if ( $cc[$content_code]['CATEGORY'] == 'PEMUPUKAN' ) {
@@ -1147,38 +1136,6 @@ class ReportController extends Controller {
 			array_column( $inspection_header, 'INSPECTION_DATE' ), SORT_ASC,
 			$inspection_header
 		);
-
-		/*
-		print '<h1>Inspection Baris<hr /></h1>';
-		print '<table>';
-		print '<tr>';
-		foreach ( $content_panen as $cpk => $cp ) {
-			print '<td>'.$cp['CONTENT_NAME'].'</td>';
-		}
-		print '</tr>';
-
-		foreach ( $inspection_baris as $ibk => $ib ) {
-			print '<tr>';
-			foreach ( $content_panen as $zpk => $zp ) {
-				print '<td>'.$ib['CONTENT_PANEN'][0][$zpk].'</td>';
-			}
-			print '</tr>';
-		}
-
-
-
-		print '</table>';
-		print '<pre>';
-		#print_r( $inspection_baris[0] );
-		print '</pre>';
-		dd();
-
-		*/
-
-		//print '<pre>';
-		//print_r( $inspection_header );
-		//print '</pre>';
-		//dd();
 
 		$data['inspection_baris'] = $inspection_baris;
 		$data['inspection_header'] = $inspection_header;
@@ -1291,7 +1248,24 @@ class ReportController extends Controller {
 		} )->export( 'xls' );
 	}
 
-	public function download_excel_inspeksis( $data, $output = 'excel' ) {
+
+	public function cron_generate_inspeksi() {
+		// NEED CHECK : KE DATA REGION
+		$region_data = array( '02', '04', '05' );
+
+		foreach ( $region_data as $region ) {
+			$data['REGION_CODE'] = $region;
+			$data['START_DATE'] = '20190401';//date( 'Ymd' );
+			$data['END_DATE'] = '20190431';//date( 'Ymd' );
+
+			// print '<pre>';
+			// print_r( $data );
+			// print '</pre><hr />';
+			self::generate_excel_inspeksi( $data );
+		}
+	}
+
+	public function generate_excel_inspeksi( $data, $output = 'excel' ) {
 
 		$query_finding['REGION_CODE'] = ( isset( $data['REGION_CODE'] ) ? $data['REGION_CODE'] : "" );
 		$query_finding['COMP_CODE'] = ( isset( $data['COMP_CODE'] ) ? $data['COMP_CODE'] : "" );
@@ -1337,7 +1311,6 @@ class ReportController extends Controller {
 			
 		}
 
-
 		foreach( $content as $content_key ) {
 			$cc[$content_key['CONTENT_CODE']]['CONTENT_NAME'] = $content_key['CONTENT_CODE'];
 			$cc[$content_key['CONTENT_CODE']]['CONTENT_NAME'] = $content_key['CONTENT_NAME'];
@@ -1360,9 +1333,9 @@ class ReportController extends Controller {
 			}
 		}
 
-		
 		$status = false;
 		$i = 0;
+
 		foreach ( $inspection_detail as $ins_detail ) {
 			$date_inspeksi = substr( $ins_detail['INSPECTION_DATE'], 0, 8 );
 			$hectarestatement =  Data::web_report_land_use_findone( $ins_detail['WERKS'].$ins_detail['AFD_CODE'].$ins_detail['BLOCK_CODE'] );
@@ -1401,10 +1374,6 @@ class ReportController extends Controller {
 					}
 				}
 			}
-			#print '<pre>';
-			#print_r( $data['inspection_data'][$i]['CONTENT'] );
-			#print '</pre>';
-
 			
 			$client = new \GuzzleHttp\Client();
 			$res = $client->request( 'POST', $this->url_api_ins_msa_report.'/api/report/inspection-baris', [
