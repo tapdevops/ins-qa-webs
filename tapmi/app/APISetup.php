@@ -49,6 +49,7 @@ class APISetup extends Model {
 						"auth" => "http://app.tap-agri.com/mobileinspection/ins-msa-auth",
 						"hectarestatement" => "http://app.tap-agri.com/mobileinspection/ins-msa-hectarestatement",
 						"report" => "http://app.tap-agri.com/mobileinspection/ins-msa-reports",
+						#"report" => "http://149.129.250.199:3013",
 						"ebccvalidation" => "http://149.129.250.199:3014",
 					)
 				)

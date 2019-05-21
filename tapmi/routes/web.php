@@ -1,5 +1,4 @@
 <?php
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -33,7 +32,7 @@ Route::group( [ 'middleware' => 'web' ], function() {
 		Route::post( '/modules/create', 'ModulesController@create_proses' );
 		Route::get( '/modules/setup-menu/{id}', 'ModulesController@setup_menu' );
 		Route::get( '/modules/setup-menu', 'ModulesController@setup_menu' );
-
+		
 		# Master User
 		Route::get( '/user', 'UserController@index' );
 		Route::get( '/user/create', 'UserController@create' );
@@ -41,7 +40,7 @@ Route::group( [ 'middleware' => 'web' ], function() {
 		Route::get( '/user/edit/{id}', 'UserController@edit' );
 		Route::post( '/user/edit/{id}', 'UserController@edit_proses' );
 		Route::get( '/user/search-user', 'UserController@search_user' );
-
+		
 		# Report
 		Route::get( '/report', 'ReportController@index' );
 		Route::get( '/report/download', 'ReportController@download' );
