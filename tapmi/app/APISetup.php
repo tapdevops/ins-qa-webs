@@ -108,4 +108,48 @@ class APISetup extends Model {
 
 		return $data;
 	}
+
+	/**
+	 * Untuk mendefinisikan url-url yang dipakai dalam website dengan manual token
+	 *
+	 * @var array
+	 */
+	public static function ins_rest_client_manual( $method, $url, $body = array() ) {
+		$client = new \GuzzleHttp\Client();
+		$init_headers = array(
+			"Authorization" => 'Bearer '.session( 'ACCESS_TOKEN' )
+		);
+		$init_body = $body;
+		$init = array();
+
+		switch ( $method ) {
+			case 'GET':
+				$init = array(
+					"headers" => $init_headers
+				);
+			break;
+			case 'POST':
+				$init = array(
+					"headers" => $init_headers,
+					"json" => $init_body
+				);
+			break;
+			case 'PUT':
+				$init = array(
+					"headers" => $init_headers,
+					"json" => $init_body
+				);
+			break;
+			case 'DELETE':
+				$init = array(
+					"headers" => $init_headers
+				);
+			break;
+		}
+
+		$result = $client->request( $method, $url, $init );
+		$data = json_decode( $result->getBody(), true );
+
+		return $data;
+	}
 }

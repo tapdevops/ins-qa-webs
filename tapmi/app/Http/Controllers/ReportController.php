@@ -29,13 +29,21 @@ class ReportController extends Controller {
 
 	protected $url_api_ins_msa_auth;
 	protected $url_api_ins_msa_hectarestatement;
+	protected $access_token;
 	protected $active_menu;
+	protected $auth;
 
 	public function __construct() {
 		$this->active_menu = '_'.str_replace( '.', '', '02.03.00.00.00' ).'_';
 		$this->url_api_ins_msa_auth = APISetup::url()['msa']['ins']['auth'];
 		$this->url_api_ins_msa_hectarestatement = APISetup::url()['msa']['ins']['hectarestatement'];
 		$this->url_api_ins_msa_report = APISetup::url()['msa']['ins']['report'];
+		$this->access_token = Storage::get( 'files/access_token_mobile_inspection.txt' );
+		$this->auth = array(
+			'username' => 'ferdinand',
+			'password' => 'tap12345',
+			'imei' => ''
+		);
 	}
 
 	/*
@@ -850,7 +858,7 @@ class ReportController extends Controller {
 	 */
 		public function cron_generate_inspeksi() {
 			$url = $this->url_api_ins_msa_hectarestatement.'/region/all';
-			$region_data = APISetup::ins_rest_client( 'GET', $url );
+			$region_data = APISetup::ins_rest_client_manual( 'GET', $url, $this->access_token );
 
 			foreach ( $region_data['data'] as $data ) {
 				$parameter['REGION_CODE'] = ( String ) $data['REGION_CODE'];
@@ -1412,6 +1420,42 @@ class ReportController extends Controller {
 				
 				$i++;
 			}
+		}
+
+	/*
+	 |--------------------------------------------------------------------------
+	 | Generate - Token
+	 |--------------------------------------------------------------------------
+	 | Untuk generate token setiap 6 hari.
+	 */
+		public function generate_token() {
+			for ( $i = 1; $i <= 1000; $i++ ) {
+				$login = self::login();
+				if ( $login['status'] == true ) {
+					Storage::disk( 'local' )->put( 'files/access_token_mobile_inspection.txt', $login['data']['ACCESS_TOKEN'] );
+					break;
+				}
+			}
+		}
+
+	/*
+	 |--------------------------------------------------------------------------
+	 | Login
+	 |--------------------------------------------------------------------------
+	 | ...
+	 */
+		public function login() {
+			$client = new \GuzzleHttp\Client();
+			$login = $client->request( 'POST', $this->url_api_ins_msa_auth.'/api/login', [
+				'json' => [
+					'username' => $this->auth['username'],
+					'password' => $this->auth['password'],
+					'imei' => $this->auth['imei'],
+				]
+			]);
+			$login = json_decode( $login->getBody(), true );
+
+			return $login;
 		}
 
 	/*
