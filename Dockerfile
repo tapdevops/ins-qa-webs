@@ -24,5 +24,5 @@ RUN docker-php-ext-install mbstring pdo pdo_mysql
 RUN chown -R www-data:www-data /var/www/html/
 RUN a2enmod rewrite
 
-CMD php artisan serve --host=0.0.0.0 --port=3014
-EXPOSE 3014
+CMD php artisan serve --host=0.0.0.0 --port=80
+EXPOSE 80
