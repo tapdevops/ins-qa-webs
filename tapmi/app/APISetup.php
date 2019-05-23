@@ -114,10 +114,10 @@ class APISetup extends Model {
 	 *
 	 * @var array
 	 */
-	public static function ins_rest_client_manual( $method, $url, $body = array() ) {
+	public static function ins_rest_client_manual( $method, $url, $token, $body = array() ) {
 		$client = new \GuzzleHttp\Client();
 		$init_headers = array(
-			"Authorization" => 'Bearer '.session( 'ACCESS_TOKEN' )
+			"Authorization" => $token
 		);
 		$init_body = $body;
 		$init = array();
