@@ -404,8 +404,9 @@ class ReportController extends Controller {
 			$parameter = $data['REGION_CODE'];
 		}
 
-		$inspection_baris = Data::web_report_inspection_baris_find( '/'.$parameter.'/'.$data['START_DATE'].'/'.$data['END_DATE'] )['items'];
 
+		$data_block = Data::hectarestatement_block_find( $parameter );
+		$inspection_baris = Data::web_report_inspection_baris_find( '/'.$parameter.'/'.$data['START_DATE'].'/'.$data['END_DATE'] )['items'];
 		$inspection_class_block = array();
 		$content = Data::web_report_inspection_content_find();
 		$content_perawatan = array();
@@ -662,6 +663,21 @@ class ReportController extends Controller {
 		}
 	}
 
+	public function get_kriteria( $data_kriteria, $angka ) {
+		$data['nilai'] = '';
+		$data['angka'] = 0;
+		if ( !empty( $data_kriteria ) ) {
+			foreach ( $data_kriteria as $kriteria ) {
+				if ( $angka >= $kriteria['BATAS_BAWAH'] && $angka <= $kriteria['BATAS_ATAS'] ) {
+					$data['nilai'] = $kriteria['GRADE'];
+					$data['angka'] = $kriteria['KONVERSI_ANGKA'];
+				}
+			}
+		}
+
+		return $data;
+	}
+
 	public function download_excel_class_block( $data, $output = 'excel' ) {
 
 		$parameter = '';
@@ -699,8 +715,11 @@ class ReportController extends Controller {
 			$data_all_block = Data::hectarestatement_block_find( $data['BA_CODE'] );
 			$kriteria_find = Data::web_report_inspection_kriteria_find();
 			$kriteria = [];
-
-
+			$report_data_block = [];
+			$report_data_afd = [];
+			$report_data_afd_temp = [];
+			$report_data_est = [];
+			$report_data_est_temp = [];
 
 			$class_block_01 = array();
 			$class_block_02 = array();
@@ -746,70 +765,345 @@ class ReportController extends Controller {
 				$class_block_06[$cb06['WERKS_AFD_BLOCK_CODE']] = $cb06['CLASS_BLOCK'];
 			}
 
-			print '<pre>';
-			print_r( $class_block_01 );
-			print_r( $class_block_02 );
-			print_r( $class_block_03 );
-			print_r( $class_block_04 );
-			print '</pre>';
-			dd();
-
 			foreach ( $data_all_block as $ablock ) {
 
-				$report_data[$ablock['WERKS_AFD_BLOCK_CODE']]['WERKS'] = $ablock['WERKS'];
-				$report_data[$ablock['WERKS_AFD_BLOCK_CODE']]['AFD_CODE'] = $ablock['AFD_CODE'];
-				$report_data[$ablock['WERKS_AFD_BLOCK_CODE']]['BLOCK_CODE'] = $ablock['BLOCK_CODE'];
-				$report_data[$ablock['WERKS_AFD_BLOCK_CODE']]['BLOCK_NAME'] = $ablock['BLOCK_NAME'];
-				$report_data[$ablock['WERKS_AFD_BLOCK_CODE']]['WERKS_AFD_BLOCK_CODE'] = $ablock['WERKS_AFD_BLOCK_CODE'];
+				$report_data_block[$ablock['WERKS_AFD_BLOCK_CODE']]['WERKS'] = $ablock['WERKS'];
+				$report_data_block[$ablock['WERKS_AFD_BLOCK_CODE']]['AFD_CODE'] = $ablock['AFD_CODE'];
+				$report_data_block[$ablock['WERKS_AFD_BLOCK_CODE']]['BLOCK_CODE'] = $ablock['BLOCK_CODE'];
+				$report_data_block[$ablock['WERKS_AFD_BLOCK_CODE']]['BLOCK_NAME'] = $ablock['BLOCK_NAME'];
+				$report_data_block[$ablock['WERKS_AFD_BLOCK_CODE']]['WERKS_AFD_BLOCK_CODE'] = $ablock['WERKS_AFD_BLOCK_CODE'];
 
 				$class_01 = '';
-				$kriteria_angka_01 = '';
+				$kriteria_angka_01 = 0;
 				if ( isset( $class_block_01[$ablock['WERKS_AFD_BLOCK_CODE']] ) ) {
 					$class_01 = $class_block_01[$ablock['WERKS_AFD_BLOCK_CODE']];
 					$kriteria_angka_01 = $kriteria[$class_01];
 				}
 
-				$report_data[$ablock['WERKS_AFD_BLOCK_CODE']]['NILAI_01'] = $class_01;
-				$report_data[$ablock['WERKS_AFD_BLOCK_CODE']]['ANGKA_01'] = $kriteria_angka_01;
+				$report_data_block[$ablock['WERKS_AFD_BLOCK_CODE']]['NILAI_01'] = $class_01;
+				$report_data_block[$ablock['WERKS_AFD_BLOCK_CODE']]['ANGKA_01'] = $kriteria_angka_01;
 
 				$class_02 = '';
+				$kriteria_angka_02 = 0;
 				if ( isset( $class_block_02[$ablock['WERKS_AFD_BLOCK_CODE']] ) ) {
 					$class_02 = $class_block_02[$ablock['WERKS_AFD_BLOCK_CODE']];
+					$kriteria_angka_02 = $kriteria[$class_02];
 				}
 
-				$report_data[$ablock['WERKS_AFD_BLOCK_CODE']]['NILAI_02'] = $class_02;
+				$report_data_block[$ablock['WERKS_AFD_BLOCK_CODE']]['NILAI_02'] = $class_02;
+				$report_data_block[$ablock['WERKS_AFD_BLOCK_CODE']]['ANGKA_02'] = $kriteria_angka_02;
 
 				$class_03 = '';
+				$kriteria_angka_03 = 0;
 				if ( isset( $class_block_03[$ablock['WERKS_AFD_BLOCK_CODE']] ) ) {
 					$class_03 = $class_block_03[$ablock['WERKS_AFD_BLOCK_CODE']];
+					$kriteria_angka_03 = $kriteria[$class_03];
 				}
 
-				$report_data[$ablock['WERKS_AFD_BLOCK_CODE']]['NILAI_03'] = $class_03;
+				$report_data_block[$ablock['WERKS_AFD_BLOCK_CODE']]['NILAI_03'] = $class_03;
+				$report_data_block[$ablock['WERKS_AFD_BLOCK_CODE']]['ANGKA_03'] = $kriteria_angka_03;
 
 				$class_04 = '';
+				$kriteria_angka_04 = 0;
 				if ( isset( $class_block_04[$ablock['WERKS_AFD_BLOCK_CODE']] ) ) {
 					$class_04 = $class_block_04[$ablock['WERKS_AFD_BLOCK_CODE']];
+					$kriteria_angka_04 = $kriteria[$class_04];
 				}
 
-				$report_data[$ablock['WERKS_AFD_BLOCK_CODE']]['NILAI_04'] = $class_04;
+				$report_data_block[$ablock['WERKS_AFD_BLOCK_CODE']]['NILAI_04'] = $class_04;
+				$report_data_block[$ablock['WERKS_AFD_BLOCK_CODE']]['ANGKA_04'] = $kriteria_angka_04;
 
 				$class_05 = '';
+				$kriteria_angka_05 = 0;
 				if ( isset( $class_block_05[$ablock['WERKS_AFD_BLOCK_CODE']] ) ) {
 					$class_05 = $class_block_05[$ablock['WERKS_AFD_BLOCK_CODE']];
+					$kriteria_angka_05 = $kriteria[$class_05];
 				}
 
-				$report_data[$ablock['WERKS_AFD_BLOCK_CODE']]['NILAI_05'] = $class_05;
+				$report_data_block[$ablock['WERKS_AFD_BLOCK_CODE']]['NILAI_05'] = $class_05;
+				$report_data_block[$ablock['WERKS_AFD_BLOCK_CODE']]['ANGKA_05'] = $kriteria_angka_05;
 
 				$class_06 = '';
+				$kriteria_angka_06 = 0;
 				if ( isset( $class_block_06[$ablock['WERKS_AFD_BLOCK_CODE']] ) ) {
 					$class_06 = $class_block_06[$ablock['WERKS_AFD_BLOCK_CODE']];
+					$kriteria_angka_06 = $kriteria[$class_06];
 				}
 
-				$report_data[$ablock['WERKS_AFD_BLOCK_CODE']]['NILAI_06'] = $class_06;
+				$report_data_block[$ablock['WERKS_AFD_BLOCK_CODE']]['NILAI_06'] = $class_06;
+				$report_data_block[$ablock['WERKS_AFD_BLOCK_CODE']]['ANGKA_06'] = $kriteria_angka_06;
 			}
 
-			$results['report_data'] = $report_data;
+			if ( !empty( $report_data_block ) ) {
+				$z = 0;
+				foreach ( $report_data_block as $rd_block ) {
+					if ( !isset( $report_data_afd_temp[$rd_block['WERKS'].$rd_block['AFD_CODE']] ) ) {
+						$report_data_afd_temp[$rd_block['WERKS'].$rd_block['AFD_CODE']] = array(
+							"WERKS" => $rd_block['WERKS'],
+							"AFD_CODE" => $rd_block['AFD_CODE'],
+							"NILAI_01" => "",
+							"ANGKA_01" => 0,
+							"TEMP_NILAI_01" => "",
+							"TEMP_ANGKA_01" => 0,
+							"TEMP_JUMLAH_DATA_01" => 0,
+							"NILAI_02" => "",
+							"ANGKA_02" => 0,
+							"TEMP_NILAI_02" => "",
+							"TEMP_ANGKA_02" => 0,
+							"TEMP_JUMLAH_DATA_02" => 0,
+							"NILAI_03" => "",
+							"ANGKA_03" => 0,
+							"TEMP_NILAI_03" => "",
+							"TEMP_ANGKA_03" => 0,
+							"TEMP_JUMLAH_DATA_03" => 0,
+							"NILAI_04" => "",
+							"ANGKA_04" => 0,
+							"TEMP_NILAI_04" => "",
+							"TEMP_ANGKA_04" => 0,
+							"TEMP_JUMLAH_DATA_04" => 0,
+							"NILAI_05" => "",
+							"ANGKA_05" => 0,
+							"TEMP_NILAI_05" => "",
+							"TEMP_ANGKA_05" => 0,
+							"TEMP_JUMLAH_DATA_05" => 0,
+							"NILAI_06" => "",
+							"ANGKA_06" => 0,
+							"TEMP_NILAI_06" => "",
+							"TEMP_ANGKA_06" => 0,
+							"TEMP_JUMLAH_DATA_06" => 0,
+							"DATA_BLOCK" => array()
+						);
+					}
+
+					$report_data_afd_temp[$rd_block['WERKS'].$rd_block['AFD_CODE']]['DATA_BLOCK'][$z] = $rd_block;
+
+					if ( $rd_block['NILAI_01'] != "" ) {
+						$report_data_afd_temp[$rd_block['WERKS'].$rd_block['AFD_CODE']]['TEMP_JUMLAH_DATA_01']++;
+						$report_data_afd_temp[$rd_block['WERKS'].$rd_block['AFD_CODE']]['TEMP_ANGKA_01'] += $rd_block['ANGKA_01'];
+					}
+
+					if ( $rd_block['NILAI_02'] != "" ) {
+						$report_data_afd_temp[$rd_block['WERKS'].$rd_block['AFD_CODE']]['TEMP_JUMLAH_DATA_02']++;
+						$report_data_afd_temp[$rd_block['WERKS'].$rd_block['AFD_CODE']]['TEMP_ANGKA_02'] += $rd_block['ANGKA_02'];
+					}
+
+					if ( $rd_block['NILAI_03'] != "" ) {
+						$report_data_afd_temp[$rd_block['WERKS'].$rd_block['AFD_CODE']]['TEMP_JUMLAH_DATA_03']++;
+						$report_data_afd_temp[$rd_block['WERKS'].$rd_block['AFD_CODE']]['TEMP_ANGKA_03'] += $rd_block['ANGKA_03'];
+					}
+
+					if ( $rd_block['NILAI_04'] != "" ) {
+						$report_data_afd_temp[$rd_block['WERKS'].$rd_block['AFD_CODE']]['TEMP_JUMLAH_DATA_04']++;
+						$report_data_afd_temp[$rd_block['WERKS'].$rd_block['AFD_CODE']]['TEMP_ANGKA_04'] += $rd_block['ANGKA_04'];
+					}
+
+					if ( $rd_block['NILAI_05'] != "" ) {
+						$report_data_afd_temp[$rd_block['WERKS'].$rd_block['AFD_CODE']]['TEMP_JUMLAH_DATA_05']++;
+						$report_data_afd_temp[$rd_block['WERKS'].$rd_block['AFD_CODE']]['TEMP_ANGKA_05'] += $rd_block['ANGKA_05'];
+					}
+
+					if ( $rd_block['NILAI_06'] != "" ) {
+						$report_data_afd_temp[$rd_block['WERKS'].$rd_block['AFD_CODE']]['TEMP_JUMLAH_DATA_06']++;
+						$report_data_afd_temp[$rd_block['WERKS'].$rd_block['AFD_CODE']]['TEMP_ANGKA_06'] += $rd_block['ANGKA_06'];
+					}
+
+					$z++;
+				}
+
+				if ( !empty( $report_data_afd_temp ) ) {
+					foreach ( $report_data_afd_temp as $key_rd_afd => $rd_afd_temp ) {
+						if ( $rd_afd_temp['TEMP_JUMLAH_DATA_01'] == 0 ) {
+							$report_data_afd_temp[$key_rd_afd]['ANGKA_01'] = 0;
+							$report_data_afd_temp[$key_rd_afd]['NILAI_01'] = '';
+						}
+						else {
+							$rd_afd_temp_angka_01 = $rd_afd_temp['TEMP_ANGKA_01'] / $rd_afd_temp['TEMP_JUMLAH_DATA_01'];
+							$kriteria_01 = self::get_kriteria( $kriteria_find, $rd_afd_temp_angka_01 );
+							$report_data_afd_temp[$key_rd_afd]['ANGKA_01'] = $kriteria_01['angka'];
+							$report_data_afd_temp[$key_rd_afd]['NILAI_01'] = $kriteria_01['nilai'];
+						}
+
+						if ( $rd_afd_temp['TEMP_JUMLAH_DATA_02'] == 0 ) {
+							$report_data_afd_temp[$key_rd_afd]['ANGKA_02'] = 0;
+							$report_data_afd_temp[$key_rd_afd]['NILAI_02'] = '';
+						}
+						else {
+							$rd_afd_temp_angka_02 = $rd_afd_temp['TEMP_ANGKA_02'] / $rd_afd_temp['TEMP_JUMLAH_DATA_02'];
+							$kriteria_02 = self::get_kriteria( $kriteria_find, $rd_afd_temp_angka_02 );
+							$report_data_afd_temp[$key_rd_afd]['ANGKA_02'] = $kriteria_02['angka'];
+							$report_data_afd_temp[$key_rd_afd]['NILAI_02'] = $kriteria_02['nilai'];
+						}
+
+						if ( $rd_afd_temp['TEMP_JUMLAH_DATA_03'] == 0 ) {
+							$report_data_afd_temp[$key_rd_afd]['ANGKA_03'] = 0;
+							$report_data_afd_temp[$key_rd_afd]['NILAI_03'] = '';
+						}
+						else {
+							$rd_afd_temp_angka_03 = $rd_afd_temp['TEMP_ANGKA_03'] / $rd_afd_temp['TEMP_JUMLAH_DATA_03'];
+							$kriteria_03 = self::get_kriteria( $kriteria_find, $rd_afd_temp_angka_03 );
+							$report_data_afd_temp[$key_rd_afd]['ANGKA_03'] = $kriteria_03['angka'];
+							$report_data_afd_temp[$key_rd_afd]['NILAI_03'] = $kriteria_03['nilai'];
+						}
+
+						if ( $rd_afd_temp['TEMP_JUMLAH_DATA_04'] == 0 ) {
+							$report_data_afd_temp[$key_rd_afd]['ANGKA_04'] = 0;
+							$report_data_afd_temp[$key_rd_afd]['NILAI_04'] = '';
+						}
+						else {
+							$rd_afd_temp_angka_04 = $rd_afd_temp['TEMP_ANGKA_04'] / $rd_afd_temp['TEMP_JUMLAH_DATA_04'];
+							$kriteria_04 = self::get_kriteria( $kriteria_find, $rd_afd_temp_angka_04 );
+							$report_data_afd_temp[$key_rd_afd]['ANGKA_04'] = $kriteria_04['angka'];
+							$report_data_afd_temp[$key_rd_afd]['NILAI_04'] = $kriteria_04['nilai'];
+						}
+
+						if ( $rd_afd_temp['TEMP_JUMLAH_DATA_05'] == 0 ) {
+							$report_data_afd_temp[$key_rd_afd]['ANGKA_05'] = 0;
+							$report_data_afd_temp[$key_rd_afd]['NILAI_05'] = '';
+						}
+						else {
+							$rd_afd_temp_angka_05 = $rd_afd_temp['TEMP_ANGKA_05'] / $rd_afd_temp['TEMP_JUMLAH_DATA_05'];
+							$kriteria_05 = self::get_kriteria( $kriteria_find, $rd_afd_temp_angka_05 );
+							$report_data_afd_temp[$key_rd_afd]['ANGKA_05'] = $kriteria_05['angka'];
+							$report_data_afd_temp[$key_rd_afd]['NILAI_05'] = $kriteria_05['nilai'];
+						}
+
+						if ( $rd_afd_temp['TEMP_JUMLAH_DATA_06'] == 0 ) {
+							$report_data_afd_temp[$key_rd_afd]['ANGKA_06'] = 0;
+							$report_data_afd_temp[$key_rd_afd]['NILAI_06'] = '';
+						}
+						else {
+							$rd_afd_temp_angka_06 = $rd_afd_temp['TEMP_ANGKA_06'] / $rd_afd_temp['TEMP_JUMLAH_DATA_06'];
+							$kriteria_06 = self::get_kriteria( $kriteria_find, $rd_afd_temp_angka_06 );
+							$report_data_afd_temp[$key_rd_afd]['ANGKA_06'] = $kriteria_06['angka'];
+							$report_data_afd_temp[$key_rd_afd]['NILAI_06'] = $kriteria_06['nilai'];
+						}
+					}
+				}
+			}
+
+			
+			if ( !empty( $report_data_afd_temp ) ) {
+				$y = 0;
+				foreach ( $report_data_afd_temp as $rd_afd_temp_2 ) {
+					if ( !isset( $report_data_est_temp[$rd_afd_temp_2['WERKS']] ) ) {
+						$report_data_est_temp[$rd_afd_temp_2['WERKS']] = array(
+							"WERKS" => $rd_afd_temp_2['WERKS'],
+							"NILAI_01" => "",
+							"ANGKA_01" => 0,
+							"TEMP_NILAI_01" => "",
+							"TEMP_ANGKA_01" => 0,
+							"TEMP_JUMLAH_DATA_01" => 0,
+							"NILAI_02" => "",
+							"ANGKA_02" => 0,
+							"TEMP_NILAI_02" => "",
+							"TEMP_ANGKA_02" => 0,
+							"TEMP_JUMLAH_DATA_02" => 0,
+							"NILAI_03" => "",
+							"ANGKA_03" => 0,
+							"TEMP_NILAI_03" => "",
+							"TEMP_ANGKA_03" => 0,
+							"TEMP_JUMLAH_DATA_03" => 0,
+							"NILAI_04" => "",
+							"ANGKA_04" => 0,
+							"TEMP_NILAI_04" => "",
+							"TEMP_ANGKA_04" => 0,
+							"TEMP_JUMLAH_DATA_04" => 0,
+							"NILAI_05" => "",
+							"ANGKA_05" => 0,
+							"TEMP_NILAI_05" => "",
+							"TEMP_ANGKA_05" => 0,
+							"TEMP_JUMLAH_DATA_05" => 0,
+							"NILAI_06" => "",
+							"ANGKA_06" => 0,
+							"TEMP_NILAI_06" => "",
+							"TEMP_ANGKA_06" => 0,
+							"TEMP_JUMLAH_DATA_06" => 0,
+							"DATA_AFD" => array()
+						);
+					}
+
+					$report_data_est_temp[$rd_afd_temp_2['WERKS']]['DATA_AFD'][$y] = $rd_afd_temp_2;
+					
+					if ( $rd_afd_temp_2['NILAI_01'] != '' ) {
+						$report_data_est_temp[$rd_afd_temp_2['WERKS']]['ANGKA_01'] += $rd_afd_temp_2['ANGKA_01'];
+						$report_data_est_temp[$rd_afd_temp_2['WERKS']]['TEMP_JUMLAH_DATA_01']++;
+					}
+
+					if ( $rd_afd_temp_2['NILAI_02'] != '' ) {
+						$report_data_est_temp[$rd_afd_temp_2['WERKS']]['ANGKA_02'] += $rd_afd_temp_2['ANGKA_02'];
+						$report_data_est_temp[$rd_afd_temp_2['WERKS']]['TEMP_JUMLAH_DATA_02']++;
+					}
+
+					if ( $rd_afd_temp_2['NILAI_03'] != '' ) {
+						$report_data_est_temp[$rd_afd_temp_2['WERKS']]['ANGKA_03'] += $rd_afd_temp_2['ANGKA_03'];
+						$report_data_est_temp[$rd_afd_temp_2['WERKS']]['TEMP_JUMLAH_DATA_03']++;
+					}
+
+					if ( $rd_afd_temp_2['NILAI_04'] != '' ) {
+						$report_data_est_temp[$rd_afd_temp_2['WERKS']]['ANGKA_04'] += $rd_afd_temp_2['ANGKA_04'];
+						$report_data_est_temp[$rd_afd_temp_2['WERKS']]['TEMP_JUMLAH_DATA_04']++;
+					}
+
+					if ( $rd_afd_temp_2['NILAI_05'] != '' ) {
+						$report_data_est_temp[$rd_afd_temp_2['WERKS']]['ANGKA_05'] += $rd_afd_temp_2['ANGKA_05'];
+						$report_data_est_temp[$rd_afd_temp_2['WERKS']]['TEMP_JUMLAH_DATA_05']++;
+					}
+
+					if ( $rd_afd_temp_2['NILAI_06'] != '' ) {
+						$report_data_est_temp[$rd_afd_temp_2['WERKS']]['ANGKA_06'] += $rd_afd_temp_2['ANGKA_06'];
+						$report_data_est_temp[$rd_afd_temp_2['WERKS']]['TEMP_JUMLAH_DATA_06']++;
+					}
+					$y++;
+				}
+			}
+
+			if ( !empty( $report_data_est_temp ) ) {
+				foreach ( $report_data_est_temp as $key_est_tmp => $est_tmp ) {
+					if ( $est_tmp['TEMP_JUMLAH_DATA_01'] > 0 ) {
+						$total_est_01 = $est_tmp['ANGKA_01'] / $est_tmp['TEMP_JUMLAH_DATA_01'];
+						$est_kriteria_01 = self::get_kriteria( $kriteria_find, $total_est_01 );
+						$report_data_est_temp[$key_est_tmp]['NILAI_01'] = $est_kriteria_01['nilai'];
+					}
+
+					if ( $est_tmp['TEMP_JUMLAH_DATA_02'] > 0 ) {
+						$total_est_02 = $est_tmp['ANGKA_02'] / $est_tmp['TEMP_JUMLAH_DATA_02'];
+						$est_kriteria_02 = self::get_kriteria( $kriteria_find, $total_est_02 );
+						$report_data_est_temp[$key_est_tmp]['NILAI_02'] = $est_kriteria_02['nilai'];
+					}
+
+					if ( $est_tmp['TEMP_JUMLAH_DATA_03'] > 0 ) {
+						$total_est_03 = $est_tmp['ANGKA_03'] / $est_tmp['TEMP_JUMLAH_DATA_03'];
+						$est_kriteria_03 = self::get_kriteria( $kriteria_find, $total_est_03 );
+						$report_data_est_temp[$key_est_tmp]['NILAI_03'] = $est_kriteria_03['nilai'];
+					}
+
+					if ( $est_tmp['TEMP_JUMLAH_DATA_04'] > 0 ) {
+						$total_est_04 = $est_tmp['ANGKA_04'] / $est_tmp['TEMP_JUMLAH_DATA_04'];
+						$est_kriteria_04 = self::get_kriteria( $kriteria_find, $total_est_04 );
+						$report_data_est_temp[$key_est_tmp]['NILAI_04'] = $est_kriteria_04['nilai'];
+					}
+
+					if ( $est_tmp['TEMP_JUMLAH_DATA_05'] > 0 ) {
+						$total_est_05 = $est_tmp['ANGKA_05'] / $est_tmp['TEMP_JUMLAH_DATA_05'];
+						$est_kriteria_05 = self::get_kriteria( $kriteria_find, $total_est_05 );
+						$report_data_est_temp[$key_est_tmp]['NILAI_05'] = $est_kriteria_05['nilai'];
+					}
+
+					if ( $est_tmp['TEMP_JUMLAH_DATA_06'] > 0 ) {
+						$total_est_06 = $est_tmp['ANGKA_06'] / $est_tmp['TEMP_JUMLAH_DATA_06'];
+						$est_kriteria_06 = self::get_kriteria( $kriteria_find, $total_est_06 );
+						$report_data_est_temp[$key_est_tmp]['NILAI_06'] = $est_kriteria_06['nilai'];
+					}
+				}
+			}
+
+			$results['report_data'] = $report_data_est_temp;
 			$results['periode'] = date( 'Ym', strtotime( $periode ) );
+
+			#print '<pre>';
+			#print_r( $report_data_est_temp );
+			#print '</pre>';
+			#dd();
 
 			Excel::create( 'Report-Class-Block', function( $excel ) use ( $results ) {
 				$excel->sheet( 'Per Block', function( $sheet ) use ( $results ) {

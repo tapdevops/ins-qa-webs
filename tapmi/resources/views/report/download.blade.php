@@ -34,8 +34,8 @@
 					<select id="report-select" class="form-control m-select2 mi-select2" name="REPORT_TYPE" onchange="return reportGroup( this.value )" data-placeholder="...">
 						<option value="FINDING" selected="selected">TEMUAN</option>
 						<option value="INSPEKSI">INSPEKSI</option>
-						<!--option value="EBCC_VALIDATION">EBCC VALIDATION</option>
-						<option value="CLASS_BLOCK_AFD_ESTATE">CLASS, BLOCK, AFD, &amp; ESTATE</option-->
+						<!--option value="EBCC_VALIDATION">EBCC VALIDATION</option-->
+						<option value="CLASS_BLOCK_AFD_ESTATE">CLASS, BLOCK, AFD, &amp; ESTATE</option>
 					</select>
 				</div>
 			</div>

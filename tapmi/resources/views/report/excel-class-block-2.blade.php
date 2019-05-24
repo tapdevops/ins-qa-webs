@@ -28,19 +28,53 @@
 	<?php
 		if ( !empty( $report_data ) ) {
 			$i = 0;
-			foreach ( $report_data as $dt ) {
+			foreach ( $report_data as $est ) {
+
+				foreach ( $est['DATA_AFD'] as $afd ) {
+
+					foreach ( $afd['DATA_BLOCK'] as $block ) {
+						print '<tr>';
+						print '<td style="text-align:center;">'.$block['WERKS'].'</td>';
+						print '<td style="text-align:center;">'.$block['AFD_CODE'].'</td>';
+						print '<td style="text-align:center;">'.$block['BLOCK_CODE'].'</td>';
+						print '<td style="text-align:center;">'.$block['BLOCK_NAME'].'</td>';
+						print '<td style="text-align:center;">'.$block['NILAI_01'].'</td>';
+						print '<td style="text-align:center;">'.$block['ANGKA_01'].'</td>';
+						print '<td style="text-align:center;">'.$block['NILAI_02'].'</td>';
+						print '<td style="text-align:center;">'.$block['NILAI_03'].'</td>';
+						print '<td style="text-align:center;">'.$block['NILAI_04'].'</td>';
+						print '<td style="text-align:center;">'.$block['NILAI_05'].'</td>';
+						print '<td style="text-align:center;">'.$block['NILAI_06'].'</td>';
+						print '</tr>';
+					}
+
+					print '<tr>';
+					print '<td style="text-align:center;">'.$afd['WERKS'].'</td>';
+					print '<td style="text-align:center;">'.$afd['AFD_CODE'].'</td>';
+					print '<td style="text-align:center;background-color:#000;"></td>';
+					print '<td style="text-align:center;background-color:#000;"></td>';
+					print '<td style="text-align:center;">'.$afd['NILAI_01'].'</td>';
+					print '<td style="text-align:center;">'.$afd['ANGKA_01'].'</td>';
+					print '<td style="text-align:center;">'.$afd['NILAI_02'].'</td>';
+					print '<td style="text-align:center;">'.$afd['NILAI_03'].'</td>';
+					print '<td style="text-align:center;">'.$afd['NILAI_04'].'</td>';
+					print '<td style="text-align:center;">'.$afd['NILAI_05'].'</td>';
+					print '<td style="text-align:center;">'.$afd['NILAI_06'].'</td>';
+					print '</tr>';
+				}
+
 				print '<tr>';
-				print '<td style="text-align:center;">EST_NAME</td>';
-				print '<td style="text-align:center;">'.$dt['AFD_CODE'].'</td>';
-				print '<td style="text-align:center;">'.$dt['BLOCK_CODE'].'</td>';
-				print '<td style="text-align:center;">'.$dt['BLOCK_NAME'].'</td>';
-				print '<td style="text-align:center;">'.$dt['NILAI_01'].'</td>';
-				print '<td style="text-align:center;"></td>';
-				print '<td style="text-align:center;">'.$dt['NILAI_02'].'</td>';
-				print '<td style="text-align:center;">'.$dt['NILAI_03'].'</td>';
-				print '<td style="text-align:center;">'.$dt['NILAI_04'].'</td>';
-				print '<td style="text-align:center;">'.$dt['NILAI_05'].'</td>';
-				print '<td style="text-align:center;">'.$dt['NILAI_06'].'</td>';
+				print '<td style="text-align:center;">'.$est['WERKS'].'</td>';
+				print '<td style="text-align:center;background-color:#000;"></td>';
+				print '<td style="text-align:center;background-color:#000;"></td>';
+				print '<td style="text-align:center;background-color:#000;"></td>';
+				print '<td style="text-align:center;">'.$est['NILAI_01'].'</td>';
+				print '<td style="text-align:center;">'.$est['ANGKA_01'].'</td>';
+				print '<td style="text-align:center;">'.$est['NILAI_02'].'</td>';
+				print '<td style="text-align:center;">'.$est['NILAI_03'].'</td>';
+				print '<td style="text-align:center;">'.$est['NILAI_04'].'</td>';
+				print '<td style="text-align:center;">'.$est['NILAI_05'].'</td>';
+				print '<td style="text-align:center;">'.$est['NILAI_06'].'</td>';
 				print '</tr>';
 
 				$i++;

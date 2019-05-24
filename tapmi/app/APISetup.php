@@ -48,9 +48,9 @@ class APISetup extends Model {
 					"ins" => array(
 						"auth" => "http://app.tap-agri.com/mobileinspection/ins-msa-auth",
 						"hectarestatement" => "http://app.tap-agri.com/mobileinspection/ins-msa-hectarestatement",
-						"report" => "http://app.tap-agri.com/mobileinspection/ins-msa-reports",
-						#"report" => "http://149.129.250.199:3013",
-						"ebccvalidation" => "http://149.129.250.199:3014",
+						#"report" => "http://app.tap-agri.com/mobileinspection/ins-msa-reports",
+						"report" => "http://149.129.250.199:3013",
+						"ebccvalidation" => "http://149.129.250.199:4014",
 					)
 				)
 			)
@@ -117,7 +117,7 @@ class APISetup extends Model {
 	public static function ins_rest_client_manual( $method, $url, $token, $body = array() ) {
 		$client = new \GuzzleHttp\Client();
 		$init_headers = array(
-			"Authorization" => $token
+			"Authorization" => "Bearer ".$token
 		);
 		$init_body = $body;
 		$init = array();
