@@ -176,7 +176,7 @@ class APIData extends Model {
 
 	# 												    	  ▁ ▂ ▄ ▅ ▆ ▇ █ USER - Find One
 	# -------------------------------------------------------------------------------------
-	public static function user_find_one( $id = '' ) {
+	public static function user_find_one( $id = '', $token = '' ) {
 
 		$data['items'] = array();
 		$data['items']['USER_AUTH_CODE'] = '';
@@ -189,7 +189,7 @@ class APIData extends Model {
 
 		if ( $id != '' ) {
 			$url = self::url( 'url_api_ins_msa_auth' ).'/api/user/'.$id;
-			$client = APISetup::ins_rest_client( 'GET', $url );
+			$client = ( $token == 'session' ? APISetup::ins_rest_client( 'GET', $url ) : APISetup::ins_rest_client_manual( 'GET', $url ) );
 			if ( $client['status'] == true ) {
 				if ( isset( $client['data'] ) ) {
 					$data['items']['USER_AUTH_CODE'] = $client['data']['USER_AUTH_CODE'];
@@ -329,7 +329,11 @@ class APIData extends Model {
 
 	# 										     ▁ ▂ ▄ ▅ ▆ ▇ █ WEB REPORT - INSPEKSI - Find
 	# -------------------------------------------------------------------------------------
-	public static function web_report_inspection_find( $query = array() ) {
+	#
+	# Parameter $token, jika diisi maka akan menggunakan token isian ini. Jika dikosongi, 
+	# akan menggunakan session.
+	#
+	public static function web_report_inspection_find( $query = array(), $token = 'session' ) {
 		
 		$url_query = '';
 		if ( !empty( $query ) > 0 ) {
@@ -350,8 +354,7 @@ class APIData extends Model {
 
 		$data['items'] = array();
 		$url = self::url( 'url_api_ins_msa_auth' ).'/api/web-report/inspection?'.$url_query;
-		
-		$client = APISetup::ins_rest_client( 'GET', $url );
+		$client = ( $token == 'session' ? APISetup::ins_rest_client( 'GET', $url ) : APISetup::ins_rest_client_manual( 'GET', $url ) );
 		if ( isset( $client['status'] ) && $client['status'] == true ) {
 			if ( count( $client['data'] ) > 0 ) {
 				$data['items'] = $client['data'];
@@ -364,11 +367,11 @@ class APIData extends Model {
 
 	# 										  ▁ ▂ ▄ ▅ ▆ ▇ █ WEB REPORT - INSPEKSI - Content
 	# -------------------------------------------------------------------------------------
-	public static function web_report_inspection_content_find() {
+	public static function web_report_inspection_content_find( $token = 'session' ) {
 		// GROUP_CATEGORY=INSPEKSI
 		// GROUP_CATEGORY=FINDING
 		$url = self::url( 'url_api_ins_msa_auth' ).'/api/web-report/inspection/content-code';
-		$client = APISetup::ins_rest_client( 'GET', $url );
+		$client = ( $token == 'session' ? APISetup::ins_rest_client( 'GET', $url ) : APISetup::ins_rest_client_manual( 'GET', $url ) );
 		$data = [];
 		if ( $client['status'] == true ) {
 			if ( isset( $client['data'] ) ) {
@@ -408,9 +411,9 @@ class APIData extends Model {
 
 	# 											 ▁ ▂ ▄ ▅ ▆ ▇ █ WEB REPORT - INSPEKSI - Find
 	# -------------------------------------------------------------------------------------
-	public static function web_report_land_use_findone( $parameter ) { // WERKS_AFD_BLOCK_CODE
+	public static function web_report_land_use_findone( $parameter, $token = 'session' ) { // WERKS_AFD_BLOCK_CODE
 		$url = self::url( 'url_api_ins_msa_hectarestatement' ).'/report/land-use/'.$parameter;
-		$client = APISetup::ins_rest_client( 'GET', $url );
+		$client = ( $token == 'session' ? APISetup::ins_rest_client( 'GET', $url ) : APISetup::ins_rest_client_manual( 'GET', $url ) );
 		$data = [];
 		if ( $client['status'] == true ) {
 			if ( isset( $client['data'] ) ) {

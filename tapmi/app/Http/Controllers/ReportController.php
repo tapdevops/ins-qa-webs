@@ -1154,14 +1154,32 @@ class ReportController extends Controller {
 	 */
 		public function cron_generate_inspeksi() {
 			$url = $this->url_api_ins_msa_hectarestatement.'/region/all';
-			$region_data = APISetup::ins_rest_client_manual( 'GET', $url, $this->access_token );
-
+			$region_data = APISetup::ins_rest_client_manual( 'GET', $url );
+			$parameter = array();
+			$parameter['START_DATE'] = date( 'Ym01' );
+			$parameter['END_DATE'] = date( 'Ymt' );
+			$response = array();
+			$response['message'] = 'Cron - Generate Report Inspeksi';
+			$response['from'] = date( 'Y-m-01' );
+			$response['to'] = date( 'Y-m-t' );
+			$response['results'] = array();
+			
+			$i = 0;
 			foreach ( $region_data['data'] as $data ) {
 				$parameter['REGION_CODE'] = ( String ) $data['REGION_CODE'];
-				$parameter['START_DATE'] = date( 'Ym01' );
-				$parameter['END_DATE'] = date( 'Ymt' );
-				self::generate_inspeksi( $parameter );
+				$res = self::generate_inspeksi( $parameter );
+				$response['results'][$i]['region_code'] = ( String ) $data['REGION_CODE'];
+				$response['results'][$i]['start_time'] = $res['start_time'];
+				$response['results'][$i]['end_time'] = $res['end_time'];
+				$response['results'][$i]['results'] = array(
+					"success" => $res['results']['success'],
+					"failed" => $res['results']['failed'],
+					"data" => $res['results']['data'],
+				);
+				$i++;
 			}
+
+			return response()->json( $response );
 		}
 
 	/*
@@ -1573,14 +1591,24 @@ class ReportController extends Controller {
 			$query_inspeksi['START_DATE'] = $data['START_DATE'].'000000';
 			$query_inspeksi['END_DATE'] = $data['END_DATE'].'235959';
 
-			$content = Data::web_report_inspection_content_find();
+			$response = array();
+			$response['message'] = 'Generate Report Inspeksi';
+			$response['start_time'] = date( 'Y-m-d H:i:s' );
+			$response['results'] = array(
+				"success" => 0,
+				"failed" => 0,
+				"data" => array()
+			);
+
+			$content = Data::web_report_inspection_content_find( 'manual' );
 			$content_perawatan = array();
 			$content_perawatan_bobot = array();
 			$content_pemupukan = array();
 			$content_panen = array();
 			$inspection_header = array();
-			$inspection_detail = Data::web_report_inspection_find( $query_inspeksi )['items'];
+			$inspection_detail = Data::web_report_inspection_find( $query_inspeksi, 'manual' )['items'];
 			$count_inspection = array();
+
 			$_bobot_all = 0;
 			$_bobot_tbm0 = 0;
 			$_bobot_tbm1 = 0;
@@ -1633,7 +1661,7 @@ class ReportController extends Controller {
 			foreach ( $inspection_detail as $ins_detail ) {
 				if ( !empty( $ins_detail['DETAIL'] ) ) {
 					$date_inspeksi = substr( $ins_detail['INSPECTION_DATE'], 0, 8 );
-					$hectarestatement =  Data::web_report_land_use_findone( $ins_detail['WERKS'].$ins_detail['AFD_CODE'].$ins_detail['BLOCK_CODE'] );
+					$hectarestatement =  Data::web_report_land_use_findone( $ins_detail['WERKS'].$ins_detail['AFD_CODE'].$ins_detail['BLOCK_CODE'], 'manual' );
 					
 					$inspektor_data = Data::user_find_one( ( String ) $ins_detail['INSERT_USER'] )['items'];
 					$baris_start_ins = date( 'Y-m-d H:i:s', strtotime( $ins_detail['START_INSPECTION'] ) );
@@ -1671,7 +1699,7 @@ class ReportController extends Controller {
 					$client = new \GuzzleHttp\Client();
 					$res = $client->request( 'POST', $this->url_api_ins_msa_report.'/api/report/inspection-baris', [
 						"headers" => [
-							#"Authorization" => 'Bearer '.session( 'ACCESS_TOKEN' ),
+							#"Authorization" => 'Bearer '.$this->access_token,
 							"Content-Type" => 'application/json'
 						],
 						'json' => [
@@ -1704,18 +1732,22 @@ class ReportController extends Controller {
 							"CONTENT_PEMUPUKAN" => $data['inspection_data'][$i]['CONTENT_PEMUPUKAN'],
 						],
 					]);
+
+					array_push( $response['results']['data'], $ins_detail['BLOCK_INSPECTION_CODE'] );
 					
 					if ( json_decode( $res->getBody(), true )['status'] == false ) {
-						$status = false;
-						print $ins_detail['BLOCK_INSPECTION_CODE'].' - Gagal.<br />';
+						$response['results']['failed']++;
 					}
 					else {
-						print $ins_detail['BLOCK_INSPECTION_CODE'].' - OK.<br />';
+						$response['results']['success']++;
 					}
 				}
-				
 				$i++;
 			}
+
+			$response['end_time'] = date( 'Y-m-d H:i:s' );
+
+			return $response;
 		}
 
 	/*

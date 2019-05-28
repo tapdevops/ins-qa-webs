@@ -9,10 +9,11 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 use Session;
 
 class APISetup extends Model {
-
+	
 	/**
 	 * Untuk mendefinisikan url-url yang dipakai dalam website
 	 *
@@ -26,7 +27,7 @@ class APISetup extends Model {
 			"dev" => array(
 				"msa" => array(
 					"ins" => array(
-						"auth" => "http://149.129.250.199:3008",
+						"auth" => "http://149.129.250.199:4008",
 						"hectarestatement" => "149.129.250.199:3009",
 						"report" => "http://149.129.250.199:3013",
 						"ebccvalidation" => "http://149.129.250.199:3014",
@@ -38,7 +39,7 @@ class APISetup extends Model {
 					"ins" => array(
 						"auth" => "http://149.129.244.86:3008",
 						"hectarestatement" => "http://149.129.244.86:3009",
-						"report" => "http://149.129.250.199:3013",
+						"report" => "http://149.129.250.199:4013",
 						"ebccvalidation" => "http://149.129.250.199:4014",
 					)
 				)
@@ -48,8 +49,8 @@ class APISetup extends Model {
 					"ins" => array(
 						"auth" => "http://app.tap-agri.com/mobileinspection/ins-msa-auth",
 						"hectarestatement" => "http://app.tap-agri.com/mobileinspection/ins-msa-hectarestatement",
-						#"report" => "http://app.tap-agri.com/mobileinspection/ins-msa-reports",
-						"report" => "http://149.129.250.199:3013",
+						"report" => "http://app.tap-agri.com/mobileinspection/ins-msa-reports",
+						#"report" => "http://149.129.250.199:3013",
 						"ebccvalidation" => "http://localhost:4014",
 					)
 				)
@@ -114,10 +115,10 @@ class APISetup extends Model {
 	 *
 	 * @var array
 	 */
-	public static function ins_rest_client_manual( $method, $url, $token, $body = array() ) {
+	public static function ins_rest_client_manual( $method, $url, $body = array() ) {
 		$client = new \GuzzleHttp\Client();
 		$init_headers = array(
-			"Authorization" => "Bearer ".$token
+			"Authorization" => "Bearer ".Storage::get( 'files/access_token_mobile_inspection.txt' )
 		);
 		$init_body = $body;
 		$init = array();
