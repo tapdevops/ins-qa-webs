@@ -77,8 +77,9 @@ class ModulesController extends Controller {
 			$html_menu_01 = '';
 			$html_menu_02 = '';
 			#$urls = 'http://inspection.tap-agri.com/';
-			$urls = 'http://149.129.250.199/ins-webs/tapmi/public/';
+			#$urls = 'http://149.129.250.199/ins-webs/tapmi/public/';
 			#$urls = 'http://inspection.tap-agri.com:3014/';
+			$urls = 'http://inspectiondev.tap-agri.com/';
 			#$urls = '';
 
 			if ( $urls == '' ) {
