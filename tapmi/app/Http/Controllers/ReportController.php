@@ -214,6 +214,8 @@ class ReportController extends Controller {
 			$kualitas_jjg_hasilpanen_check[] = $jjg_hasilpanen['ID_KUALITAS'];
 		}
 
+
+
 		/*
 		print '<pre>';
 		print_r( $kualitas_jjg_hasilpanen_check );
@@ -260,11 +262,16 @@ class ReportController extends Controller {
 
 		$ebcc_validation = Data::web_report_ebcc_validation_find( '/'.$data['WERKS_AFD_BLOCK_CODE'].'/'.$data['START_DATE'].'/'.$data['END_DATE'] );
 
+		// print '<pre>';
+		// print_r( '/'.$data['WERKS_AFD_BLOCK_CODE'].'/'.$data['START_DATE'].'/'.$data['END_DATE'] );
+		// print '</pre>';
+		// dd();
+
 		$i = 0;
 		foreach ( $ebcc_validation['data'] as $ebcc ) {
 			$results['data'][$i]['EBCC_VALIDATION_CODE'] = $ebcc['EBCC_VALIDATION_CODE'];
-			$results['data'][$i]['WERKS_AFD_CODE'] = $ebcc['WERKS_AFD_CODE'];
-			$results['data'][$i]['WERKS_AFD_BLOCK_CODE'] = $ebcc['WERKS_AFD_BLOCK_CODE'];
+			$results['data'][$i]['WERKS_AFD_CODE'] = $ebcc['WERKS'].$ebcc['AFD_CODE'].$ebcc['BLOCK_CODE'];
+			$results['data'][$i]['WERKS_AFD_BLOCK_CODE'] = $ebcc['WERKS'].$ebcc['AFD_CODE'].$ebcc['BLOCK_CODE'];
 			$results['data'][$i]['WERKS'] = $ebcc['WERKS'];
 			$results['data'][$i]['EST_NAME'] = '';
 			$results['data'][$i]['AFD_CODE'] = $ebcc['AFD_CODE'];
@@ -274,7 +281,7 @@ class ReportController extends Controller {
 			$results['data'][$i]['NO_TPH'] = $ebcc['NO_TPH'];
 			$results['data'][$i]['STATUS_TPH_SCAN'] = $ebcc['STATUS_TPH_SCAN'];
 			$results['data'][$i]['ALASAN_MANUAL'] = $ebcc['ALASAN_MANUAL'];
-			$results['data'][$i]['TANGGAL_VALIDASI'] = date( 'd M Y', strtotime( $ebcc['INSERT_TIME'] ) );
+			$results['data'][$i]['TANGGAL_VALIDASI'] = date( 'Y-m-d H:i:s', strtotime( $ebcc['INSERT_TIME'] ) );
 			$results['data'][$i]['LAT_TPH'] = $ebcc['LAT_TPH'];
 			$results['data'][$i]['LON_TPH'] = $ebcc['LON_TPH'];
 			$results['data'][$i]['DELIVERY_CODE'] = $ebcc['DELIVERY_CODE'];
@@ -318,7 +325,7 @@ class ReportController extends Controller {
 				}
 			}
 
-			$hectarestatement =  Data::web_report_land_use_findone( $ebcc['WERKS_AFD_BLOCK_CODE'] );
+			$hectarestatement =  Data::web_report_land_use_findone( $ebcc['WERKS'].$ebcc['AFD_CODE'].$ebcc['BLOCK_CODE'] );
 			if ( !empty( $hectarestatement ) ) {
 				$results['data'][$i]['EST_NAME'] = $hectarestatement['EST_NAME'];
 				$results['data'][$i]['BLOCK_NAME'] = $hectarestatement['BLOCK_NAME'];
@@ -335,11 +342,6 @@ class ReportController extends Controller {
 			$i++;
 		}
 
-		print '<pre>';
-		print_r( $results['data'] );
-		print '</pre>';
-		dd();
-		
 		Excel::create( 'Report-EBCC-Validation', function( $excel ) use ( $results ) {
 			$excel->sheet( 'Per Baris', function( $sheet ) use ( $results ) {
 				$sheet->loadView( 'report.excel-ebcc-validation', $results );
