@@ -22,6 +22,14 @@ class APIData extends Model {
 			case 'url_api_ins_msa_auth': 
 				return APISetup::url()['msa']['ins']['auth'];
 			break;
+			# API INSPEKSI - MSA - FINDING
+			case 'url_api_ins_msa_finding': 
+				return APISetup::url()['msa']['ins']['finding'];
+			break;
+			# API INSPEKSI - MSA - INSPECTION
+			case 'url_api_ins_msa_inspection': 
+				return APISetup::url()['msa']['ins']['inspection'];
+			break;
 			# API INSPEKSI - MSA - EBCC VALIDATION
 			case 'url_api_ins_msa_ebccvalidation': 
 				return APISetup::url()['msa']['ins']['ebccvalidation'];
@@ -176,7 +184,7 @@ class APIData extends Model {
 
 	# 												    	  ▁ ▂ ▄ ▅ ▆ ▇ █ USER - Find One
 	# -------------------------------------------------------------------------------------
-	public static function user_find_one( $id = '', $token = '' ) {
+	public static function user_find_one( $id = '', $token = 'session' ) {
 
 		$data['items'] = array();
 		$data['items']['USER_AUTH_CODE'] = '';
@@ -297,7 +305,8 @@ class APIData extends Model {
 		}
 
 		$data['items'] = array();
-		$url = self::url( 'url_api_ins_msa_auth' ).'/api/web-report/finding?'.$url_query;
+
+		$url = self::url( 'url_api_ins_msa_finding' ).'/api/v1.0/report/web/finding/all?'.$url_query;
 		$client = APISetup::ins_rest_client( 'GET', $url );
 
 		if ( $client['status'] == true ) {
@@ -353,7 +362,7 @@ class APIData extends Model {
 		}
 
 		$data['items'] = array();
-		$url = self::url( 'url_api_ins_msa_auth' ).'/api/web-report/inspection?'.$url_query;
+		$url = self::url( 'url_api_ins_msa_inspection' ).'/api/v1.0/report?'.$url_query;
 		$client = ( $token == 'session' ? APISetup::ins_rest_client( 'GET', $url ) : APISetup::ins_rest_client_manual( 'GET', $url ) );
 		if ( isset( $client['status'] ) && $client['status'] == true ) {
 			if ( count( $client['data'] ) > 0 ) {

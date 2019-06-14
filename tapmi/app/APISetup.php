@@ -21,26 +21,31 @@ class APISetup extends Model {
 	 */
 	public static function url() {
 
-		$env = 'prod';
+		$env = 'dev';
 
 		$data = array(
 			"dev" => array(
 				"msa" => array(
 					"ins" => array(
 						"auth" => "http://149.129.250.199:4008",
-						"hectarestatement" => "149.129.250.199:3009",
-						"report" => "http://149.129.250.199:3013",
-						"ebccvalidation" => "http://149.129.250.199:3014",
+						//"auth" => "http://app.tap-agri.com/mobileinspectiondev/ins-msa-dev-auth",
+						"hectarestatement" => "http://app.tap-agri.com/mobileinspection/ins-msa-hectarestatement",
+						//"hectarestatement" => "http://app.tap-agri.com/mobileinspection/ins-msa-hectarestatement",
+						"finding" => "http://app.tap-agri.com/mobileinspectiondev/ins-msa-dev-finding",
+						"inspection" => "http://app.tap-agri.com/mobileinspectiondev/ins-msa-dev-inspection",
+						//"report" => "http://app.tap-agri.com/mobileinspectiondev/ins-msa-dev-reports",
+						"report" => "http://149.129.250.199:4013",
+						"ebccvalidation" => "http://149.129.250.199:4014",
 					)
 				)
 			),
 			"qa" => array(
 				"msa" => array(
 					"ins" => array(
-						"auth" => "http://149.129.244.86:3008",
-						"hectarestatement" => "http://149.129.244.86:3009",
-						"report" => "http://149.129.250.199:4013",
-						"ebccvalidation" => "http://149.129.250.199:4014",
+						"auth" => "http://app.tap-agri.com/mobileinspectiondev/ins-msa-dev-auth",
+						"hectarestatement" => "http://app.tap-agri.com/mobileinspectiondev/ins-msa-dev-hectarestatement",
+						"report" => "http://app.tap-agri.com/mobileinspectiondev/ins-msa-dev-reports",
+						"ebccvalidation" => "http://149.129.250.199:3014",
 					)
 				)
 			),
@@ -50,7 +55,7 @@ class APISetup extends Model {
 						"auth" => "http://app.tap-agri.com/mobileinspection/ins-msa-auth",
 						"hectarestatement" => "http://app.tap-agri.com/mobileinspection/ins-msa-hectarestatement",
 						"report" => "http://app.tap-agri.com/mobileinspection/ins-msa-reports",
-						"ebccvalidation" => "http://app.tap-agri.com/mobileinspectiondev/ins-msa-dev-ebccval",
+						"ebccvalidation" => "http://app.tap-agri.com/mobileinspection/ins-msa-ebccval",
 					)
 				)
 			)

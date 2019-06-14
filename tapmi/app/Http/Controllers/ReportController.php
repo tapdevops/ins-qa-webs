@@ -262,6 +262,7 @@ class ReportController extends Controller {
 
 		$ebcc_validation = Data::web_report_ebcc_validation_find( '/'.$data['WERKS_AFD_BLOCK_CODE'].'/'.$data['START_DATE'].'/'.$data['END_DATE'] );
 
+
 		// print '<pre>';
 		// print_r( '/'.$data['WERKS_AFD_BLOCK_CODE'].'/'.$data['START_DATE'].'/'.$data['END_DATE'] );
 		// print '</pre>';
@@ -286,9 +287,13 @@ class ReportController extends Controller {
 			$results['data'][$i]['LON_TPH'] = $ebcc['LON_TPH'];
 			$results['data'][$i]['DELIVERY_CODE'] = $ebcc['DELIVERY_CODE'];
 			$results['data'][$i]['STATUS_DELIVERY_CODE'] = $ebcc['STATUS_DELIVERY_CODE'];
-			$results['data'][$i]['NIK_VALIDATOR'] = '';
-			$results['data'][$i]['NAMA_VALIDATOR'] = '';
-			$results['data'][$i]['JABATAN_VALIDATOR'] = '';
+
+
+
+			$inspektor_data = Data::user_find_one( ( String ) $ebcc['INSERT_USER'] )['items'];
+			$results['data'][$i]['NIK_VALIDATOR'] = $inspektor_data['EMPLOYEE_NIK'];
+			$results['data'][$i]['NAMA_VALIDATOR'] = $inspektor_data['FULLNAME'];
+			$results['data'][$i]['JABATAN_VALIDATOR'] = $inspektor_data['JOB'];
 
 			# Kualitas: { UOM: "JJG", GROUP_KUALITAS: "HASIL PANEN" }
 			$results['data'][$i]['HASIL_JJG_HASILPANEN'] = [];
