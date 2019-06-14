@@ -675,9 +675,17 @@ class ReportController extends Controller {
 		$data['angka'] = 0;
 		if ( !empty( $data_kriteria ) ) {
 			foreach ( $data_kriteria as $kriteria ) {
-				if ( $angka >= $kriteria['BATAS_BAWAH'] && $angka <= $kriteria['BATAS_ATAS'] ) {
-					$data['nilai'] = $kriteria['GRADE'];
-					$data['angka'] = $kriteria['KONVERSI_ANGKA'];
+				if ( $angka <= 1.00 ) {
+					if ( $angka >= $kriteria['BATAS_BAWAH'] && $angka <= $kriteria['BATAS_ATAS'] ) {
+						$data['nilai'] = $kriteria['GRADE'];
+						$data['angka'] = $kriteria['KONVERSI_ANGKA'];
+					}
+				}
+				else {
+					if ( $angka > $kriteria['BATAS_BAWAH'] && $angka <= $kriteria['BATAS_ATAS'] ) {
+						$data['nilai'] = $kriteria['GRADE'];
+						$data['angka'] = $kriteria['KONVERSI_ANGKA'];
+					}
 				}
 			}
 		}

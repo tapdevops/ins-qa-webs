@@ -119,10 +119,9 @@
 			<div class="m-form__actions m-form__actions--solid">
 				<div class="row">
 					<div class="col-lg-6">
-						
 					</div>
 					<div class="col-lg-6 m--align-right">
-						<!--a id="generate-report" href="javascript:;" class="btn btn-warning"><i class="fa fa-refresh"></i> Generate Report</a-->
+						<a id="generate-report" href="javascript:;" class="btn btn-warning"><i class="fa fa-refresh"></i> Generate Report</a>
 						<a id="submit-report" href="javascript:;" class="btn btn-primary"><i class="fa fa-file-excel-o"></i> Download Excel</a>
 						<a href="{{ url( '/report/' ) }}" class="btn btn-secondary">Cancel</a>
 					</div>
