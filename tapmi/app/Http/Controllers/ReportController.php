@@ -738,14 +738,15 @@ class ReportController extends Controller {
 			$parameter = $data['REGION_CODE'];
 		}
 
-		$periode = substr( $data['START_DATE'], 0, 6 );
-		$periode_min_1 = date( 'Ym', strtotime( $periode." - 2 month" ) );
-		$periode_min_2 = date( 'Ym', strtotime( $periode." - 3 month" ) );
-		$periode_min_3 = date( 'Ym', strtotime( $periode." - 4 month" ) );
-		$periode_min_4 = date( 'Ym', strtotime( $periode." - 5 month" ) );
-		$periode_min_5 = date( 'Ym', strtotime( $periode." - 6 month" ) );
-		$periode_min_6 = date( 'Ym', strtotime( $periode." - 7 month" ) );
+		$periode = date( 'Ym', strtotime( substr( $data['START_DATE'], 0, 6 )."01" ) );
+		$periode_min_1 = date( 'Ym', strtotime( $periode."01"." - 1 month" ) );
+		$periode_min_2 = date( 'Ym', strtotime( $periode."01"." - 2 month" ) );
+		$periode_min_3 = date( 'Ym', strtotime( $periode."01"." - 3 month" ) );
+		$periode_min_4 = date( 'Ym', strtotime( $periode."01"." - 4 month" ) );
+		$periode_min_5 = date( 'Ym', strtotime( $periode."01"." - 5 month" ) );
+		$periode_min_6 = date( 'Ym', strtotime( $periode."01"." - 6 month" ) );
 
+		// print '/'.$data['BA_CODE'].'/'.$periode.'<br />';
 		// print '/'.$data['BA_CODE'].'/'.$periode_min_1.'<br />';
 		// print '/'.$data['BA_CODE'].'/'.$periode_min_2.'<br />';
 		// print '/'.$data['BA_CODE'].'/'.$periode_min_3.'<br />';

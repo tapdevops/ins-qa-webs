@@ -20,8 +20,8 @@
 		<td style="background-color: #043077;"></td>
 		<td style="background-color: #043077;"></td>
 		<?php
-			for ( $i = 2; $i <= 7; $i++ ) {
-				print '<td style="text-align:center;"><b>'.$i.'-'.date( 'M Y', strtotime( $periode." - ".$i." month" ) ).'</b></td>';
+			for ( $i = 1; $i <= 6; $i++ ) {
+				print '<td style="text-align:center;"><b>'.date( 'M Y', strtotime( $periode."01 - ".$i." month" ) ).'</b></td>';
 			}
 		?>
 	</tr>
