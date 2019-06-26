@@ -50,7 +50,7 @@
 					<td style="text-align: center;">{{ $inspection['AFD_CODE'] }}</td>
 					<td style="text-align: center;">{{ $inspection['BLOCK_CODE'] }}</td>
 					<td>{{ $inspection['BLOCK_NAME'] }}</td>
-					<td style="text-align: center;">{{ date( 'Y-m-d', strtotime( $inspection['INSPECTION_DATE'] ) ) }}</td>
+					<td style="text-align: center;">{{ date( 'Y-m-d H:i', strtotime( $inspection['INSPECTION_TIME'] ) ) }}</td>
 					<td style="text-align: center;">{{ ( strlen( intval( ( $inspection['LAMA_INSPEKSI'] / 60 ) ) ) == 1 ? '0'.intval( ( $inspection['LAMA_INSPEKSI'] / 60 ) ) : intval( ( $inspection['LAMA_INSPEKSI'] / 60 ) ) ).':'.( strlen( ( $inspection['LAMA_INSPEKSI'] % 60 ) ) == 1 ? '0'.( $inspection['LAMA_INSPEKSI'] % 60 ) : ( $inspection['LAMA_INSPEKSI'] % 60 ) ) }}</td>
 					<td style="text-align: center;">{{ $inspection['AREAL'] }}</td>
 					<td style="text-align: center;">{{ $inspection['REPORTER_NIK'] }}</td>
@@ -65,7 +65,7 @@
 						@if ( isset( $inspection['CONTENT_PANEN'][0][$kcp] ) )
 							<td style="text-align: center;">{{ $inspection['CONTENT_PANEN'][0][$kcp] }}</td>
 						@else
-							<td style="text-align: center;">0</td>
+							<td style="text-align: center;"></td>
 						@endif
 					@endforeach
 					@foreach ( $content_pemupukan as $kcp => $cp )
@@ -93,7 +93,7 @@
 						@if ( isset( $inspection['CONTENT_PERAWATAN'][0][$kcp] ) )
 							<td style="text-align: center;">{{ $inspection['CONTENT_PERAWATAN'][0][$kcp] }}</td>
 						@else
-							<td style="text-align: center;">0</td>
+							<td style="text-align: center;"></td>
 						@endif
 					@endforeach
 				</tr>

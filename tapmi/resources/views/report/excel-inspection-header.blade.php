@@ -66,7 +66,7 @@
 					@if ( isset( $inspection['DATA_JUMLAH_PANEN'][$kcp] ) )
 						<td style="text-align: center;">{{ $inspection['DATA_JUMLAH_PANEN'][$kcp] }}</td>
 					@else
-						<td style="text-align: center;">0</td>
+						<td style="text-align: center;"></td>
 					@endif
 				@endforeach
 
@@ -74,7 +74,7 @@
 					@if ( isset( $inspection['DATA_RATA2_PEMUPUKAN'][$kcp] ) )
 						<td style="text-align: center;">{{ number_format( $inspection['DATA_RATA2_PEMUPUKAN'][$kcp], 2, '.', '' ) }}</td>
 					@else
-						<td style="text-align: center;">0</td>
+						<td style="text-align: center;"></td>
 					@endif
 				@endforeach
 
@@ -82,7 +82,7 @@
 					@if ( isset( $inspection['DATA_RATA2'][$kcp] ) )
 						<td style="text-align: center;">{{ number_format( $inspection['DATA_RATA2'][$kcp], 2, '.', '' ) }}</td>
 					@else
-						<td style="text-align: center;">0</td>
+						<td style="text-align: center;"></td>
 					@endif
 				@endforeach
 
@@ -90,7 +90,7 @@
 					@if ( isset( $inspection['DATA_RATA2'][$kcp] ) )
 						<td style="text-align: center;">{{ number_format( $inspection['DATA_RATA2'][$kcp], 2, '.', '' ) }}</td>
 					@else
-						<td style="text-align: center;">0</td>
+						<td style="text-align: center;"></td>
 					@endif
 				@endforeach
 
@@ -98,7 +98,7 @@
 					@if ( isset( $inspection['DATA_BOBOT_RAWAT'][$kcp] ) )
 						<td style="text-align: center;">{{ $inspection['DATA_BOBOT_RAWAT'][$kcp] }}</td>
 					@else
-						<td style="text-align: center;">0</td>
+						<td style="text-align: center;"></td>
 					@endif
 				@endforeach
 
@@ -106,7 +106,7 @@
 					@if ( isset( $inspection['DATA_RATAXBOBOT'][$kcp] ) )
 						<td style="text-align: center;">{{ number_format( $inspection['DATA_RATAXBOBOT'][$kcp], 2, '.', '' ) }}</td>
 					@else
-						<td style="text-align: center;">0</td>
+						<td style="text-align: center;"></td>
 					@endif
 				@endforeach
 

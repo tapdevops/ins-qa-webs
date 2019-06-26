@@ -20,8 +20,8 @@
 		<td style="background-color: #043077;"></td>
 		<td style="background-color: #043077;"></td>
 		<?php
-			for ( $i = 1; $i <= 6; $i++ ) {
-				print '<td style="text-align:center;"><b>'.date( 'M Y', strtotime( $periode." - ".$i." month" ) ).'</b></td>';
+			for ( $i = 2; $i <= 7; $i++ ) {
+				print '<td style="text-align:center;"><b>'.$i.'-'.date( 'M Y', strtotime( $periode." - ".$i." month" ) ).'</b></td>';
 			}
 		?>
 	</tr>
@@ -45,6 +45,7 @@
 						print '<td style="text-align:center;">'.$block['NILAI_04'].'</td>';
 						print '<td style="text-align:center;">'.$block['NILAI_05'].'</td>';
 						print '<td style="text-align:center;">'.$block['NILAI_06'].'</td>';
+						print '<td style="text-align:center;">'.$block['NILAI_07'].'</td>';
 						print '</tr>';
 					}
 
@@ -60,6 +61,7 @@
 					print '<td style="text-align:center;">'.$afd['NILAI_04'].'</td>';
 					print '<td style="text-align:center;">'.$afd['NILAI_05'].'</td>';
 					print '<td style="text-align:center;">'.$afd['NILAI_06'].'</td>';
+					print '<td style="text-align:center;">'.$afd['NILAI_07'].'</td>';
 					print '</tr>';
 				}
 
@@ -75,6 +77,7 @@
 				print '<td style="text-align:center;">'.$est['NILAI_04'].'</td>';
 				print '<td style="text-align:center;">'.$est['NILAI_05'].'</td>';
 				print '<td style="text-align:center;">'.$est['NILAI_06'].'</td>';
+				print '<td style="text-align:center;">'.$est['NILAI_07'].'</td>';
 				print '</tr>';
 
 				$i++;

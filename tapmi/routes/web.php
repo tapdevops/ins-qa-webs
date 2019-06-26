@@ -53,6 +53,8 @@ Route::group( [ 'middleware' => 'web' ], function() {
 		Route::get( '/report/search-block', 'ReportController@search_block' );
 		
 		Route::get( '/data/user-search', 'DataController@user_search_find' );
+
+		Route::get( '/xxx', 'ReportController@testing_hasil_kriteria' );
 	});
 
 	// Cron URL
@@ -60,4 +62,3 @@ Route::group( [ 'middleware' => 'web' ], function() {
 	Route::get( '/cron/generate/token', 'ReportController@generate_token' );
 
 });
-

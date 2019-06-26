@@ -277,7 +277,8 @@
 				},
 				autoclose: true,
 				minViewMode: 1,
-				format: 'yyyy-mm'
+				format: 'yyyy-mm',
+				endDate: "-1M"
 			})
 
 			$( '#form' ).waitMe( {
