@@ -21,7 +21,7 @@ class APISetup extends Model {
 	 */
 	public static function url() {
 
-		$env = 'qa';
+		$env = 'dev';
 
 		$data = array(
 			"dev" => array(
