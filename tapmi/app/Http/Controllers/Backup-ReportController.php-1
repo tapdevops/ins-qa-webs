@@ -112,6 +112,7 @@ class ReportController extends Controller {
 			}
 			self::download_excel_ebcc_validation( $setup );
 		}
+		
 		// Report Class Block
 		else if ( Input::get( 'REPORT_TYPE' ) == 'CLASS_BLOCK_AFD_ESTATE' ) {
 			$date = date( 'Ymd', strtotime( Input::get( 'DATE_MONTH' ) ) );
@@ -120,7 +121,6 @@ class ReportController extends Controller {
 			self::download_excel_class_block( $setup );
 		}
 	}
-
 
 	
 	public function generate_proses( Request $req ) {
