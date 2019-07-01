@@ -642,15 +642,16 @@ class ReportController extends Controller {
 		foreach( $inspection_class_block as $k => $v ) {
 			#$hasil = Data::web_report_inspection_kriteria_findone( $inspection_class_block[$k]['NILAI_INSPEKSI'] );
 			# Update 2019-06-18 14:51
-			$hasil = self::get_kriteria( $kriteria_find, floatval( $inspection_class_block[$k]['NILAI_INSPEKSI'] ) );
+			$hasil = self::get_kriteria( $kriteria_find, $inspection_class_block[$k]['NILAI_INSPEKSI'] );
 			$inspection_class_block[$k]['HASIL_INSPEKSI'] = $hasil['raw'];
 		}
 
 		sort( $inspection_class_block );
-
-		// print '<pre>';
-		// print_r( $inspection_class_block );
-		// print '</pre>';dd();
+		#$kriteria_01 = self::get_kriteria( $kriteria_find, $rd_afd_temp_angka_01 );
+		#dd();
+		print '<pre>';
+		print_r( $inspection_class_block );
+		print '</pre>';dd();
 
 		$client = new \GuzzleHttp\Client();
 		foreach ( $inspection_class_block as $__block ) {
@@ -764,7 +765,7 @@ class ReportController extends Controller {
 			$data_class_block_min_6 = Data::web_report_class_block_find( '/'.$data['BA_CODE'].'/'.$periode_min_6 )['items'];
 
 			// print '<pre>';
-			// print_r( $data_class_block_min_5 );
+			// print_r( $data_class_block );
 			// print '</pre>';
 			// dd();
 
@@ -908,6 +909,15 @@ class ReportController extends Controller {
 
 				$report_data_block[$ablock['WERKS_AFD_BLOCK_CODE']]['NILAI_07'] = $class_07;
 				$report_data_block[$ablock['WERKS_AFD_BLOCK_CODE']]['ANGKA_07'] = $kriteria_angka_07;
+
+
+				if ( $ablock['BLOCK_CODE'] == '240' ) {
+					if ( isset( $class_block_01[$ablock['WERKS_AFD_BLOCK_CODE']] ) ) {
+						print '<pre>';
+						print_r( $class_block_01[$ablock['WERKS_AFD_BLOCK_CODE']] );
+						print '</pre>';
+					}
+				}
 			}
 
 			// print '<pre>';
@@ -1755,7 +1765,12 @@ class ReportController extends Controller {
 			$inspection_header = array();
 			$inspection_detail = Data::web_report_inspection_find( $query_inspeksi, 'manual' )['items'];
 			$count_inspection = array();
-			
+				
+			print '<pre>';
+			print_r( $inspection_detail );
+			print '</pre>';
+			dd();
+
 			$_bobot_all = 0;
 			$_bobot_tbm0 = 0;
 			$_bobot_tbm1 = 0;
@@ -1844,48 +1859,10 @@ class ReportController extends Controller {
 						}
 					}
 
-					// print '<pre>';
-					// print_r( 
-					// 	array(
-					// 		"BLOCK_INSPECTION_CODE" => $ins_detail['BLOCK_INSPECTION_CODE'],
-					// 		"PERIODE" => date( 'Ym', strtotime( $data['START_DATE'] ) ),
-					// 		"WERKS_AFD_CODE" => $ins_detail['WERKS'].$ins_detail['AFD_CODE'],
-					// 		"WERKS_AFD_BLOCK_CODE" => $ins_detail['WERKS'].$ins_detail['AFD_CODE'].$ins_detail['BLOCK_CODE'],
-					// 		"WERKS" => $ins_detail['WERKS'],
-					// 		"EST_NAME" => $hectarestatement['EST_NAME'],
-					// 		"AFD_CODE" => $ins_detail['AFD_CODE'],
-					// 		"AFD_NAME" => $hectarestatement['AFD_NAME'],
-					// 		"BLOCK_CODE" => $ins_detail['BLOCK_CODE'],
-					// 		"BLOCK_NAME" => $hectarestatement['BLOCK_NAME'],
-					// 		"LAT_START_INSPECTION" => $ins_detail['LAT_START_INSPECTION'],
-					// 		"LONG_START_INSPECTION" => $ins_detail['LAT_START_INSPECTION'],
-					// 		"INSPECTION_DATE" => $date_inspeksi,
-					// 		"INSPECTION_TIME" => $time_inspeksi,
-					// 		"AREAL" => $ins_detail['AREAL'],
-					// 		"LAMA_INSPEKSI" => ( $baris_diff->i * 60 ) + $baris_diff->s,
-					// 		"SPMON" => $hectarestatement['SPMON'],
-					// 		"MATURITY_STATUS" =>  str_replace( ' ', '', $hectarestatement['MATURITY_STATUS'] ),
-					// 		"REPORTER_FULLNAME" => $inspektor_data['FULLNAME'],
-					// 		"REPORTER_JOB" => $inspektor_data['JOB'],
-					// 		"REPORTER_REF_ROLE" => $inspektor_data['REF_ROLE'],
-					// 		"REPORTER_USER_ROLE" => $inspektor_data['USER_ROLE'],
-					// 		"REPORTER_USER_AUTH_CODE" => $inspektor_data['USER_AUTH_CODE'],
-					// 		"REPORTER_NIK" => $inspektor_data['EMPLOYEE_NIK'],
-					// 		"CONTENT" => $data['inspection_data'][$i]['CONTENT'],
-					// 		"CONTENT_PANEN" => $data['inspection_data'][$i]['CONTENT_PANEN'],
-					// 		"CONTENT_PERAWATAN" => $data['inspection_data'][$i]['CONTENT_PERAWATAN'],
-					// 		"CONTENT_PEMUPUKAN" => $data['inspection_data'][$i]['CONTENT_PEMUPUKAN'],
-					// 	) 
-					// );
-					// print '</pre><hr />';
-
-					$client = new \GuzzleHttp\Client();
-					$res = $client->request( 'POST', $this->url_api_ins_msa_report.'/api/report/inspection-baris', [
-						"headers" => [
-							"Authorization" => 'Bearer '.$this->access_token,
-							"Content-Type" => 'application/json'
-						],
-						'json' => [
+					if ( $ins_detail['BLOCK_CODE'] == "240" ):
+					print '<pre>';
+					print_r( 
+						array(
 							"BLOCK_INSPECTION_CODE" => $ins_detail['BLOCK_INSPECTION_CODE'],
 							"PERIODE" => date( 'Ym', strtotime( $data['START_DATE'] ) ),
 							"WERKS_AFD_CODE" => $ins_detail['WERKS'].$ins_detail['AFD_CODE'],
@@ -1914,24 +1891,64 @@ class ReportController extends Controller {
 							"CONTENT_PANEN" => $data['inspection_data'][$i]['CONTENT_PANEN'],
 							"CONTENT_PERAWATAN" => $data['inspection_data'][$i]['CONTENT_PERAWATAN'],
 							"CONTENT_PEMUPUKAN" => $data['inspection_data'][$i]['CONTENT_PEMUPUKAN'],
-						],
-					] );
+						) 
+					);
+					print '</pre><hr />';
+					endif;
 
-					array_push( $response['results']['data'], $ins_detail['BLOCK_INSPECTION_CODE'] );
+					// $client = new \GuzzleHttp\Client();
+					// $res = $client->request( 'POST', $this->url_api_ins_msa_report.'/api/report/inspection-baris', [
+					// 	"headers" => [
+					// 		"Authorization" => 'Bearer '.$this->access_token,
+					// 		"Content-Type" => 'application/json'
+					// 	],
+					// 	'json' => [
+					// 		"BLOCK_INSPECTION_CODE" => $ins_detail['BLOCK_INSPECTION_CODE'],
+					// 		"PERIODE" => date( 'Ym', strtotime( $data['START_DATE'] ) ),
+					// 		"WERKS_AFD_CODE" => $ins_detail['WERKS'].$ins_detail['AFD_CODE'],
+					// 		"WERKS_AFD_BLOCK_CODE" => $ins_detail['WERKS'].$ins_detail['AFD_CODE'].$ins_detail['BLOCK_CODE'],
+					// 		"WERKS" => $ins_detail['WERKS'],
+					// 		"EST_NAME" => $hectarestatement['EST_NAME'],
+					// 		"AFD_CODE" => $ins_detail['AFD_CODE'],
+					// 		"AFD_NAME" => $hectarestatement['AFD_NAME'],
+					// 		"BLOCK_CODE" => $ins_detail['BLOCK_CODE'],
+					// 		"BLOCK_NAME" => $hectarestatement['BLOCK_NAME'],
+					// 		"LAT_START_INSPECTION" => $ins_detail['LAT_START_INSPECTION'],
+					// 		"LONG_START_INSPECTION" => $ins_detail['LAT_START_INSPECTION'],
+					// 		"INSPECTION_DATE" => $date_inspeksi,
+					// 		"INSPECTION_TIME" => $time_inspeksi,
+					// 		"AREAL" => $ins_detail['AREAL'],
+					// 		"LAMA_INSPEKSI" => ( $baris_diff->i * 60 ) + $baris_diff->s,
+					// 		"SPMON" => $hectarestatement['SPMON'],
+					// 		"MATURITY_STATUS" =>  str_replace( ' ', '', $hectarestatement['MATURITY_STATUS'] ),
+					// 		"REPORTER_FULLNAME" => $inspektor_data['FULLNAME'],
+					// 		"REPORTER_JOB" => $inspektor_data['JOB'],
+					// 		"REPORTER_REF_ROLE" => $inspektor_data['REF_ROLE'],
+					// 		"REPORTER_USER_ROLE" => $inspektor_data['USER_ROLE'],
+					// 		"REPORTER_USER_AUTH_CODE" => $inspektor_data['USER_AUTH_CODE'],
+					// 		"REPORTER_NIK" => $inspektor_data['EMPLOYEE_NIK'],
+					// 		"CONTENT" => $data['inspection_data'][$i]['CONTENT'],
+					// 		"CONTENT_PANEN" => $data['inspection_data'][$i]['CONTENT_PANEN'],
+					// 		"CONTENT_PERAWATAN" => $data['inspection_data'][$i]['CONTENT_PERAWATAN'],
+					// 		"CONTENT_PEMUPUKAN" => $data['inspection_data'][$i]['CONTENT_PEMUPUKAN'],
+					// 	],
+					// ] );
+
+					// array_push( $response['results']['data'], $ins_detail['BLOCK_INSPECTION_CODE'] );
 					
-					if ( json_decode( $res->getBody(), true )['status'] == false ) {
-						$response['results']['failed']++;
-					}
-					else {
-						$response['results']['success']++;
-					}
+					// if ( json_decode( $res->getBody(), true )['status'] == false ) {
+					// 	$response['results']['failed']++;
+					// }
+					// else {
+					// 	$response['results']['success']++;
+					// }
 				}
 				$i++;
 			}
 
-			$response['end_time'] = date( 'Y-m-d H:i:s' );
+			// $response['end_time'] = date( 'Y-m-d H:i:s' );
 
-			return $response;
+			// return $response;
 		}
 
 	/*
