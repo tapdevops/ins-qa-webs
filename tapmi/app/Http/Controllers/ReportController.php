@@ -342,8 +342,8 @@ class ReportController extends Controller {
 			$i++;
 		}
 
-		Excel::create( 'Report-EBCC-Validation', function( $excel ) use ( $results ) {
-			$excel->sheet( 'Per Baris', function( $sheet ) use ( $results ) {
+		Excel::create( 'Report-Sampling-EBCC', function( $excel ) use ( $results ) {
+			$excel->sheet( 'Sampling EBCC', function( $sheet ) use ( $results ) {
 				$sheet->loadView( 'report.excel-ebcc-validation', $results );
 			} );
 		} )->export( 'xls' );
@@ -649,9 +649,9 @@ class ReportController extends Controller {
 		sort( $inspection_class_block );
 		#$kriteria_01 = self::get_kriteria( $kriteria_find, $rd_afd_temp_angka_01 );
 		#dd();
-		print '<pre>';
-		print_r( $inspection_class_block );
-		print '</pre>';dd();
+		// print '<pre>';
+		// print_r( $inspection_class_block );
+		// print '</pre>';dd();
 
 		$client = new \GuzzleHttp\Client();
 		foreach ( $inspection_class_block as $__block ) {
@@ -911,13 +911,13 @@ class ReportController extends Controller {
 				$report_data_block[$ablock['WERKS_AFD_BLOCK_CODE']]['ANGKA_07'] = $kriteria_angka_07;
 
 
-				if ( $ablock['BLOCK_CODE'] == '240' ) {
-					if ( isset( $class_block_01[$ablock['WERKS_AFD_BLOCK_CODE']] ) ) {
-						print '<pre>';
-						print_r( $class_block_01[$ablock['WERKS_AFD_BLOCK_CODE']] );
-						print '</pre>';
-					}
-				}
+				// if ( $ablock['BLOCK_CODE'] == '240' ) {
+				// 	if ( isset( $class_block_01[$ablock['WERKS_AFD_BLOCK_CODE']] ) ) {
+				// 		print '<pre>';
+				// 		print_r( $class_block_01[$ablock['WERKS_AFD_BLOCK_CODE']] );
+				// 		print '</pre>';
+				// 	}
+				// }
 			}
 
 			// print '<pre>';
@@ -1233,16 +1233,21 @@ class ReportController extends Controller {
 			$results['report_data'] = $report_data_est_temp;
 			$results['periode'] = date( 'Ym', strtotime( $periode.'01' ) );
 
-			#print '<pre>';
-			#print_r( $report_data_est_temp );
-			#print '</pre>';
-			#dd();
+			// print '<pre>';
+			// print_r( $report_data_est_temp );
+			// print '</pre>';
+			// dd();
 
 			Excel::create( 'Report-Class-Block', function( $excel ) use ( $results ) {
-				$excel->sheet( 'Per Block', function( $sheet ) use ( $results ) {
+				$excel->sheet( 'Class Block', function( $sheet ) use ( $results ) {
 					$sheet->loadView( 'report.excel-class-block-2', $results );
 				} );
 			} )->export( 'xls' );
+			// Excel::create( 'Report-Finding', function( $excel ) use ( $data ) {
+			// 	$excel->sheet( 'Temuan', function( $sheet ) use ( $data ) {
+			// 		$sheet->loadView( 'report.excel-finding', $data );
+			// 	} );
+			// } )->export( 'xls' );
 		}
 	}
 
@@ -1627,6 +1632,10 @@ class ReportController extends Controller {
 				}
 			}
 
+			// print '<pre>';
+			// print_r( $inspection_header );
+			// print '</pre>';
+			// dd();
 
 			if ( isset( $inspection_header ) ):
 				# Rata-rata pemupukan
@@ -1748,6 +1757,7 @@ class ReportController extends Controller {
 			$query_inspeksi['START_DATE'] = $data['START_DATE'].'000000';
 			$query_inspeksi['END_DATE'] = $data['END_DATE'].'235959';
 
+			
 			$response = array();
 			$response['message'] = 'Generate Report Inspeksi';
 			$response['start_time'] = date( 'Y-m-d H:i:s' );
@@ -1765,11 +1775,11 @@ class ReportController extends Controller {
 			$inspection_header = array();
 			$inspection_detail = Data::web_report_inspection_find( $query_inspeksi, 'manual' )['items'];
 			$count_inspection = array();
-				
-			print '<pre>';
-			print_r( $inspection_detail );
-			print '</pre>';
-			dd();
+			
+			// print '<pre>';
+			// print_r( $inspection_detail );
+			// print '</pre>';
+			// dd();
 
 			$_bobot_all = 0;
 			$_bobot_tbm0 = 0;
@@ -1859,50 +1869,10 @@ class ReportController extends Controller {
 						}
 					}
 
-					if ( $ins_detail['BLOCK_CODE'] == "240" ):
-					print '<pre>';
-					print_r( 
-						array(
-							"BLOCK_INSPECTION_CODE" => $ins_detail['BLOCK_INSPECTION_CODE'],
-							"PERIODE" => date( 'Ym', strtotime( $data['START_DATE'] ) ),
-							"WERKS_AFD_CODE" => $ins_detail['WERKS'].$ins_detail['AFD_CODE'],
-							"WERKS_AFD_BLOCK_CODE" => $ins_detail['WERKS'].$ins_detail['AFD_CODE'].$ins_detail['BLOCK_CODE'],
-							"WERKS" => $ins_detail['WERKS'],
-							"EST_NAME" => $hectarestatement['EST_NAME'],
-							"AFD_CODE" => $ins_detail['AFD_CODE'],
-							"AFD_NAME" => $hectarestatement['AFD_NAME'],
-							"BLOCK_CODE" => $ins_detail['BLOCK_CODE'],
-							"BLOCK_NAME" => $hectarestatement['BLOCK_NAME'],
-							"LAT_START_INSPECTION" => $ins_detail['LAT_START_INSPECTION'],
-							"LONG_START_INSPECTION" => $ins_detail['LAT_START_INSPECTION'],
-							"INSPECTION_DATE" => $date_inspeksi,
-							"INSPECTION_TIME" => $time_inspeksi,
-							"AREAL" => $ins_detail['AREAL'],
-							"LAMA_INSPEKSI" => ( $baris_diff->i * 60 ) + $baris_diff->s,
-							"SPMON" => $hectarestatement['SPMON'],
-							"MATURITY_STATUS" =>  str_replace( ' ', '', $hectarestatement['MATURITY_STATUS'] ),
-							"REPORTER_FULLNAME" => $inspektor_data['FULLNAME'],
-							"REPORTER_JOB" => $inspektor_data['JOB'],
-							"REPORTER_REF_ROLE" => $inspektor_data['REF_ROLE'],
-							"REPORTER_USER_ROLE" => $inspektor_data['USER_ROLE'],
-							"REPORTER_USER_AUTH_CODE" => $inspektor_data['USER_AUTH_CODE'],
-							"REPORTER_NIK" => $inspektor_data['EMPLOYEE_NIK'],
-							"CONTENT" => $data['inspection_data'][$i]['CONTENT'],
-							"CONTENT_PANEN" => $data['inspection_data'][$i]['CONTENT_PANEN'],
-							"CONTENT_PERAWATAN" => $data['inspection_data'][$i]['CONTENT_PERAWATAN'],
-							"CONTENT_PEMUPUKAN" => $data['inspection_data'][$i]['CONTENT_PEMUPUKAN'],
-						) 
-					);
-					print '</pre><hr />';
-					endif;
-
-					// $client = new \GuzzleHttp\Client();
-					// $res = $client->request( 'POST', $this->url_api_ins_msa_report.'/api/report/inspection-baris', [
-					// 	"headers" => [
-					// 		"Authorization" => 'Bearer '.$this->access_token,
-					// 		"Content-Type" => 'application/json'
-					// 	],
-					// 	'json' => [
+					// #if ( $ins_detail['BLOCK_CODE'] == "240" ):
+					// print '<pre>';
+					// print_r( 
+					// 	array(
 					// 		"BLOCK_INSPECTION_CODE" => $ins_detail['BLOCK_INSPECTION_CODE'],
 					// 		"PERIODE" => date( 'Ym', strtotime( $data['START_DATE'] ) ),
 					// 		"WERKS_AFD_CODE" => $ins_detail['WERKS'].$ins_detail['AFD_CODE'],
@@ -1931,24 +1901,64 @@ class ReportController extends Controller {
 					// 		"CONTENT_PANEN" => $data['inspection_data'][$i]['CONTENT_PANEN'],
 					// 		"CONTENT_PERAWATAN" => $data['inspection_data'][$i]['CONTENT_PERAWATAN'],
 					// 		"CONTENT_PEMUPUKAN" => $data['inspection_data'][$i]['CONTENT_PEMUPUKAN'],
-					// 	],
-					// ] );
+					// 	) 
+					// );
+					// print '</pre><hr />';
+					// #endif;
 
-					// array_push( $response['results']['data'], $ins_detail['BLOCK_INSPECTION_CODE'] );
+					$client = new \GuzzleHttp\Client();
+					$res = $client->request( 'POST', $this->url_api_ins_msa_report.'/api/report/inspection-baris', [
+						"headers" => [
+							"Authorization" => 'Bearer '.$this->access_token,
+							"Content-Type" => 'application/json'
+						],
+						'json' => [
+							"BLOCK_INSPECTION_CODE" => $ins_detail['BLOCK_INSPECTION_CODE'],
+							"PERIODE" => date( 'Ym', strtotime( $data['START_DATE'] ) ),
+							"WERKS_AFD_CODE" => $ins_detail['WERKS'].$ins_detail['AFD_CODE'],
+							"WERKS_AFD_BLOCK_CODE" => $ins_detail['WERKS'].$ins_detail['AFD_CODE'].$ins_detail['BLOCK_CODE'],
+							"WERKS" => $ins_detail['WERKS'],
+							"EST_NAME" => $hectarestatement['EST_NAME'],
+							"AFD_CODE" => $ins_detail['AFD_CODE'],
+							"AFD_NAME" => $hectarestatement['AFD_NAME'],
+							"BLOCK_CODE" => $ins_detail['BLOCK_CODE'],
+							"BLOCK_NAME" => $hectarestatement['BLOCK_NAME'],
+							"LAT_START_INSPECTION" => $ins_detail['LAT_START_INSPECTION'],
+							"LONG_START_INSPECTION" => $ins_detail['LAT_START_INSPECTION'],
+							"INSPECTION_DATE" => $date_inspeksi,
+							"INSPECTION_TIME" => $time_inspeksi,
+							"AREAL" => $ins_detail['AREAL'],
+							"LAMA_INSPEKSI" => ( $baris_diff->i * 60 ) + $baris_diff->s,
+							"SPMON" => $hectarestatement['SPMON'],
+							"MATURITY_STATUS" =>  str_replace( ' ', '', $hectarestatement['MATURITY_STATUS'] ),
+							"REPORTER_FULLNAME" => $inspektor_data['FULLNAME'],
+							"REPORTER_JOB" => $inspektor_data['JOB'],
+							"REPORTER_REF_ROLE" => $inspektor_data['REF_ROLE'],
+							"REPORTER_USER_ROLE" => $inspektor_data['USER_ROLE'],
+							"REPORTER_USER_AUTH_CODE" => $inspektor_data['USER_AUTH_CODE'],
+							"REPORTER_NIK" => $inspektor_data['EMPLOYEE_NIK'],
+							"CONTENT" => $data['inspection_data'][$i]['CONTENT'],
+							"CONTENT_PANEN" => $data['inspection_data'][$i]['CONTENT_PANEN'],
+							"CONTENT_PERAWATAN" => $data['inspection_data'][$i]['CONTENT_PERAWATAN'],
+							"CONTENT_PEMUPUKAN" => $data['inspection_data'][$i]['CONTENT_PEMUPUKAN'],
+						],
+					] );
+
+					array_push( $response['results']['data'], $ins_detail['BLOCK_INSPECTION_CODE'] );
 					
-					// if ( json_decode( $res->getBody(), true )['status'] == false ) {
-					// 	$response['results']['failed']++;
-					// }
-					// else {
-					// 	$response['results']['success']++;
-					// }
+					if ( json_decode( $res->getBody(), true )['status'] == false ) {
+						$response['results']['failed']++;
+					}
+					else {
+						$response['results']['success']++;
+					}
 				}
 				$i++;
 			}
 
-			// $response['end_time'] = date( 'Y-m-d H:i:s' );
+			$response['end_time'] = date( 'Y-m-d H:i:s' );
 
-			// return $response;
+			return $response;
 		}
 
 	/*

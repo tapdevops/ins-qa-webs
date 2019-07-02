@@ -277,24 +277,27 @@ class ModulesController extends Controller
 
 		if ($req->id == '') {
 			$data_parameter = Data::parameter_find('?PARAMETER_GROUP=USER_ROLE');
+			print '<pre>';
+			print_r( $data_parameter );
+			print '</pre>';
+			dd();
 			$response['status'] = true;
 			$response['message'] = '';
 			foreach ($data_parameter as $parameter) {
-
-				if (self::generate_menu((string)$parameter['PARAMETER_NAME']) == true) {
-					$response['message'][(string)$parameter['PARAMETER_NAME']] = 'Success! Menu berhasil digenerate.';
-				} else {
-					$response['message'][(string)$parameter['PARAMETER_NAME']] = 'Error! Menu gagal digenerate.';
-				}
+				// if ( self::generate_menu((string)$parameter['PARAMETER_NAME']) == true ) {
+				// 	$response['message'][(string)$parameter['PARAMETER_NAME']] = 'Success! Menu berhasil digenerate.';
+				// } else {
+				// 	$response['message'][(string)$parameter['PARAMETER_NAME']] = 'Error! Menu gagal digenerate.';
+				// }
 			}
 		} else {
-			if (self::generate_menu($req->id) == true) {
-				$response['status'] = true;
-				$response['message'] = 'Success! Menu berhasil digenerate.';
-			} else {
-				$response['status'] = false;
-				$response['message'] = 'Error! Menu gagal digenerate.';
-			}
+			// if ( self::generate_menu( $req->id ) == true ) {
+			// 	$response['status'] = true;
+			// 	$response['message'] = 'Success! Menu berhasil digenerate.';
+			// } else {
+			// 	$response['status'] = false;
+			// 	$response['message'] = 'Error! Menu gagal digenerate.';
+			// }
 		}
 
 		return response()->json($response);

@@ -325,7 +325,7 @@ class APIData extends Model {
 
 		$data['items'] = array();
 		$url = self::url( 'url_api_ins_msa_report' ).'/api/report/inspection-baris'.$parameter;
-		
+		#print $url;dd();
 		$client = APISetup::ins_rest_client( 'GET', $url );
 		
 		if ( isset( $client['status'] ) && $client['status'] == true ) {

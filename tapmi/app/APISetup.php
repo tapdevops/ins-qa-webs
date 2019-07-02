@@ -28,10 +28,12 @@ class APISetup extends Model {
 				"msa" => array(
 					"ins" => array(
 						"auth" => "http://app.tap-agri.com/mobileinspectiondev/ins-msa-dev-auth",
-						#"hectarestatement" => "http://app.tap-agri.com/mobileinspectiondev/ins-msa-dev-hectarestatement",
-						"hectarestatement" => "http://app.tap-agri.com/mobileinspection/ins-msa-hectarestatement",
+						"hectarestatement" => "http://localhost:4009",
+						// "hectarestatement" => "http://app.tap-agri.com/mobileinspectiondev/ins-msa-dev-hectarestatement",
+						// "hectarestatement" => "http://app.tap-agri.com/mobileinspection/ins-msa-hectarestatement",
 						"finding" => "http://app.tap-agri.com/mobileinspectiondev/ins-msa-dev-finding",
-						"inspection" => "http://app.tap-agri.com/mobileinspectiondev/ins-msa-dev-inspection",
+						#"inspection" => "http://app.tap-agri.com/mobileinspectiondev/ins-msa-dev-inspection",
+						"inspection" => "http://localhost:4010",
 						"report" => "http://app.tap-agri.com/mobileinspectiondev/ins-msa-dev-reports",
 						"ebccvalidation" => "http://app.tap-agri.com/mobileinspectiondev/ins-msa-dev-ebccval"
 					)

@@ -45,7 +45,7 @@
 				<td style="text-align: left;">{{ $dt['BLOCK_NAME'] }}</td>
 				<td style="text-align: center;">{{ $dt['NO_TPH'] }}</td>
 				<td style="text-align: left;">{{ $dt['STATUS_TPH_SCAN'] }}</td>
-				<td style="text-align: left;">{{ $dt['ALASAN_MANUAL'] }}</td>
+				<td style="text-align: left;">{{ ( $dt['ALASAN_MANUAL'] == null ? '' : ( $dt['ALASAN_MANUAL'] == '1' ? 'QR Code TPH Rusak' : 'QR Code TPH Hilang' ) ) }}</td>
 				<td style="text-align: center;">{{ $dt['TANGGAL_VALIDASI'] }}</td>
 				<td style="text-align: left;">{{ $dt['NIK_VALIDATOR'] }}</td>
 				<td style="text-align: left;">{{ $dt['NAMA_VALIDATOR'] }}</td>
