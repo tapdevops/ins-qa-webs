@@ -5,11 +5,11 @@
 	<tr>
 		<td style="text-align:center;color: #FFF; background-color: #043077;"><b>Estate</b></td>
 		<td style="text-align:center;color: #FFF; background-color: #043077;"><b>Afd</b></td>
-		<td style="text-align:center;color: #FFF; background-color: #043077;"><b>Block Code</b></td>
-		<td style="text-align:center;color: #FFF; background-color: #043077;"><b>Block Name</b></td>
-		<td style="text-align:center;color: #FFF; background-color: #043077;"><b>Kelas Block Bulan ini</b></td>
+		<td style="text-align:center;color: #FFF; background-color: #043077;"><b>Kode Blok</b></td>
+		<td style="text-align:center;color: #FFF; background-color: #043077;"><b>Nama Blok</b></td>
+		<td style="text-align:center;color: #FFF; background-color: #043077;"><b>Kelas Blok Bulan ini</b></td>
 		<td style="text-align:center;color: #FFF; background-color: #043077;"><b>Total Nilai / Jumlah</b></td>
-		<td colspan="6" style="text-align:center;color: #FFF; background-color: #043077;"><b>Kelas Block 6 Bulan Sebelumnya</b></td>
+		<td colspan="6" style="text-align:center;color: #FFF; background-color: #043077;"><b>Kelas Blok 6 Bulan Sebelumnya</b></td>
 
 	</tr>
 	<tr>
