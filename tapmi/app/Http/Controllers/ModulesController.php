@@ -63,9 +63,7 @@ class ModulesController extends Controller
 
 	#   		 									  	        ▁ ▂ ▄ ▅ ▆ ▇ █ Generate Menu
 	# -------------------------------------------------------------------------------------
-	public function generate_menu($id = '')
-	{
-
+	public function generate_menu( $id = '' ) {
 
 		if ($id != '') {
 			/*═════════════════════════════════════════════════════════════════╗
@@ -85,9 +83,10 @@ class ModulesController extends Controller
 			#$urls = 'http://149.129.250.199/ins-webs/tapmi/public/';
 			#$urls = 'http://inspection.tap-agri.com:3014/';
 			#$urls = 'http://inspectiondev.tap-agri.com/';
-			$urls = 'http://inspectionqa.tap-agri.com/';
+			$urls = 'http://inspection.tap-agri.com/';
 			#$urls = '';
 
+			
 			if ($urls == '') {
 				$urls = url('') . '/';
 			}
@@ -253,7 +252,6 @@ class ModulesController extends Controller
 						$_02++;
 					}
 				}
-
 				$html_menu_02 .= '</ul>';
 
 				/*═════════════════════════════════════════════════════════════════╗
@@ -277,27 +275,30 @@ class ModulesController extends Controller
 
 		if ($req->id == '') {
 			$data_parameter = Data::parameter_find('?PARAMETER_GROUP=USER_ROLE');
-			print '<pre>';
-			print_r( $data_parameter );
-			print '</pre>';
-			dd();
+			
 			$response['status'] = true;
 			$response['message'] = '';
 			foreach ($data_parameter as $parameter) {
-				// if ( self::generate_menu((string)$parameter['PARAMETER_NAME']) == true ) {
-				// 	$response['message'][(string)$parameter['PARAMETER_NAME']] = 'Success! Menu berhasil digenerate.';
-				// } else {
-				// 	$response['message'][(string)$parameter['PARAMETER_NAME']] = 'Error! Menu gagal digenerate.';
-				// }
+				// print '<pre>';
+				// print_r( $parameter );
+				// print '</pre>';
+				$parameter_name = (string) $parameter['PARAMETER_NAME'];
+				
+				#if
+				if ( self::generate_menu( $parameter_name ) == true ) {
+					$response['message'][ (String) $parameter['PARAMETER_NAME'] ] = 'Success! Menu berhasil digenerate.';
+				} else {
+					$response['message'][ (String) $parameter['PARAMETER_NAME'] ] = 'Error! Menu gagal digenerate.';
+				}
 			}
 		} else {
-			// if ( self::generate_menu( $req->id ) == true ) {
-			// 	$response['status'] = true;
-			// 	$response['message'] = 'Success! Menu berhasil digenerate.';
-			// } else {
-			// 	$response['status'] = false;
-			// 	$response['message'] = 'Error! Menu gagal digenerate.';
-			// }
+			if ( self::generate_menu( $req->id ) == true ) {
+				$response['status'] = true;
+				$response['message'] = 'Success! Menu berhasil digenerate.';
+			} else {
+				$response['status'] = false;
+				$response['message'] = 'Error! Menu gagal digenerate.';
+			}
 		}
 
 		return response()->json($response);

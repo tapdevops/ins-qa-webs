@@ -79,8 +79,8 @@ class ReportController extends Controller {
 
 			$data['status'] = false;
 			$data['message'] = 'Terjadi kesalahan dalam download report.';
-
 			$setup = array();
+
 			if ( Input::get( 'REGION_CODE' ) != '' && Input::get( 'COMP_CODE' ) == '' ) {
 				$setup['REGION_CODE'] = Input::get( 'REGION_CODE' );
 				$setup['START_DATE'] = date( 'Ymd', strtotime( Input::get( 'START_DATE' ) ) );
@@ -1238,8 +1238,8 @@ class ReportController extends Controller {
 			// print '</pre>';
 			// dd();
 
-			Excel::create( 'Report-Class-Block', function( $excel ) use ( $results ) {
-				$excel->sheet( 'Class Block', function( $sheet ) use ( $results ) {
+			Excel::create( 'Report-Kelas-Blok', function( $excel ) use ( $results ) {
+				$excel->sheet( 'Kelas Blok', function( $sheet ) use ( $results ) {
 					$sheet->loadView( 'report.excel-class-block-2', $results );
 				} );
 			} )->export( 'xls' );
@@ -1958,7 +1958,7 @@ class ReportController extends Controller {
 
 			$response['end_time'] = date( 'Y-m-d H:i:s' );
 
-			return $response;
+			#return $response;
 		}
 
 	/*
