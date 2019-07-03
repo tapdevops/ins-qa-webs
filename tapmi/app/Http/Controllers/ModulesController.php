@@ -63,7 +63,7 @@ class ModulesController extends Controller
 
 	#   		 									  	        ▁ ▂ ▄ ▅ ▆ ▇ █ Generate Menu
 	# -------------------------------------------------------------------------------------
-	public function generate_menu( $id = '' ) {
+	public function generate_menu( $id = '', $url = 'http://inspectionqa.tap-agri.com/' ) {
 
 		if ($id != '') {
 			/*═════════════════════════════════════════════════════════════════╗
@@ -83,8 +83,8 @@ class ModulesController extends Controller
 			#$urls = 'http://149.129.250.199/ins-webs/tapmi/public/';
 			#$urls = 'http://inspection.tap-agri.com:3014/';
 			#$urls = 'http://inspectiondev.tap-agri.com/';
-			$urls = 'http://inspection.tap-agri.com/';
-			#$urls = '';
+			#$urls = 'http://inspectionqa.tap-agri.com/';
+			$urls = '';
 
 			
 			if ($urls == '') {
@@ -254,10 +254,11 @@ class ModulesController extends Controller
 				}
 				$html_menu_02 .= '</ul>';
 
+				#$id = (String)
 				/*═════════════════════════════════════════════════════════════════╗
 				║ Save to disk            										   ║
 				╚═════════════════════════════════════════════════════════════════*/
-				Storage::disk('resources')->put('layouts/default/header-menu-02-' . $id . '.blade.php', $html_menu_02);
+				Storage::disk('resources')->put('layouts/default/header-menu-02-'.$id.'.blade.php', $html_menu_02);
 
 				return true;
 			} else {
@@ -279,9 +280,6 @@ class ModulesController extends Controller
 			$response['status'] = true;
 			$response['message'] = '';
 			foreach ($data_parameter as $parameter) {
-				// print '<pre>';
-				// print_r( $parameter );
-				// print '</pre>';
 				$parameter_name = (string) $parameter['PARAMETER_NAME'];
 				
 				#if
