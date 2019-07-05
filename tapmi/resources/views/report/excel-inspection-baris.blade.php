@@ -42,7 +42,7 @@
 	</tr>
 	@if ( count( $inspection_baris ) > 0 )
 		@foreach ( $inspection_baris as $inspection )
-			@if ( isset( $inspection['BLOCK_INSPECTION_CODE'] ) )
+			@if ( isset( $inspection['BLOCK_INSPECTION_CODE'] ) && $inspection['REPORTER_NIK'] != '' )
 				<tr>
 					<td style="text-align: center;">{{ $inspection['BLOCK_INSPECTION_CODE'] }}</td>
 					<td style="text-align: center;">{{ $inspection['WERKS'] }}</td>

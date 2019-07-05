@@ -1719,7 +1719,7 @@ class ReportController extends Controller {
 				$data['content_panen'] = $content_panen;
 
 				// print '<pre>';
-				// print_r( $data );
+				// print_r( $data['inspection_baris'] );
 				// print '</pre>';
 				// dd();
 

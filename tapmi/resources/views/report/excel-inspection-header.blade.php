@@ -47,6 +47,7 @@
 	</tr>
 	@if ( count( $inspection_header ) > 0 )
 		@foreach ( $inspection_header as $inspection )
+			@if( $inspection['NIK_REPORTER'] != '' )
 			<tr>
 				<td style="text-align: center;">{{ $inspection['NIK_REPORTER'] }}</td>
 				<td style="text-align: left;">{{ $inspection['NAMA_REPORTER'] }}</td>
@@ -114,6 +115,7 @@
 				<td style="text-align: center;">{{ ( isset( $inspection['HASIL_INSPEKSI']['GRADE'] ) ) ? $inspection['HASIL_INSPEKSI']['GRADE'] : "" }}</td>
 
 			</tr>
+			@endif
 		@endforeach
 	@endif
 </table>
