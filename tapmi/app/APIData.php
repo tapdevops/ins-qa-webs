@@ -325,7 +325,7 @@ class APIData extends Model {
 
 		$data['items'] = array();
 		$url = self::url( 'url_api_ins_msa_report' ).'/api/report/inspection-baris'.$parameter;
-		#print $url;dd();
+		// print $url;dd();
 		$client = APISetup::ins_rest_client( 'GET', $url );
 		
 		if ( isset( $client['status'] ) && $client['status'] == true ) {
@@ -382,8 +382,8 @@ class APIData extends Model {
 		$data['items'] = array();
 		// $url = self::url( 'url_api_ins_msa_inspection' ).'/api/v1.0/report?'.$url_query;
 		$url = self::url( 'url_api_ins_msa_inspection' ).'/api/v1.0/report?'.$url_query;
-		
 		$client = ( $token == 'session' ? APISetup::ins_rest_client( 'GET', $url ) : APISetup::ins_rest_client_manual( 'GET', $url ) );
+		// print $url;
 		if ( isset( $client['status'] ) && $client['status'] == true ) {
 			if ( count( $client['data'] ) > 0 ) {
 				$data['items'] = $client['data'];

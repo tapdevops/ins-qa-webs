@@ -717,7 +717,6 @@ class ReportController extends Controller {
 		print '<pre>';
 		print_r( $result );
 		print '</pre>';
-		print 'ABCDZ';
 	}
 
 	public function download_excel_class_block( $data, $output = 'excel' ) {
@@ -1292,8 +1291,10 @@ class ReportController extends Controller {
 			$url = $this->url_api_ins_msa_hectarestatement.'/region/all';
 			$region_data = APISetup::ins_rest_client_manual( 'GET', $url );
 			$parameter = array();
-			$parameter['START_DATE'] = date( 'Ym01' );
-			$parameter['END_DATE'] = date( 'Ymt' );
+			// $parameter['START_DATE'] = date( 'Ym01' );
+			// $parameter['END_DATE'] = date( 'Ymt' );
+			$parameter['START_DATE'] = '20190711';
+			$parameter['END_DATE'] = '20190711';
 			$response = array();
 			$response['message'] = 'Cron - Generate Report Inspeksi';
 			$response['from'] = date( 'Y-m-01' );
@@ -1424,7 +1425,11 @@ class ReportController extends Controller {
 	 | ...
 	 */
 		public function excel_inspeksi( $data, $output = 'excel' ) {
-			
+				
+			// print '<pre>';
+			// print_r($data);
+			// print '</pre>';
+			// dd();
 			$parameter = '';
 			if ( isset( $data['BLOCK_CODE'] ) ) {
 				$parameter = $data['BLOCK_CODE'];
@@ -1756,7 +1761,6 @@ class ReportController extends Controller {
 			$query_inspeksi['BLOCK_CODE'] = ( isset( $data['BLOCK_CODE'] ) ? $data['BLOCK_CODE'] : "" );
 			$query_inspeksi['START_DATE'] = $data['START_DATE'].'000000';
 			$query_inspeksi['END_DATE'] = $data['END_DATE'].'235959';
-
 			
 			$response = array();
 			$response['message'] = 'Generate Report Inspeksi';
@@ -1775,11 +1779,10 @@ class ReportController extends Controller {
 			$inspection_header = array();
 			$inspection_detail = Data::web_report_inspection_find( $query_inspeksi, 'manual' )['items'];
 			$count_inspection = array();
-			
+
 			// print '<pre>';
 			// print_r( $inspection_detail );
 			// print '</pre>';
-			// dd();
 
 			$_bobot_all = 0;
 			$_bobot_tbm0 = 0;
