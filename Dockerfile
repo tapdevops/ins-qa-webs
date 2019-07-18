@@ -26,3 +26,4 @@ RUN a2enmod rewrite
 
 CMD php artisan serve --host=0.0.0.0 --port=80
 EXPOSE 80
+#test clone dari branch qa
