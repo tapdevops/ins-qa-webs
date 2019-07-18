@@ -1288,17 +1288,26 @@ class ReportController extends Controller {
 	 | ...
 	 */
 		public function cron_generate_inspeksi() {
+			ini_set( 'memory_limit', '1G' );
 			$url = $this->url_api_ins_msa_hectarestatement.'/region/all';
 			$region_data = APISetup::ins_rest_client_manual( 'GET', $url );
 			$parameter = array();
+
+			# Per Bulan
 			// $parameter['START_DATE'] = date( 'Ym01' );
 			// $parameter['END_DATE'] = date( 'Ymt' );
-			$parameter['START_DATE'] = '20190711';
-			$parameter['END_DATE'] = '20190711';
+
+			# Per Hari
+			$parameter['START_DATE'] = date('Ymd', strtotime( date( 'Y-m-d' ). ' - 3 days'));
+			$parameter['END_DATE'] = date( 'Ymd' );
+
+			# Buat Test
+			// $parameter['START_DATE'] = '20190711';
+			// $parameter['END_DATE'] = '20190711';
+
 			$response = array();
 			$response['message'] = 'Cron - Generate Report Inspeksi';
-			$response['from'] = date( 'Y-m-01' );
-			$response['to'] = date( 'Y-m-t' );
+			$response['date'] = date( 'Y-m-d' );
 			$response['results'] = array();
 			
 			$i = 0;
@@ -1961,7 +1970,7 @@ class ReportController extends Controller {
 
 			$response['end_time'] = date( 'Y-m-d H:i:s' );
 
-			#return $response;
+			return $response;
 		}
 
 	/*
