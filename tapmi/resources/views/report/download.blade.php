@@ -121,7 +121,9 @@
 					<div class="col-lg-6">
 					</div>
 					<div class="col-lg-6 m--align-right">
+						@if ( session( 'USER_ROLE' ) == 'ADMIN' )
 						<a id="generate-report" href="javascript:;" class="btn btn-warning"><i class="fa fa-refresh"></i> Generate Report</a>
+						@endif
 						<a id="submit-report" href="javascript:;" class="btn btn-primary"><i class="fa fa-file-excel-o"></i> Download Excel</a>
 						<a href="{{ url( '/report/' ) }}" class="btn btn-secondary">Cancel</a>
 					</div>
