@@ -1298,7 +1298,7 @@ class ReportController extends Controller {
 			// $parameter['END_DATE'] = date( 'Ymt' );
 
 			# Per Hari
-			$parameter['START_DATE'] = date('Ymd', strtotime( date( 'Y-m-d' ). ' - 3 days'));
+			$parameter['START_DATE'] = date('Ymd', strtotime( date( 'Y-m-d' ). ' - 7 days'));
 			$parameter['END_DATE'] = date( 'Ymd' );
 
 			# Buat Test
@@ -1755,6 +1755,7 @@ class ReportController extends Controller {
 	 | ...
 	 */
 		public function generate_inspeksi( $data ) {
+			ini_set( 'memory_limit', '2G' );
 
 			// $data['START_DATE'] = '20190501';
 			// $data['END_DATE'] = '20190531';
@@ -1788,6 +1789,11 @@ class ReportController extends Controller {
 			$inspection_header = array();
 			$inspection_detail = Data::web_report_inspection_find( $query_inspeksi, 'manual' )['items'];
 			$count_inspection = array();
+
+			// print '<pre>';
+			// print_r( $inspection_detail );
+			// print '</pre>';
+			// dd();
 
 			// print '<pre>';
 			// print_r( $inspection_detail );

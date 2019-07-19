@@ -139,7 +139,7 @@ class APIData extends Model {
 	# ║ Tanpa Parameter  │ Mengambil data berdasarkan USER_AUTH_CODE          			  ║
 	# ╠══════════════════╪════════════════════════════════════════════════════════════════╣
 	# ║ Dengan Parameter │ Mengambil data berdasarkan Parameter (CEO, EM, KEPALA_KEBUN,   ║
-	# ║ 			     │ ASISTEN_LAPANGAN, dan lain-lain.   						      ║
+	# ║ 			     │ ASISTEN_LAPANGAN, dan z-lain.   						      ║
 	# ╚══════════════════╧════════════════════════════════════════════════════════════════╝
 	#
 	public static function modules_find_by_job( $parameter = '' ) { // Parameter = User Role
@@ -380,10 +380,9 @@ class APIData extends Model {
 		}
 
 		$data['items'] = array();
-		// $url = self::url( 'url_api_ins_msa_inspection' ).'/api/v1.0/report?'.$url_query;
 		$url = self::url( 'url_api_ins_msa_inspection' ).'/api/v1.0/report?'.$url_query;
 		$client = ( $token == 'session' ? APISetup::ins_rest_client( 'GET', $url ) : APISetup::ins_rest_client_manual( 'GET', $url ) );
-		// print $url;
+
 		if ( isset( $client['status'] ) && $client['status'] == true ) {
 			if ( count( $client['data'] ) > 0 ) {
 				$data['items'] = $client['data'];
