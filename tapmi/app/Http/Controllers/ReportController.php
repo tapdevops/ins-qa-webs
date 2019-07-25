@@ -1790,10 +1790,10 @@ class ReportController extends Controller {
 			$inspection_detail = Data::web_report_inspection_find( $query_inspeksi, 'manual' )['items'];
 			$count_inspection = array();
 
-			print '<pre>';
-			print_r( $inspection_detail );
-			print '</pre>';
-			dd();
+			// print '<pre>';
+			// print_r( $inspection_detail );
+			// print '</pre>';
+			// dd();
 
 			// print '<pre>';
 			// print_r( $inspection_detail );
@@ -2175,8 +2175,6 @@ class ReportController extends Controller {
 
 			return response()->json( $data );
 		}
-
-
 
 
 
