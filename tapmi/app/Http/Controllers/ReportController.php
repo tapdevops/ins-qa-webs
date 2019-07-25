@@ -214,42 +214,17 @@ class ReportController extends Controller {
 			$kualitas_jjg_hasilpanen_check[] = $jjg_hasilpanen['ID_KUALITAS'];
 		}
 
-		/*
-		print '<pre>';
-		print_r( $kualitas_jjg_hasilpanen_check );
-		print '<pre>';
-		if ( in_array( '19', $kualitas_jjg_hasilpanen_check ) ) {
-			print 'Yes';
-		}
-		else {
-			print 'No';
-		}
-		dd();
-		*/
-
 		$kualitas_penalty_tph = Data::kualitas_find( '?UOM=TPH&GROUP_KUALITAS=PENALTY DI TPH' );
 		$kualitas_penalty_tph_check = [];
 		foreach ( $kualitas_penalty_tph as $penalty_tph ) {
 			$kualitas_penalty_tph_check[] = $penalty_tph['ID_KUALITAS'];
 		}
-		/*
-		print '<pre>';
-		print_r( $kualitas_penalty_tph_check );
-		print '</pre>';
-		dd();
-		*/
 
 		$kualitas_jjg_kondisibuah = Data::kualitas_find( '?UOM=JJG&GROUP_KUALITAS=KONDISI BUAH' );
 		$kualitas_jjg_kondisibuah_check = [];
 		foreach ( $kualitas_jjg_kondisibuah as $jjg_kondisibuah ) {
 			$kualitas_jjg_kondisibuah_check[] = $jjg_kondisibuah['ID_KUALITAS'];
 		}
-		/*
-		print '<pre>';
-		print_r( $kualitas_jjg_kondisibuah_check );
-		print '</pre>';
-		dd();
-		*/
 
 		$results = [];
 		$results['data'] = [];
@@ -259,11 +234,6 @@ class ReportController extends Controller {
 		$results['kualitas_penalty_tph'] = $kualitas_penalty_tph;
 
 		$ebcc_validation = Data::web_report_ebcc_validation_find( '/'.$data['WERKS_AFD_BLOCK_CODE'].'/'.$data['START_DATE'].'/'.$data['END_DATE'] );
-
-		// print '<pre>';
-		// print_r( '/'.$data['WERKS_AFD_BLOCK_CODE'].'/'.$data['START_DATE'].'/'.$data['END_DATE'] );
-		// print '</pre>';
-		// dd();
 
 		$i = 0;
 		foreach ( $ebcc_validation['data'] as $ebcc ) {
@@ -1298,7 +1268,8 @@ class ReportController extends Controller {
 			// $parameter['END_DATE'] = date( 'Ymt' );
 
 			# Per Hari
-			$parameter['START_DATE'] = date('Ymd', strtotime( date( 'Y-m-d' ). ' - 3 days'));
+			// $parameter['START_DATE'] = date('Ymd', strtotime( date( 'Y-m-d' ). ' - 3 days'));
+			$parameter['START_DATE'] = date( 'Ymd' );
 			$parameter['END_DATE'] = date( 'Ymd' );
 
 			# Buat Test
@@ -1309,24 +1280,28 @@ class ReportController extends Controller {
 			$response['message'] = 'Cron - Generate Report Inspeksi';
 			$response['date'] = date( 'Y-m-d' );
 			$response['results'] = array();
-			
+				
+			print '<b>Start/End Date: '.$parameter['START_DATE'].'/'.$parameter['END_DATE'].' </b><hr /><br />';
+
 			$i = 0;
 			foreach ( $region_data['data'] as $data ) {
 				$parameter['REGION_CODE'] = ( String ) $data['REGION_CODE'];
-				$res = self::generate_inspeksi( $parameter );
-				$response['results'][$i]['region_code'] = ( String ) $data['REGION_CODE'];
-				$response['results'][$i]['start_time'] = $res['start_time'];
-				$response['results'][$i]['end_time'] = $res['end_time'];
-				$response['results'][$i]['results'] = array(
-					"success" => $res['results']['success'],
-					"failed" => $res['results']['failed'],
-					"data" => $res['results']['data'],
-				);
-				
+				// $res = self::generate_inspeksi( $parameter );
+				// $response['results'][$i]['region_code'] = ( String ) $data['REGION_CODE'];
+				// $response['results'][$i]['start_time'] = $res['start_time'];
+				// $response['results'][$i]['end_time'] = $res['end_time'];
+				// $response['results'][$i]['results'] = array(
+				// 	"success" => $res['results']['success'],
+				// 	"failed" => $res['results']['failed'],
+				// 	"data" => $res['results']['data'],
+				// );
+
+				print "<b>CRON DATA INSPEKSI REGION_CODE ".$data['REGION_CODE']."</b><br />";
+				self::generate_inspeksi( $parameter );
 				$i++;
 			}
 
-			return response()->json( $response );
+			// return response()->json( $response );
 		}
 
 	/*
@@ -1789,10 +1764,7 @@ class ReportController extends Controller {
 			$inspection_detail = Data::web_report_inspection_find( $query_inspeksi, 'manual' )['items'];
 			$count_inspection = array();
 
-			// print '<pre>';
-			// print_r( $inspection_detail );
-			// print '</pre>';
-
+			
 			$_bobot_all = 0;
 			$_bobot_tbm0 = 0;
 			$_bobot_tbm1 = 0;
@@ -1842,6 +1814,8 @@ class ReportController extends Controller {
 			$status = false;
 			$i = 0;
 
+			print '<table border="1px solid grey" padding="10px">';
+			print '<tr><td>No.</td><td>Block Inspection Code</td></tr>';
 			foreach ( $inspection_detail as $ins_detail ) {
 				if ( !empty( $ins_detail['DETAIL'] ) ) {
 					$date_inspeksi = substr( $ins_detail['INSPECTION_DATE'], 0, 8 );
@@ -1881,7 +1855,11 @@ class ReportController extends Controller {
 						}
 					}
 
-					// #if ( $ins_detail['BLOCK_CODE'] == "240" ):
+					// if ( $ins_detail['BLOCK_INSPECTION_CODE'] == "I0127190719100753" ):
+					print '<tr>';
+					print '<td>'.$i.' / '.count( $inspection_detail ).'</td>';
+					print '<td>'.$ins_detail['BLOCK_INSPECTION_CODE'].'</td>';
+					
 					// print '<pre>';
 					// print_r( 
 					// 	array(
@@ -1912,11 +1890,11 @@ class ReportController extends Controller {
 					// 		"CONTENT" => $data['inspection_data'][$i]['CONTENT'],
 					// 		"CONTENT_PANEN" => $data['inspection_data'][$i]['CONTENT_PANEN'],
 					// 		"CONTENT_PERAWATAN" => $data['inspection_data'][$i]['CONTENT_PERAWATAN'],
-					// 		"CONTENT_PEMUPUKAN" => $data['inspection_data'][$i]['CONTENT_PEMUPUKAN'],
+					// 		"CONTENT_PEMUPUKAN" => $data['inspection_data'][$i]['CONTENT_PEMUPUKAN']
 					// 	) 
 					// );
 					// print '</pre><hr />';
-					// #endif;
+					// endif;
 
 					$client = new \GuzzleHttp\Client();
 					$res = $client->request( 'POST', $this->url_api_ins_msa_report.'/api/report/inspection-baris', [
@@ -1953,24 +1931,27 @@ class ReportController extends Controller {
 							"CONTENT_PANEN" => $data['inspection_data'][$i]['CONTENT_PANEN'],
 							"CONTENT_PERAWATAN" => $data['inspection_data'][$i]['CONTENT_PERAWATAN'],
 							"CONTENT_PEMUPUKAN" => $data['inspection_data'][$i]['CONTENT_PEMUPUKAN'],
-						],
+						]
 					] );
 
 					array_push( $response['results']['data'], $ins_detail['BLOCK_INSPECTION_CODE'] );
 					
 					if ( json_decode( $res->getBody(), true )['status'] == false ) {
-						$response['results']['failed']++;
+						print '<td>FAILED</td>';
 					}
 					else {
-						$response['results']['success']++;
+						print '<td>OK</td>';
 					}
+
+
+					print '</tr>';
 				}
 				$i++;
 			}
-
 			$response['end_time'] = date( 'Y-m-d H:i:s' );
-
-			return $response;
+			print '</table>';
+			print 'Start/End Time: '.$response['start_time'].'/'.$response['end_time'].'<br /><hr />';
+			
 		}
 
 	/*

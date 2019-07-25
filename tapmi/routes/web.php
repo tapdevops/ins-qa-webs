@@ -51,10 +51,7 @@ Route::group( [ 'middleware' => 'web' ], function() {
 		Route::get( '/report/search-est', 'ReportController@search_est' );
 		Route::get( '/report/search-afd', 'ReportController@search_afd' );
 		Route::get( '/report/search-block', 'ReportController@search_block' );
-		
 		Route::get( '/data/user-search', 'DataController@user_search_find' );
-
-		Route::get( '/xxx', 'ReportController@testing_hasil_kriteria' );
 	});
 
 	// Cron URL

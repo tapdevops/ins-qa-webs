@@ -22,8 +22,6 @@ class APISetup extends Model {
 	public static function url() {
 
 		$env = 'dev';
-
-
 		$data = array(
 			"dev" => array(
 				"msa" => array(
@@ -61,7 +59,8 @@ class APISetup extends Model {
 						"auth" => "http://app.tap-agri.com/mobileinspection/ins-msa-auth",
 						"hectarestatement" => "http://app.tap-agri.com/mobileinspection/ins-msa-hectarestatement",
 						"finding" => "http://app.tap-agri.com/mobileinspection/ins-msa-finding",
-						"inspection" => "http://app.tap-agri.com/mobileinspection/ins-msa-inspection",
+						"inspection" => "http://localhost:3010",
+						// "inspection" => "http://app.tap-agri.com/mobileinspection/ins-msa-inspection",
 						"report" => "http://app.tap-agri.com/mobileinspection/ins-msa-reports",
 						"ebccvalidation" => "http://app.tap-agri.com/mobileinspection/ins-msa-ebccval",
 					)
