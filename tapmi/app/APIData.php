@@ -400,6 +400,7 @@ class APIData extends Model {
 		// GROUP_CATEGORY=FINDING
 		$url = self::url( 'url_api_ins_msa_auth' ).'/api/web-report/inspection/content-code';
 		$client = ( $token == 'session' ? APISetup::ins_rest_client( 'GET', $url ) : APISetup::ins_rest_client_manual( 'GET', $url ) );
+		// print $url;
 		$data = [];
 		if ( $client['status'] == true ) {
 			if ( isset( $client['data'] ) ) {
