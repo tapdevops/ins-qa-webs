@@ -1256,7 +1256,7 @@ class ReportController extends Controller {
 	 | ...
 	 */
 		public function cron_generate_inspeksi() {
-			ini_set( 'memory_limit', '1G' );
+			// ini_set( 'memory_limit', '1G' );
 			$url = $this->url_api_ins_msa_hectarestatement.'/region/all';
 			$region_data = APISetup::ins_rest_client_manual( 'GET', $url );
 			$parameter = array();
@@ -1825,10 +1825,16 @@ class ReportController extends Controller {
 					$time_inspeksi = $ins_detail['INSPECTION_DATE'];
 					$hectarestatement =  Data::web_report_land_use_findone( $ins_detail['WERKS'].$ins_detail['AFD_CODE'].$ins_detail['BLOCK_CODE'], 'manual' );
 					
-					$inspektor_data = Data::user_find_one( ( String ) $ins_detail['INSERT_USER'] )['items'];
+					$inspektor_data = Data::user_find_one( ( String ) $ins_detail['INSERT_USER'], 'manual' )['items'];
 					$baris_start_ins = date( 'Y-m-d H:i:s', strtotime( $ins_detail['START_INSPECTION'] ) );
 					$baris_end_ins = date( 'Y-m-d H:i:s', strtotime( $ins_detail['END_INSPECTION'] ) );
 					$baris_diff = ( new DateTime( $baris_start_ins ) )->diff( new DateTime( $baris_end_ins ) );
+
+					// print '<pre>';
+					// print $ins_detail['INSERT_USER'];
+					// print_r( $inspektor_data );
+					// print '</pre>';
+					// dd();
 
 					$data['inspection_data'][$i]['CONTENT'] = array();
 					$data['inspection_data'][$i]['CONTENT_PANEN'] = array();
@@ -1899,6 +1905,7 @@ class ReportController extends Controller {
 					// print '</pre><hr />';
 					// endif;
 
+					
 					$client = new \GuzzleHttp\Client();
 					$res = $client->request( 'POST', $this->url_api_ins_msa_report.'/api/report/inspection-baris', [
 						"headers" => [
@@ -1945,7 +1952,6 @@ class ReportController extends Controller {
 					else {
 						print '<td>OK</td>';
 					}
-
 
 					print '</tr>';
 				}
