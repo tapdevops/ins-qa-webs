@@ -102,7 +102,6 @@ class ReportController extends Controller {
 				$setup['START_DATE'] = date( 'Ymd', strtotime( Input::get( 'START_DATE' ) ) );
 				$setup['END_DATE'] = date( 'Ymd', strtotime( Input::get( 'END_DATE' ) ) );
 			}
-
 			else if ( Input::get( 'BA_CODE' ) != '' && Input::get( 'AFD_CODE' ) != '' && Input::get( 'BLOCK_CODE' ) != '' ) {
 				$setup['BA_CODE'] = Input::get( 'BA_CODE' );
 				$setup['AFD_CODE'] = Input::get( 'AFD_CODE' );
@@ -180,7 +179,6 @@ class ReportController extends Controller {
 				$setup['START_DATE'] = date( 'Ymd', strtotime( Input::get( 'START_DATE' ) ) );
 				$setup['END_DATE'] = date( 'Ymd', strtotime( Input::get( 'END_DATE' ) ) );
 			}
-			
 			else if ( Input::get( 'BA_CODE' ) != '' && Input::get( 'AFD_CODE' ) != '' && Input::get( 'BLOCK_CODE' ) != '' ) {
 				$setup['BA_CODE'] = Input::get( 'BA_CODE' );
 				$setup['AFD_CODE'] = Input::get( 'AFD_CODE' );
@@ -660,7 +658,6 @@ class ReportController extends Controller {
 					$data['angka'] = $data_kriteria[0]['KONVERSI_ANGKA'];
 					$data['raw'] = $data_kriteria[0];
 				}
-
 				if ( $angka <= 1 ) {
 					if ( $angka >= $kriteria['BATAS_BAWAH'] && $angka <= $kriteria['BATAS_ATAS'] ) {
 						$data['nilai'] = $kriteria['GRADE'];
@@ -724,6 +721,7 @@ class ReportController extends Controller {
 		// print '/'.$data['BA_CODE'].'/'.$periode_min_5.'<br />';
 		// print '/'.$data['BA_CODE'].'/'.$periode_min_6.'<br />';
 		// dd();
+
 		if ( isset( $data['BA_CODE'] ) ) {
 			$data_class_block = Data::web_report_class_block_find( '/'.$data['BA_CODE'].'/'.$periode )['items'];
 			$data_class_block_min_1 = Data::web_report_class_block_find( '/'.$data['BA_CODE'].'/'.$periode_min_1 )['items'];
@@ -879,7 +877,6 @@ class ReportController extends Controller {
 				$report_data_block[$ablock['WERKS_AFD_BLOCK_CODE']]['NILAI_07'] = $class_07;
 				$report_data_block[$ablock['WERKS_AFD_BLOCK_CODE']]['ANGKA_07'] = $kriteria_angka_07;
 
-
 				// if ( $ablock['BLOCK_CODE'] == '240' ) {
 				// 	if ( isset( $class_block_01[$ablock['WERKS_AFD_BLOCK_CODE']] ) ) {
 				// 		print '<pre>';
@@ -887,6 +884,7 @@ class ReportController extends Controller {
 				// 		print '</pre>';
 				// 	}
 				// }
+				
 			}
 
 			// print '<pre>';
@@ -1764,6 +1762,12 @@ class ReportController extends Controller {
 			$inspection_header = array();
 			$inspection_detail = Data::web_report_inspection_find( $query_inspeksi, 'manual' )['items'];
 			$count_inspection = array();
+
+			// print '<pre>';
+			// print_r($inspection_detail);
+			// print '</pre>';
+			// dd();
+
 			$_bobot_all = 0;
 			$_bobot_tbm0 = 0;
 			$_bobot_tbm1 = 0;
