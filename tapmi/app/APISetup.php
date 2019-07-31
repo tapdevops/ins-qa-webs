@@ -68,7 +68,7 @@ class APISetup extends Model {
 				)
 			)
 		);
-
+		
 		if ( isset( $data[$env] ) ) {
 			return $data[$env];
 		}
