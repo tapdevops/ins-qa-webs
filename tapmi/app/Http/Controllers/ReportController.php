@@ -41,7 +41,7 @@ class ReportController extends Controller {
 		$this->access_token = Storage::get( 'files/access_token_mobile_inspection.txt' );
 		$this->auth = array(
 			'username' => 'ferdinand',
-			'password' => 'tap12345',
+			'password' => 'bakuljam',
 			'imei' => ''
 		);
 	}
