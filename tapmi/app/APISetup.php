@@ -6,23 +6,26 @@
  * @package  Laravel
  * @author   Ferdinand
  */
+
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use Session;
 
-class APISetup extends Model {
-	
+class APISetup extends Model
+{
+
 	/**
 	 * Untuk mendefinisikan url-url yang dipakai dalam website
 	 *
 	 * @var array
 	 */
-	public static function url() {
+	public static function url()
+	{
 
 		$env = 'qa';
-		
+
 		$data = array(
 			"dev" => array(
 				"msa" => array(
@@ -68,14 +71,12 @@ class APISetup extends Model {
 				)
 			)
 		);
-		
-		if ( isset( $data[$env] ) ) {
+
+		if (isset($data[$env])) {
 			return $data[$env];
-		}
-		else {
+		} else {
 			return null;
 		}
-		
 	}
 
 	/**
@@ -83,41 +84,42 @@ class APISetup extends Model {
 	 *
 	 * @var array
 	 */
-	public static function ins_rest_client( $method, $url, $body = array() ) {
+	public static function ins_rest_client($method, $url, $body = array())
+	{
 		$client = new \GuzzleHttp\Client();
 		$init_headers = array(
-			"Authorization" => 'Bearer '.session( 'ACCESS_TOKEN' )
+			"Authorization" => 'Bearer ' . session('ACCESS_TOKEN')
 		);
 		$init_body = $body;
 		$init = array();
 
-		switch ( $method ) {
+		switch ($method) {
 			case 'GET':
 				$init = array(
 					"headers" => $init_headers
 				);
-			break;
+				break;
 			case 'POST':
 				$init = array(
 					"headers" => $init_headers,
 					"json" => $init_body
 				);
-			break;
+				break;
 			case 'PUT':
 				$init = array(
 					"headers" => $init_headers,
 					"json" => $init_body
 				);
-			break;
+				break;
 			case 'DELETE':
 				$init = array(
 					"headers" => $init_headers
 				);
-			break;
+				break;
 		}
 
-		$result = $client->request( $method, $url, $init );
-		$data = json_decode( $result->getBody(), true );
+		$result = $client->request($method, $url, $init);
+		$data = json_decode($result->getBody(), true);
 
 		return $data;
 	}
@@ -127,41 +129,42 @@ class APISetup extends Model {
 	 *
 	 * @var array
 	 */
-	public static function ins_rest_client_manual( $method, $url, $body = array() ) {
+	public static function ins_rest_client_manual($method, $url, $body = array())
+	{
 		$client = new \GuzzleHttp\Client();
 		$init_headers = array(
-			"Authorization" => "Bearer ".Storage::get( 'files/access_token_mobile_inspection.txt' )
+			"Authorization" => "Bearer " . Storage::get('files/access_token_mobile_inspection.txt')
 		);
 		$init_body = $body;
 		$init = array();
 
-		switch ( $method ) {
+		switch ($method) {
 			case 'GET':
 				$init = array(
 					"headers" => $init_headers
 				);
-			break;
+				break;
 			case 'POST':
 				$init = array(
 					"headers" => $init_headers,
 					"json" => $init_body
 				);
-			break;
+				break;
 			case 'PUT':
 				$init = array(
 					"headers" => $init_headers,
 					"json" => $init_body
 				);
-			break;
+				break;
 			case 'DELETE':
 				$init = array(
 					"headers" => $init_headers
 				);
-			break;
+				break;
 		}
 
-		$result = $client->request( $method, $url, $init );
-		$data = json_decode( $result->getBody(), true );
+		$result = $client->request($method, $url, $init);
+		$data = json_decode($result->getBody(), true);
 
 		return $data;
 	}
