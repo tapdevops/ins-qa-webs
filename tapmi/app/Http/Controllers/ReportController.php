@@ -680,9 +680,6 @@ class ReportController extends Controller
 	{
 		$kriteria_find = Data::web_report_inspection_kriteria_find();
 		$result = self::get_kriteria($kriteria_find, 3);
-		print '<pre>';
-		print_r($result);
-		print '</pre>';
 	}
 
 	public function download_excel_class_block($data, $output = 'excel')
@@ -709,15 +706,6 @@ class ReportController extends Controller
 		$periode_min_5 = date('Ym', strtotime($periode . "01" . " - 5 month"));
 		$periode_min_6 = date('Ym', strtotime($periode . "01" . " - 6 month"));
 
-		// print '/'.$data['BA_CODE'].'/'.$periode.'<br />';
-		// print '/'.$data['BA_CODE'].'/'.$periode_min_1.'<br />';
-		// print '/'.$data['BA_CODE'].'/'.$periode_min_2.'<br />';
-		// print '/'.$data['BA_CODE'].'/'.$periode_min_3.'<br />';
-		// print '/'.$data['BA_CODE'].'/'.$periode_min_4.'<br />';
-		// print '/'.$data['BA_CODE'].'/'.$periode_min_5.'<br />';
-		// print '/'.$data['BA_CODE'].'/'.$periode_min_6.'<br />';
-		// dd();
-
 		if (isset($data['BA_CODE'])) {
 			$data_class_block = Data::web_report_class_block_find('/' . $data['BA_CODE'] . '/' . $periode)['items'];
 			$data_class_block_min_1 = Data::web_report_class_block_find('/' . $data['BA_CODE'] . '/' . $periode_min_1)['items'];
@@ -726,11 +714,6 @@ class ReportController extends Controller
 			$data_class_block_min_4 = Data::web_report_class_block_find('/' . $data['BA_CODE'] . '/' . $periode_min_4)['items'];
 			$data_class_block_min_5 = Data::web_report_class_block_find('/' . $data['BA_CODE'] . '/' . $periode_min_5)['items'];
 			$data_class_block_min_6 = Data::web_report_class_block_find('/' . $data['BA_CODE'] . '/' . $periode_min_6)['items'];
-
-			// print '<pre>';
-			// print_r( $data_class_block );
-			// print '</pre>';
-			// dd();
 
 			$data_all_block = Data::hectarestatement_block_find($data['BA_CODE']);
 			$kriteria_find = Data::web_report_inspection_kriteria_find();
@@ -790,11 +773,6 @@ class ReportController extends Controller
 				$class_block_07[$cb07['WERKS_AFD_BLOCK_CODE']] = $cb07['CLASS_BLOCK'];
 			}
 
-			// print '<pre>';
-			// print_r($class_block_07);
-			// print '</pre>';
-			// dd();
-
 			foreach ($data_all_block as $ablock) {
 
 				$report_data_block[$ablock['WERKS_AFD_BLOCK_CODE']]['WERKS'] = $ablock['WERKS'];
@@ -805,17 +783,16 @@ class ReportController extends Controller
 
 				$class_01 = '';
 				$kriteria_angka_01 = 0;
-				if (isset($class_block_01[$ablock['WERKS_AFD_BLOCK_CODE']])) {
+				if ( isset( $class_block_01[$ablock['WERKS_AFD_BLOCK_CODE']] ) && $class_block_01[$ablock['WERKS_AFD_BLOCK_CODE']] != '' ) {
 					$class_01 = $class_block_01[$ablock['WERKS_AFD_BLOCK_CODE']];
 					$kriteria_angka_01 = $kriteria[$class_01];
 				}
-
 				$report_data_block[$ablock['WERKS_AFD_BLOCK_CODE']]['NILAI_01'] = $class_01;
 				$report_data_block[$ablock['WERKS_AFD_BLOCK_CODE']]['ANGKA_01'] = $kriteria_angka_01;
-
+				
 				$class_02 = '';
 				$kriteria_angka_02 = 0;
-				if (isset($class_block_02[$ablock['WERKS_AFD_BLOCK_CODE']])) {
+				if (isset($class_block_02[$ablock['WERKS_AFD_BLOCK_CODE']]) && $class_block_02[$ablock['WERKS_AFD_BLOCK_CODE']] != '') {
 					$class_02 = $class_block_02[$ablock['WERKS_AFD_BLOCK_CODE']];
 					$kriteria_angka_02 = $kriteria[$class_02];
 				}
@@ -825,7 +802,7 @@ class ReportController extends Controller
 
 				$class_03 = '';
 				$kriteria_angka_03 = 0;
-				if (isset($class_block_03[$ablock['WERKS_AFD_BLOCK_CODE']])) {
+				if (isset($class_block_03[$ablock['WERKS_AFD_BLOCK_CODE']]) && $class_block_03[$ablock['WERKS_AFD_BLOCK_CODE']] != '') {
 					$class_03 = $class_block_03[$ablock['WERKS_AFD_BLOCK_CODE']];
 					$kriteria_angka_03 = $kriteria[$class_03];
 				}
@@ -835,7 +812,7 @@ class ReportController extends Controller
 
 				$class_04 = '';
 				$kriteria_angka_04 = 0;
-				if (isset($class_block_04[$ablock['WERKS_AFD_BLOCK_CODE']])) {
+				if (isset($class_block_04[$ablock['WERKS_AFD_BLOCK_CODE']]) && $class_block_04[$ablock['WERKS_AFD_BLOCK_CODE']] != '') {
 					$class_04 = $class_block_04[$ablock['WERKS_AFD_BLOCK_CODE']];
 					$kriteria_angka_04 = $kriteria[$class_04];
 				}
@@ -845,7 +822,7 @@ class ReportController extends Controller
 
 				$class_05 = '';
 				$kriteria_angka_05 = 0;
-				if (isset($class_block_05[$ablock['WERKS_AFD_BLOCK_CODE']])) {
+				if (isset($class_block_05[$ablock['WERKS_AFD_BLOCK_CODE']]) && $class_block_05[$ablock['WERKS_AFD_BLOCK_CODE']] != '') {
 					$class_05 = $class_block_05[$ablock['WERKS_AFD_BLOCK_CODE']];
 					$kriteria_angka_05 = $kriteria[$class_05];
 				}
@@ -855,7 +832,7 @@ class ReportController extends Controller
 
 				$class_06 = '';
 				$kriteria_angka_06 = 0;
-				if (isset($class_block_06[$ablock['WERKS_AFD_BLOCK_CODE']])) {
+				if (isset($class_block_06[$ablock['WERKS_AFD_BLOCK_CODE']]) && $class_block_06[$ablock['WERKS_AFD_BLOCK_CODE']] != '') {
 					$class_06 = $class_block_06[$ablock['WERKS_AFD_BLOCK_CODE']];
 					$kriteria_angka_06 = $kriteria[$class_06];
 				}
@@ -865,7 +842,7 @@ class ReportController extends Controller
 
 				$class_07 = '';
 				$kriteria_angka_07 = 0;
-				if (isset($class_block_07[$ablock['WERKS_AFD_BLOCK_CODE']])) {
+				if (isset($class_block_07[$ablock['WERKS_AFD_BLOCK_CODE']]) && $class_block_07[$ablock['WERKS_AFD_BLOCK_CODE']] != '') {
 					$class_07 = $class_block_07[$ablock['WERKS_AFD_BLOCK_CODE']];
 					$kriteria_angka_07 = $kriteria[$class_07];
 				}
@@ -873,20 +850,7 @@ class ReportController extends Controller
 				$report_data_block[$ablock['WERKS_AFD_BLOCK_CODE']]['NILAI_07'] = $class_07;
 				$report_data_block[$ablock['WERKS_AFD_BLOCK_CODE']]['ANGKA_07'] = $kriteria_angka_07;
 
-				// if ( $ablock['BLOCK_CODE'] == '240' ) {
-				// 	if ( isset( $class_block_01[$ablock['WERKS_AFD_BLOCK_CODE']] ) ) {
-				// 		print '<pre>';
-				// 		print_r( $class_block_01[$ablock['WERKS_AFD_BLOCK_CODE']] );
-				// 		print '</pre>';
-				// 	}
-				// }
-
 			}
-
-			// print '<pre>';
-			// print_r( $report_data_block );
-			// print '</pre>';
-			// dd();
 
 			if (!empty($report_data_block)) {
 				$z = 0;
@@ -1135,11 +1099,6 @@ class ReportController extends Controller
 				}
 			}
 
-			// print '<pre>';
-			// print_r($report_data_afd_temp);
-			// print '</pre>';
-			// dd();
-
 			if (!empty($report_data_est_temp)) {
 				foreach ($report_data_est_temp as $key_est_tmp => $est_tmp) {
 					if ($est_tmp['TEMP_JUMLAH_DATA_01'] > 0) {
@@ -1188,9 +1147,9 @@ class ReportController extends Controller
 
 			$results['report_data'] = $report_data_est_temp;
 			$results['periode'] = date('Ym', strtotime($periode . '01'));
-
+			
 			// print '<pre>';
-			// print_r( $report_data_est_temp );
+			// print_r( $results );
 			// print '</pre>';
 			// dd();
 
@@ -1199,11 +1158,6 @@ class ReportController extends Controller
 					$sheet->loadView('report.excel-class-block-2', $results);
 				});
 			})->export('xls');
-			// Excel::create( 'Report-Finding', function( $excel ) use ( $data ) {
-			// 	$excel->sheet( 'Temuan', function( $sheet ) use ( $data ) {
-			// 		$sheet->loadView( 'report.excel-finding', $data );
-			// 	} );
-			// } )->export( 'xls' );
 		}
 	}
 
