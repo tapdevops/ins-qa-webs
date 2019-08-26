@@ -36,7 +36,6 @@ class UserController extends Controller {
 	#   		 								  				        ▁ ▂ ▄ ▅ ▆ ▇ █ INDEX
 	# -------------------------------------------------------------------------------------
 	public function index() {
-
 		$allowed_role = array( "ADMIN" );
 		$data['active_menu'] = $this->active_menu;
 
@@ -53,7 +52,21 @@ class UserController extends Controller {
 						$data['master_user'][$i]['REF_ROLE'] = $q['REF_ROLE'];
 						$data['master_user'][$i]['JOB'] = $q['JOB'];
 						$data['master_user'][$i]['FULLNAME'] = $q['FULLNAME'];
+						$data['master_user'][$i]['APK_VERSION'] = '';
+						$data['master_user'][$i]['APK_DATE'] = '';
 
+						$client = new \GuzzleHttp\Client();
+						$res = $client->request( 'GET', $this->url_api_ins_msa_auth.'/api/v1.0/server/apk-version/'.$q['USER_AUTH_CODE'], 
+							[
+								'headers' => [
+								'Authorization' => 'Bearer '.session( 'ACCESS_TOKEN' )
+							]
+						]);
+						$x = json_decode( $res->getBody(), true );
+
+						if ( $x['status'] == true ) {
+							$data['master_user'][$i]['APK_VERSION'] = $x['apk_version'];
+						}
 						$i++;
 					}
 					
