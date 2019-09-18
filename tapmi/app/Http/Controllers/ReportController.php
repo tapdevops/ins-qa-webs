@@ -783,13 +783,13 @@ class ReportController extends Controller
 
 				$class_01 = '';
 				$kriteria_angka_01 = 0;
-				if ( isset( $class_block_01[$ablock['WERKS_AFD_BLOCK_CODE']] ) && $class_block_01[$ablock['WERKS_AFD_BLOCK_CODE']] != '' ) {
+				if (isset($class_block_01[$ablock['WERKS_AFD_BLOCK_CODE']]) && $class_block_01[$ablock['WERKS_AFD_BLOCK_CODE']] != '') {
 					$class_01 = $class_block_01[$ablock['WERKS_AFD_BLOCK_CODE']];
 					$kriteria_angka_01 = $kriteria[$class_01];
 				}
 				$report_data_block[$ablock['WERKS_AFD_BLOCK_CODE']]['NILAI_01'] = $class_01;
 				$report_data_block[$ablock['WERKS_AFD_BLOCK_CODE']]['ANGKA_01'] = $kriteria_angka_01;
-				
+
 				$class_02 = '';
 				$kriteria_angka_02 = 0;
 				if (isset($class_block_02[$ablock['WERKS_AFD_BLOCK_CODE']]) && $class_block_02[$ablock['WERKS_AFD_BLOCK_CODE']] != '') {
@@ -849,7 +849,6 @@ class ReportController extends Controller
 
 				$report_data_block[$ablock['WERKS_AFD_BLOCK_CODE']]['NILAI_07'] = $class_07;
 				$report_data_block[$ablock['WERKS_AFD_BLOCK_CODE']]['ANGKA_07'] = $kriteria_angka_07;
-
 			}
 
 			if (!empty($report_data_block)) {
@@ -1147,7 +1146,7 @@ class ReportController extends Controller
 
 			$results['report_data'] = $report_data_est_temp;
 			$results['periode'] = date('Ym', strtotime($periode . '01'));
-			
+
 			// print '<pre>';
 			// print_r( $results );
 			// print '</pre>';
@@ -1272,6 +1271,7 @@ class ReportController extends Controller
 		$query_finding['START_DATE'] = $data['START_DATE'] . '000000';
 		$query_finding['END_DATE'] = $data['END_DATE'] . '235959';
 
+
 		$data['finding_data'] = array();
 		$finding_data = Data::web_report_finding_find($query_finding)['items'];
 		$i = 0;
@@ -1283,6 +1283,7 @@ class ReportController extends Controller
 			$finding['EST_NAME'] = '';
 			$finding['MATURITY_STATUS'] = '';
 			$finding['SPMON'] = '';
+			$finding['END_TIME'];
 			if (!empty($hectarestatement)) {
 				$finding['BLOCK_NAME'] = $hectarestatement['BLOCK_NAME'];
 				$finding['EST_NAME'] = $hectarestatement['EST_NAME'];
@@ -1318,6 +1319,8 @@ class ReportController extends Controller
 			$data['finding_data'][$i]['INSERT_TIME'] = $finding['INSERT_TIME'];
 			$data['finding_data'][$i]['UPDATE_USER'] = $finding['UPDATE_USER'];
 			$data['finding_data'][$i]['UPDATE_TIME'] = $finding['UPDATE_TIME'];
+			$data['finding_data'][$i]['END_TIME'] = $finding['END_TIME'];
+
 
 			// Data Inspektor
 			$inspektor_data = Data::user_find_one((string) $finding['INSERT_USER'])['items'];

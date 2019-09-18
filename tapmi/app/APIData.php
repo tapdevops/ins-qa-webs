@@ -319,7 +319,7 @@ class APIData extends Model
 
 		$data['items'] = array();
 
-		$url = self::url('url_api_ins_msa_finding') . '/api/v1.0/report/web/finding/all?' . $url_query;
+		$url = self::url('url_api_ins_msa_finding') . '/api/v1.1/report/web/finding/all?' . $url_query;
 		$client = APISetup::ins_rest_client('GET', $url);
 
 		if ($client['status'] == true) {

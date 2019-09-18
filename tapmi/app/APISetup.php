@@ -21,9 +21,12 @@ class APISetup extends Model
 	 *
 	 * @var array
 	 */
-	public static function url() {
+	public static function url()
+	{
 
 		$env = 'qa';
+
+
 		$data = array(
 			"dev" => array(
 				"msa" => array(
