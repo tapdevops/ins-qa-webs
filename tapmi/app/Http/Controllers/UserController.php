@@ -56,7 +56,7 @@ class UserController extends Controller {
 						$data['master_user'][$i]['APK_DATE'] = '';
 
 						$client = new \GuzzleHttp\Client();
-						$res = $client->request( 'GET', $this->url_api_ins_msa_auth.'/api/v1.0/server/apk-version/'.$q['USER_AUTH_CODE'], 
+						$res = $client->request( 'GET', $this->url_api_ins_msa_auth.'/api/v1.1/server/apk-version/'.$q['USER_AUTH_CODE'], 
 							[
 								'headers' => [
 								'Authorization' => 'Bearer '.session( 'ACCESS_TOKEN' )
