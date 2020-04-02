@@ -461,10 +461,8 @@
 					</button>
 					<div id="m_header_menu" class="m-header-menu m-aside-header-menu-mobile m-aside-header-menu-mobile--offcanvas  m-header-menu--skin-dark m-header-menu--submenu-skin-light m-aside-header-menu-mobile--skin-light m-aside-header-menu-mobile--submenu-skin-light "  >
 						@include( 'layouts.default.header-menu-02-'.session( 'USER_ROLE' ) )
-						<!--ul class="m-menu__nav  m-menu__nav--submenu-arrow "-->
 					</div>
 				</div>
-				<!-- end::Horizontal Menu -->
 			</div>
 		</div>
 	</div>

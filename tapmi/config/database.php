@@ -77,6 +77,30 @@ return [
             'charset' => 'utf8',
             'prefix' => '',
         ],
+		
+		'mobile_ins' => [
+			'driver'   => 'oracle',
+			'tns'      =>  '',
+			'host'     => '10.20.1.111',
+			'port'     => '1521',
+			'database' => 'tapapps',
+			'username' => 'mobile_inspection',
+			'password' => 'mobile_inspection',
+			'charset'  => 'AL32UTF8',
+			'prefix'   => '',
+		],
+
+		  /*'mobile_ins' => [
+                        'driver'   => 'oracle',
+                        'tns'      =>  '',
+                        'host'     => 'dboracle.tap-agri.com',
+                        'port'     => '1521',
+                        'database' => 'tapapps',
+                        'username' => 'mobile_inspection',
+                        'password' => 'mobile_inspection',
+                        'charset'  => 'AL32UTF8',
+                        'prefix'   => '',
+                ],*/
 
     ],
 
