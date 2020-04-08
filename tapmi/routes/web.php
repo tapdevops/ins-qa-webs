@@ -84,6 +84,3 @@ Route::get( '/testings', 'KafkaProducerController@test' );
 
 #image
 Route::get( '/storage/{filename}', 'StorageController@image' );
-
-#validation_image_data
-Route::get( '/listvalidasi', 'ValidationController@index'); 

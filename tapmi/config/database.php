@@ -88,19 +88,6 @@ return [
 			'password' => 'mobile_inspection',
 			'charset'  => 'AL32UTF8',
 			'prefix'   => '',
-        ],
-        
-        
-		'ebcc' => [
-			'driver'   => 'oracle',
-			'tns'      =>  '',
-			'host'     => '10.20.1.111',
-			'port'     => '1521',
-			'database' => 'tapapps',
-			'username' => 'ebcc',
-			'password' => 'ebcc',
-			'charset'  => 'AL32UTF8',
-			'prefix'   => '',
 		],
 
 		  /*'mobile_ins' => [

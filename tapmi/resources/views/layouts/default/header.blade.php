@@ -8,7 +8,7 @@
 			<span class="m-menu__arrow m-menu__arrow--adjust"></span>
 			<ul class="m-menu__subnav">
 				<li class="m-menu__item " m-menu-link-redirect="1" aria-haspopup="true">
-					<a href={{URL::to('/dashboard')}} class="m-menu__link ">
+					<a href="http://inspectionqa.tap-agri.com/dashboard" class="m-menu__link ">
 						<i class="m-menu__link-icon fa fa-dashboard"></i>
 						<span class="m-menu__link-text">Dashboard</span>
 					</a>
