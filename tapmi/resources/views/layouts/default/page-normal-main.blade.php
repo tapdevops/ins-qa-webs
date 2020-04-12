@@ -21,6 +21,7 @@
 		<link href="{{ url( 'assets/default-template/8/app/base/style.bundle.css' ) }}" rel="stylesheet" type="text/css" />
 		<link rel="shortcut icon" href="{{ url( 'assets/favicon.ico' ) }}" />
 		<link rel="stylesheet" type="text/css" href="{{ url( 'assets/vendor/jquery-loading-overlay/style.min.css' ) }}">
+			@yield('style')
 	</head>
 	<body style="background-image: url('{{url('assets/background.jpg')}}')"  class="m-page--fluid m-page--loading-enabled m-page--loading m-header--fixed m-header--fixed-mobile m-footer--push m-aside--offcanvas-default"  >
 

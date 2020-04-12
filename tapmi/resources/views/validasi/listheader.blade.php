@@ -13,8 +13,8 @@
 					<input type="date" class="form-control m-input m-input--solid" max="{{ $dmin }}" placeholder="Select date..." id="generalSearch">
 				</div> --}}
 				<div class="input-daterange input-group" id="m_datepicker_5">
-					<label for="TGL_PANEN">Tanggal &nbsp; &nbsp; </label>
-					<input type="text" class="form-control m-input" id="tgl_panel" name="TGL_PANEN" autocomplete="off" readonly="readonly" />
+					<label for="TANGGAL_RENCANA">Tanggal &nbsp; &nbsp; </label>
+					<input type="text" class="form-control m-input" id="tgl_rencana" name="TANGGAL_RENCANA" autocomplete="off" readonly="readonly" />
 					<div class="input-group-append">
 						<span class="input-group-text">
 							<i class="la la-calendar"></i>
@@ -44,18 +44,14 @@
 		
 		@foreach ( $data_header as $key => $q )
 			<tr>
-				<td>{{ $q['nama_kerani_buah'] }} - {{$q['nik_kerani_buah'] }}</td>
+				<td>{{ $q['nama_krani_buah'] }}</td>
 				<td>{{ $q['id_afd'] }}</td>
-				<td>{{ $q['nama_mandor'] }} - {{$q['nik_mandor']  }}</td>
-				@foreach ( $validated as $k => $v )
-					@if($v['no_bcc_mi'] == $q['no_bcc'])
-					<?php  $valid = $v['jumlah_ebcc_validated'] ?>
-					@else 
-					<?php $valid = '0' ?>
-					@endif
-				@endforeach
-				<td> {{ $valid }} / 3 </td>
-				<td><button type="button" class="btn btn-primary btn-sm">Validasi</button></td>
+				<td>{{ $q['nama_mandor'] }}</td>
+				<td>{{ $q['jumlah_ebcc_validated'] }} /{{ $q['target_validasi'] }}  </td>
+				<?php 
+				$id = str_replace("/",".",$q['id_validasi']);
+				 ?>
+				<td><a href={{ URL::to('/validasi/create/'.$id) }}><button type="button" class="btn btn-primary btn-sm">Validasi</button></a></td>
 			</tr>
 		@endforeach
 	</tbody>
@@ -78,7 +74,7 @@
 					}
 				},
 				search: {
-					input: $( "#tgl_panel" )
+					input: $( "#tgl_rencana" )
 				},
 
 
@@ -93,18 +89,10 @@
 					field: "Mandor Panen",
 					width: 300
 				}, {
-					field: "Jumlah BCC yang Divalidasi",
-					width: 300
-				}, {
-					field: "Actions",
-					width: 200,
-					title: "Actions",
-					sortable: !1,
-					overflow: "visible",
-					template: function(e, a, i) {
-						return '\t\t\t\t\t\t<a href="' + base_url + '/validate/insert_detail/' + e['Auth Code'] + '" class="m-portlet__nav-link btn m-btn m-btn--hover-accent m-btn--icon m-btn--icon-only m-btn--pill" title="Validasi "><i class="la la-list"></i> Validasi</a>\t\t\t\t\t'
-					}
-				}],
+					field: "Jumlah Divalidasi",
+					width: 100
+				}
+			]
 
 			})
 			, $("#m_form_status").on("change", function() {
@@ -115,10 +103,11 @@
 		}
 	};
 
-	
+	jQuery(document).ready(function() {
+		datatable.init()
+		MobileInspection.set_active_menu( '{{ $active_menu }}' );
 
-	$(document).ready(function() {
-
+		
 		$("#m_datepicker_5").datepicker({
 			todayHighlight: !0,
 			templates: {
@@ -126,14 +115,25 @@
 				rightArrow: '<i class="la la-angle-right"></i>'
 			},
 			endDate: "-1d",
-			format: 'yyyy-M-dd'
+			format: 'yy-M-dd',
+			onSelect: function(date, instance) {
+						$.ajax
+						({
+							type: "Post",
+							url: "{{URL::to('/validasi/filter_date/')}}/"+date,
+							data: null,
+							success: function(result)
+							{
+								//do something
+								datatable.fnDraw(result);
+							}
+						});  
+						}
+		// 	,
+		// 	 onClose: function(selectedDate) {
+        //   table.fnDraw();}});
 		});
-		
-	});
 
-	jQuery(document).ready(function() {
-		datatable.init()
-		MobileInspection.set_active_menu( '{{ $active_menu }}' );
 	});
 </script>
 @endsection

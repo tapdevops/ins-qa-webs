@@ -110,7 +110,7 @@ class ParserTest extends TestCase
 
         foreach ($yamls as $yaml) {
             try {
-                $content = $this->parser->parse($yaml);
+                $this->parser->parse($yaml);
 
                 $this->fail('YAML files must not contain tabs');
             } catch (\Exception $e) {
@@ -1794,7 +1794,7 @@ YAML
         $this->assertEquals('!iterator foo', $this->parser->parse('!iterator foo'));
     }
 
-    public function testExceptionWhenUsingUnsuportedBuiltInTags()
+    public function testExceptionWhenUsingUnsupportedBuiltInTags()
     {
         $this->expectException('Symfony\Component\Yaml\Exception\ParseException');
         $this->expectExceptionMessage('The built-in tag "!!foo" is not implemented at line 1 (near "!!foo").');

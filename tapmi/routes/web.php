@@ -87,3 +87,9 @@ Route::get( '/storage/{filename}', 'StorageController@image' );
 
 #validation_image_data
 Route::get( '/listvalidasi', 'ValidationController@index'); 
+// Route::get( '/validasi/ebcc/{id}', 'ValidationController@view_validasi' );
+Route::get( '/validasi/create/{id}', 'ValidationController@create' );
+Route::get( '/validasi/filter_date/{date}', 'ValidationController@filter_date' );
+
+// Route::get('validasi-datatable', 'ValidationController@datatable')->name('header.datatable');
+// Route::get('validasi-data', 'ValidationController@headerList')->name('header.data');
