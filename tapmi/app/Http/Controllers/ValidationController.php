@@ -19,8 +19,12 @@
 	use DateTime;
 	use Maatwebsite\Excel\Facades\Excel;
 	use App\Validation;
-	use App\ValidationEbcc;
-	use DataTables;
+	use App\TMParameter;
+	use App\TRValidasiHeader;
+	use App\TRValidasiDetail;
+    use DataTables;
+    use Ramsey\Uuid\Uuid;
+
 
 # API Setup
 	use App\APIData as Data;
@@ -38,7 +42,9 @@ class ValidationController extends Controller {
 	#   		 									  		            ▁ ▂ ▄ ▅ ▆ ▇ █ Index
 	# -------------------------------------------------------------------------------------
 	public function index() {
-		
+        $ba_afd_code =explode(",",session('LOCATION_CODE'));
+        $code = implode("','", $ba_afd_code);
+        // dd($code);
 		ini_set('memory_limit', '-1');
 		$data['active_menu'] = $this->active_menu;
         $sql = "select distinct ebcc.id_ba,
@@ -82,6 +88,7 @@ class ValidationController extends Controller {
                     inner join MOBILE_INSPECTION.TM_PARAMETER param on 1 = 1
                     WHERE ebcc.tanggal_rencana >= trunc(sysdate, 'yyyy') - interval '1' year
                     and ebcc.tanggal_rencana <  trunc(sysdate, 'yyyy')
+                    and ebcc.id_ba || ebcc.id_afd in ('$code')
                     order by ebcc.tanggal_rencana desc";
         $valid_data = json_encode($this->db_mobile_ins->select($sql));
 		$result = json_decode( $valid_data,true);
@@ -110,71 +117,177 @@ class ValidationController extends Controller {
     {   
         $data['active_menu'] = $this->active_menu;
         $string = str_replace(".","/",$id);
-        $arr = explode("-", $string, 3);
+        $arr = explode("-", $string, 5);
         $nik_kerani = $arr[0];
         $nik_mandor = $arr[1];
         $tanggal = date("Y-m-d",strtotime($arr[2]));
-        $data['data_validasi'] = Validation::where('NIK_KERANI_BUAH', $nik_kerani)
-                                    ->where('NIK_MANDOR',$nik_mandor)
-                                    ->whereDate('TGL_PANEN','=',$tanggal)
-                                    ->orderByRaw('DBMS_RANDOM.VALUE FETCH NEXT 1 ROWS ONLY')
-                                    ->get();
+        $tgl = $arr[2];
+        $ba_code = $arr[3];
+        $afd = $arr[4];
+        $id_validasi = $nik_kerani."-".$nik_mandor."-".$tgl;
+
+        $sql = " SELECT HDP.ID_RENCANA,
+                        HDP.TANGGAL_RENCANA,
+                        HDP.NIK_MANDOR,
+                        HDP.NIK_KERANI_BUAH,
+                        EMP_EBCC.EMP_NAME,
+                        HDP.ID_BA_AFD_BLOK,
+                        HDP.NO_REKAP_BCC,
+                        HP.NO_TPH,
+                        HP.NO_BCC,
+                        HP.STATUS_TPH,
+                        HP.PICTURE_NAME,
+                        TB.ID_BLOK,
+                        TB.BLOK_NAME,
+                        TBA.NAMA_BA,
+                        CASE
+                            WHEN HP.KETERANGAN_QRCODE IS NULL THEN ''
+                            ELSE
+                                CASE
+                                    WHEN HP.KETERANGAN_QRCODE = '1' THEN ' - QR Codenya Hilang'
+                                    WHEN HP.KETERANGAN_QRCODE = '2' THEN ' - QR Codenya Rusak'
+                                    ELSE ''
+                                END
+                        END AS KETERANGAN_QRCODE,
+                        NVL( EBCC.F_GET_HASIL_PANEN_BUNCH ( TBA.ID_BA, HP.NO_REKAP_BCC, HP.NO_BCC, 'BUNCH_HARVEST' ), 0 ) as JJG_PANEN,
+                        NVL( EBCC.F_GET_HASIL_PANEN_NUMBERX( HDP.ID_RENCANA, HP.NO_REKAP_BCC, HP.NO_BCC, 1 ), 0 ) AS EBCC_JML_BM,
+                        NVL( EBCC.F_GET_HASIL_PANEN_NUMBERX( HDP.ID_RENCANA, HP.NO_REKAP_BCC, HP.NO_BCC, 2 ), 0 ) AS EBCC_JML_BK,
+                        NVL( EBCC.F_GET_HASIL_PANEN_NUMBERX( HDP.ID_RENCANA, HP.NO_REKAP_BCC, HP.NO_BCC, 3 ), 0 ) AS EBCC_JML_MS,
+                        NVL( EBCC.F_GET_HASIL_PANEN_NUMBERX( HDP.ID_RENCANA, HP.NO_REKAP_BCC, HP.NO_BCC, 4 ), 0 ) AS EBCC_JML_OR,
+                        NVL( EBCC.F_GET_HASIL_PANEN_NUMBERX( HDP.ID_RENCANA, HP.NO_REKAP_BCC, HP.NO_BCC, 6 ), 0 ) AS EBCC_JML_BB,
+                        NVL( EBCC.F_GET_HASIL_PANEN_NUMBERX( HDP.ID_RENCANA, HP.NO_REKAP_BCC, HP.NO_BCC, 15 ), 0 ) AS EBCC_JML_JK,
+                        NVL( EBCC.F_GET_HASIL_PANEN_NUMBERX( HDP.ID_RENCANA, HP.NO_REKAP_BCC, HP.NO_BCC, 16 ), 0 ) AS EBCC_JML_BA,   
+                        NVL( EBCC.F_GET_HASIL_PANEN_BRDX ( HDP.ID_RENCANA, HP.NO_REKAP_BCC, HP.NO_BCC ), 0 ) AS EBCC_JML_BRD
+                    FROM (
+                            SELECT
+                                HRP.ID_RENCANA AS ID_RENCANA,
+                                HRP.TANGGAL_RENCANA AS TANGGAL_RENCANA,
+                                HRP.NIK_KERANI_BUAH AS NIK_KERANI_BUAH,
+                                HRP.NIK_MANDOR AS NIK_MANDOR,
+                                DRP.ID_BA_AFD_BLOK AS ID_BA_AFD_BLOK,
+                                DRP.NO_REKAP_BCC AS NO_REKAP_BCC
+                            FROM
+                                EBCC.T_HEADER_RENCANA_PANEN HRP 
+                                LEFT JOIN EBCC.T_DETAIL_RENCANA_PANEN DRP ON HRP.ID_RENCANA = DRP.ID_RENCANA
+                        ) HDP
+                        LEFT JOIN EBCC.T_HASIL_PANEN HP ON HP.ID_RENCANA = HDP.ID_RENCANA AND HP.NO_REKAP_BCC = HDP.NO_REKAP_BCC
+                        LEFT JOIN EBCC.T_BLOK TB ON TB.ID_BA_AFD_BLOK = HDP.ID_BA_AFD_BLOK
+                        LEFT JOIN EBCC.T_AFDELING TA ON TA.ID_BA_AFD = TB.ID_BA_AFD
+                        LEFT JOIN EBCC.T_BUSSINESSAREA TBA ON TBA.ID_BA = TA.ID_BA
+                        LEFT JOIN EBCC.T_EMPLOYEE EMP_EBCC ON EMP_EBCC.NIK = HDP.NIK_KERANI_BUAH 
+                WHERE
+                        HDP.NIK_KERANI_BUAH = '$nik_kerani' AND
+                        HDP.NIK_MANDOR = '$nik_mandor' AND
+                        HDP.TANGGAL_RENCANA = '$tanggal' AND
+                        SUBSTR (HDP.ID_BA_AFD_BLOK, 1, 4) = '$ba_code' AND --id_ba
+                        SUBSTR (HDP.ID_BA_AFD_BLOK, 5, 1) = '$afd'  -- id_afd
+                ORDER BY DBMS_RANDOM.VALUE FETCH NEXT 1 ROWS ONLY ";
+
+
+        $valid_data = json_encode($this->db_mobile_ins->select($sql));
+        $result = json_decode( $valid_data,true);
+                   
+        $i = 1;
+        $no_val = TRValidasiHeader::select('JUMLAH_EBCC_VALIDATED')->where('ID_VALIDASI',$id_validasi)->get();
+        // dd($no_val,$id_validasi);
+        if($no_val == null){
+            $val = 1;
+        }else{
+            $val = $i + $no_val[0]->jumlah_ebcc_validated;
+        }
+        $target = TMParameter::select('PARAMETER_DESC')->where('PARAMETER_NAME','TARGET_VALIDASI')->get();
+
+        $data['data_validasi'] = $result;
+        $data['no_validasi'] = $val;
+        $data['target'] = $target[0]->parameter_desc;
+
         return view('validasi.image_preview',$data);
     }
 
-    public function filter_date($date) {
-		ini_set('memory_limit', '-1');
-		$data['active_menu'] = $this->active_menu;
-        $sql = "select distinct ebcc.id_ba,
-                                ebcc.id_afd,
-                                ebcc.tanggal_rencana,
-                                ebcc.nik_kerani_buah,
-                                ebcc.nama_krani_buah,
-                                ebcc.nik_mandor,
-                                ebcc.nama_mandor,
-                                ebcc.id_validasi,
-                                case when valid.jumlah_ebcc_validated is null then 0 else valid.jumlah_ebcc_validated end as jumlah_ebcc_validated,
-                                param.target_validasi 
-                from (SELECT SUBSTR (drp.id_ba_afd_blok, 1, 4) AS id_ba,
-                                SUBSTR (drp.id_ba_afd_blok, 5, 1) AS id_afd,
-                                hrp.id_rencana,
-                                hrp.tanggal_rencana,
-                                hrp.nik_kerani_buah,
-                                hrp.nik_mandor,
-                                emp_krani.emp_name 
-                                || ' - ' 
-                                || hrp.nik_kerani_buah AS nama_krani_buah,
-                                emp_mandor.emp_name
-                                || ' - '
-                                || hrp.nik_mandor AS nama_mandor,
-                                hrp.nik_kerani_buah
-                                || '-'
-                                || hrp.nik_mandor
-                                || '-'
-                                || to_char(hrp.tanggal_rencana,'YYYYMMDD')
-                                AS id_validasi
-                                FROM ebcc.t_header_rencana_panen hrp
-                                LEFT JOIN ebcc.t_detail_rencana_panen drp
-                                ON hrp.id_rencana = drp.id_rencana
-                                LEFT JOIN ebcc.t_employee emp_krani
-                                ON emp_krani.nik = hrp.nik_kerani_buah
-                                LEFT JOIN ebcc.t_employee emp_mandor
-                                ON emp_mandor.nik = hrp.nik_mandor
-                                JOIN mobile_inspection.t_parameter param
-                                ON 1=1
-                                WHERE SUBSTR (ID_BA_AFD_BLOK, 1, 2) IN (SELECT comp_code FROM tap_dw.tm_comp@dwh_link)
-                )  ebcc 
-                    left join MOBILE_INSPECTION.TR_VALIDASI_HEADER valid on EBCC.ID_VALIDASI = VALID.ID_VALIDASI 
-                    inner join MOBILE_INSPECTION.T_PARAMETER param on 1 = 1
-                    WHERE ebcc.tanggal_rencana = '$date'";
-        $valid_data = json_encode($this->db_mobile_ins->select($sql));
-		$result = json_decode( $valid_data,true);
+    public function create_action(Request $request)
+    { 
+        // dd($request);
+        $id_val = $request->id_validasi."-".$request->ba_code."-".$request->afd_code;
+        $id = str_replace("/",".",$id_val);
+        $jml = $request->jumlah_ebcc_validated;
+            TRValidasiHeader::firstOrCreate($request->only('id_validasi','jumlah_ebcc_validated','last_update'));
+            // TRValidasiDetail::create($request->all());
+            $data['uuid']	= Uuid::uuid1()->toString();
+            if($request->kondisi_foto == null){
+                $data['kondisi_foto'] = "BISA_DIVALIDASI";
+            }else{
+                $data['kondisi_foto'] = "TIDAK_BISA_DIVALIDASI,".$request->kondisi_foto ;
+            }
 
-		$data['data_header'] = $result;
+            $data['insert_time'] = date('Y-M-d');
+            $data['insert_user'] = session('NIK');
+            $data['insert_user_fullname'] = session('USERNAME');
+            $data['insert_user_userrole'] = session('USER_ROLE');
+
+			TRValidasiDetail::create($request->except('id_validasi','jumlah_ebcc_validated','last_updated','kodisi_foto')+$data);
+           
+            if($jml < 3){
+                return Redirect::to('validasi/create/'.$id);
+            }else{
+                return Redirect::to('listvalidasi');
+            }
+
+    }
+
+
+    // public function filter_date($date) {
+	// 	ini_set('memory_limit', '-1');
+	// 	$data['active_menu'] = $this->active_menu;
+    //     $sql = "select distinct ebcc.id_ba,
+    //                             ebcc.id_afd,
+    //                             ebcc.tanggal_rencana,
+    //                             ebcc.nik_kerani_buah,
+    //                             ebcc.nama_krani_buah,
+    //                             ebcc.nik_mandor,
+    //                             ebcc.nama_mandor,
+    //                             ebcc.id_validasi,
+    //                             case when valid.jumlah_ebcc_validated is null then 0 else valid.jumlah_ebcc_validated end as jumlah_ebcc_validated,
+    //                             param.target_validasi 
+    //             from (SELECT SUBSTR (drp.id_ba_afd_blok, 1, 4) AS id_ba,
+    //                             SUBSTR (drp.id_ba_afd_blok, 5, 1) AS id_afd,
+    //                             hrp.id_rencana,
+    //                             hrp.tanggal_rencana,
+    //                             hrp.nik_kerani_buah,
+    //                             hrp.nik_mandor,
+    //                             emp_krani.emp_name 
+    //                             || ' - ' 
+    //                             || hrp.nik_kerani_buah AS nama_krani_buah,
+    //                             emp_mandor.emp_name
+    //                             || ' - '
+    //                             || hrp.nik_mandor AS nama_mandor,
+    //                             hrp.nik_kerani_buah
+    //                             || '-'
+    //                             || hrp.nik_mandor
+    //                             || '-'
+    //                             || to_char(hrp.tanggal_rencana,'YYYYMMDD')
+    //                             AS id_validasi
+    //                             FROM ebcc.t_header_rencana_panen hrp
+    //                             LEFT JOIN ebcc.t_detail_rencana_panen drp
+    //                             ON hrp.id_rencana = drp.id_rencana
+    //                             LEFT JOIN ebcc.t_employee emp_krani
+    //                             ON emp_krani.nik = hrp.nik_kerani_buah
+    //                             LEFT JOIN ebcc.t_employee emp_mandor
+    //                             ON emp_mandor.nik = hrp.nik_mandor
+    //                             JOIN mobile_inspection.t_parameter param
+    //                             ON 1=1
+    //                             WHERE SUBSTR (ID_BA_AFD_BLOK, 1, 2) IN (SELECT comp_code FROM tap_dw.tm_comp@dwh_link)
+    //             )  ebcc 
+    //                 left join MOBILE_INSPECTION.TR_VALIDASI_HEADER valid on EBCC.ID_VALIDASI = VALID.ID_VALIDASI 
+    //                 inner join MOBILE_INSPECTION.T_PARAMETER param on 1 = 1
+    //                 WHERE ebcc.tanggal_rencana = '$date'";
+    //     $valid_data = json_encode($this->db_mobile_ins->select($sql));
+	// 	$result = json_decode( $valid_data,true);
+
+	// 	$data['data_header'] = $result;
 		
-		return view( 'validasi.listheader', $data );
+	// 	return view( 'validasi.listheader', $data );
 		
-	}
+	// }
 
 
 }

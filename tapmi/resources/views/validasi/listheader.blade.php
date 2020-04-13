@@ -51,7 +51,7 @@
 				<?php 
 				$id = str_replace("/",".",$q['id_validasi']);
 				 ?>
-				<td><a href={{ URL::to('/validasi/create/'.$id) }}><button type="button" class="btn btn-primary btn-sm">Validasi</button></a></td>
+				<td><a href={{ URL::to('/validasi/create/'.$id.'-'.$q['id_ba'].'-'.$q['id_afd']) }}><button type="button" class="btn btn-primary btn-sm">Validasi</button></a></td>
 			</tr>
 		@endforeach
 	</tbody>
