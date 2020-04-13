@@ -56,7 +56,7 @@ class ValidationController extends Controller {
                                 ebcc.nama_mandor,
                                 ebcc.id_validasi,
                                 case when valid.jumlah_ebcc_validated is null then 0 else valid.jumlah_ebcc_validated end as jumlah_ebcc_validated,
-                                case when param.parameter_name = 'target_validasi' then param.parameter_desc else '3' end AS target_validasi  
+                                case when param.parameter_name = 'TARGET_VALIDASI' then param.parameter_desc end AS target_validasi  
                 from (SELECT SUBSTR (drp.id_ba_afd_blok, 1, 4) AS id_ba,
                                 SUBSTR (drp.id_ba_afd_blok, 5, 1) AS id_afd,
                                 hrp.id_rencana,
