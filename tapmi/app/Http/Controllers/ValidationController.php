@@ -189,7 +189,8 @@ class ValidationController extends Controller {
         $result = json_decode( $valid_data,true);
                    
         $i = 1;
-        $no_val = TRValidasiHeader::select('JUMLAH_EBCC_VALIDATED')->where('ID_VALIDASI',$id_validasi)->get();
+        $no_val = TRValidasiHeader::select('JUMLAH_EBCC_VALIDATED')->where('ID_VALIDASI',$id_validasi)->first();
+        
         // dd($no_val,$id_validasi);
         if($no_val == null){
             $val = 1;
