@@ -50,7 +50,7 @@ class ValidationController extends Controller {
                                 ebcc.nama_mandor,
                                 ebcc.id_validasi,
                                 case when valid.jumlah_ebcc_validated is null then 0 else valid.jumlah_ebcc_validated end as jumlah_ebcc_validated,
-                                param.target_validasi 
+                                case when param.parameter_name = 'target_validasi' then param.parameter_desc else '3' end AS target_validasi  
                 from (SELECT SUBSTR (drp.id_ba_afd_blok, 1, 4) AS id_ba,
                                 SUBSTR (drp.id_ba_afd_blok, 5, 1) AS id_afd,
                                 hrp.id_rencana,
@@ -76,12 +76,10 @@ class ValidationController extends Controller {
                                 ON emp_krani.nik = hrp.nik_kerani_buah
                                 LEFT JOIN ebcc.t_employee emp_mandor
                                 ON emp_mandor.nik = hrp.nik_mandor
-                                JOIN mobile_inspection.t_parameter param
-                                ON 1=1
                                 WHERE SUBSTR (ID_BA_AFD_BLOK, 1, 2) IN (SELECT comp_code FROM tap_dw.tm_comp@dwh_link)
                 )  ebcc 
                     left join MOBILE_INSPECTION.TR_VALIDASI_HEADER valid on EBCC.ID_VALIDASI = VALID.ID_VALIDASI 
-                    inner join MOBILE_INSPECTION.T_PARAMETER param on 1 = 1
+                    inner join MOBILE_INSPECTION.TM_PARAMETER param on 1 = 1
                     WHERE ebcc.tanggal_rencana >= trunc(sysdate, 'yyyy') - interval '1' year
                     and ebcc.tanggal_rencana <  trunc(sysdate, 'yyyy')
                     order by ebcc.tanggal_rencana desc";
