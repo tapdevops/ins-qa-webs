@@ -86,8 +86,9 @@ class ValidationController extends Controller {
                 )  ebcc 
                     left join MOBILE_INSPECTION.TR_VALIDASI_HEADER valid on EBCC.ID_VALIDASI = VALID.ID_VALIDASI 
                     inner join MOBILE_INSPECTION.TM_PARAMETER param on 1 = 1
-                    WHERE ebcc.tanggal_rencana >= trunc(sysdate, 'yyyy') - interval '1' year
-                    and ebcc.tanggal_rencana <  trunc(sysdate, 'yyyy')
+                    WHERE ebcc.tanggal_rencana > trunc(sysdate, 'yyyy') - interval '1' year
+                    and ebcc.tanggal_rencana <=  trunc(sysdate, 'yyyy')
+                    and ebcc.tanggal_rencana < trunc(sysdate)
                     and ebcc.id_ba || ebcc.id_afd in ('$code')
                     order by ebcc.tanggal_rencana desc";
         $valid_data = json_encode($this->db_mobile_ins->select($sql));
