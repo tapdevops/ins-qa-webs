@@ -191,11 +191,11 @@ class ValidationController extends Controller {
         $i = 1;
         $no_val = TRValidasiHeader::select('JUMLAH_EBCC_VALIDATED')->where('ID_VALIDASI',$id_validasi)->first();
         
-        // dd($no_val,$id_validasi);
+        // dd($no_val,$no_val['jumlah_ebcc_validated']);
         if($no_val == null){
             $val = 1;
         }else{
-            $val = $i + $no_val[0]->jumlah_ebcc_validated;
+            $val = $i + $no_val['jumlah_ebcc_validated'];
         }
         $target = TMParameter::select('PARAMETER_DESC')->where('PARAMETER_NAME','TARGET_VALIDASI')->get();
 
