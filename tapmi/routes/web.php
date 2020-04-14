@@ -67,6 +67,16 @@ Route::group( [ 'middleware' => 'web' ], function() {
 			Route::get('/summary/{ba_code}/{start_date}/{end_date}', 'TempController@download_proses')->name('download_temp/{ba_code}/{start_date}/{end_date}');
 			Route::get('/summarykrani/{ba_code}/{start_date}/{end_date}', 'Temp2Controller@download_proses')->name('download_temp2/{ba_code}/{start_date}/{end_date}');
 		});
+
+		#validation_image_data
+		Route::get( '/listvalidasi', 'ValidationController@index'); 
+		Route::get( '/validasi/create/{id}', 'ValidationController@create' );
+		Route::post( '/validasi/create_action', 'ValidationController@create_action')->name('create_validation');
+		Route::get( '/validasi/filter_date/{date}', 'ValidationController@filter_date' );
+		// Route::get('validasi-datatable', 'ValidationController@datatable')->name('header.datatable');
+		// Route::get('validasi-data', 'ValidationController@headerList')->name('header.data');
+
+
 	});
 
 	// Cron URL
@@ -84,11 +94,3 @@ Route::get( '/testings', 'KafkaProducerController@test' );
 
 #image
 Route::get( '/storage/{filename}', 'StorageController@image' );
-
-#validation_image_data
-Route::get( '/listvalidasi', 'ValidationController@index'); 
-Route::get( '/validasi/create/{id}', 'ValidationController@create' );
-Route::post( '/validasi/create_action', 'ValidationController@create_action')->name('create_validation');
-Route::get( '/validasi/filter_date/{date}', 'ValidationController@filter_date' );
-// Route::get('validasi-datatable', 'ValidationController@datatable')->name('header.datatable');
-// Route::get('validasi-data', 'ValidationController@headerList')->name('header.data');
