@@ -72,12 +72,6 @@
 
 $(document).ready(function() {
     var t = $('#product-table').DataTable({
-        // "columnDefs": [ {
-        //     "searchable": false,
-        //     "orderable": false,
-        //     "targets": 0
-        // } ],
-        // "order": [[ 1, 'asc' ]],
         processing: true,
         serverSide: true,
         ajax: '{!! route('header.data') !!}',

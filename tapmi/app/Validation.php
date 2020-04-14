@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Validation extends Model
 {
     //
-    protected $connection = 'ebcc';
+    protected $connection = 'mobile_ins';
     
-    protected $table = 'ebcc_hasil_panen';
+    // protected $table = 'ebcc_hasil_panen';
 }

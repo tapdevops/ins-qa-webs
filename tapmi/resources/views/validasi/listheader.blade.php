@@ -12,9 +12,9 @@
 				{{-- <div class="m-input-icon m-input-icon--left">
 					<input type="date" class="form-control m-input m-input--solid" max="{{ $dmin }}" placeholder="Select date..." id="generalSearch">
 				</div> --}}
-				<div class="input-daterange input-group" id="m_datepicker_5">
+				<div class="input-daterange input-group">
 					<label for="TANGGAL_RENCANA">Tanggal &nbsp; &nbsp; </label>
-					<input type="text" class="form-control m-input" id="tgl_rencana" name="TANGGAL_RENCANA" autocomplete="off" readonly="readonly" />
+					<input type="text" class="form-control m-input" id="m_datepicker_5" name="TANGGAL_RENCANA" autocomplete="off" readonly="readonly" />
 					<div class="input-group-append">
 						<span class="input-group-text">
 							<i class="la la-calendar"></i>
@@ -60,6 +60,7 @@
 
 @section( 'scripts' )
 <script src="{{ url( 'assets/default-template/assets/custom/components/forms/widgets/bootstrap-daterangepicker.js' ) }}" type="text/javascript"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/fixedcolumns/3.2.6/js/dataTables.fixedColumns.min.js"></script>
 <script type="text/javascript">
 	
@@ -95,19 +96,15 @@
 			]
 
 			})
-			, $("#m_form_status").on("change", function() {
-				e.search($(this).val().toLowerCase(), "Status")
-			}), $("#m_form_type").on("change", function() {
-				e.search($(this).val().toLowerCase(), "Type")
-			}), $("#m_form_status, c#m_form_type").selectpicker()
 		}
 	};
 
 	jQuery(document).ready(function() {
 		datatable.init()
 		MobileInspection.set_active_menu( '{{ $active_menu }}' );
+	});
 
-		
+	$(document).ready(function () {
 		$("#m_datepicker_5").datepicker({
 			todayHighlight: !0,
 			templates: {
@@ -115,25 +112,63 @@
 				rightArrow: '<i class="la la-angle-right"></i>'
 			},
 			endDate: "-1d",
-			format: 'yy-M-dd',
-			onSelect: function(date, instance) {
-						$.ajax
-						({
-							type: "Post",
-							url: "{{URL::to('/validasi/filter_date/')}}/"+date,
-							data: null,
-							success: function(result)
-							{
-								//do something
-								datatable.fnDraw(result);
-							}
-						});  
-						}
-		// 	,
-		// 	 onClose: function(selectedDate) {
-        //   table.fnDraw();}});
+			format: 'dd-M-yy',
+			
 		});
 
+		
+		$('#m_datepicker_5').datepicker().on('change', function(){
+				var selected = $(this).val();
+				var date_val = selected.toUpperCase();
+				load_data(date_val);
+			});
+
+			
+		function load_data(tanggal=''){
+
+			$.ajaxSetup({
+					headers: {
+						'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+					}
+				});
+
+				$.ajax({
+					url: "{{URL::to('validasi/filter_date')}}/"+tanggal,
+						type: "POST",
+						data: null,
+						success: function(result){
+																			
+							$(".m-datatable").mDatatable({
+									data: result,
+									search: {
+										input: $( "#tgl_rencana" )
+									},
+
+
+									columns: [
+									{
+										field: "Krani Buah",
+										width: 300
+									}, {
+										field: "Afdeling",
+										width: 120
+									},{
+										field: "Mandor Panen",
+										width: 300
+									}, {
+										field: "Jumlah Divalidasi",
+										width: 100
+									}
+								]
+
+								})		
+							}				
+					});
+		}
+
 	});
+	
+
+	
 </script>
 @endsection
