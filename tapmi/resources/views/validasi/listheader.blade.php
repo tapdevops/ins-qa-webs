@@ -32,7 +32,6 @@
 <table class="m-datatable" id="html_table" width="100%" style="margin-top:20px;">
 	<thead>
 		<tr>
-			<th>Tanggal</th>
 			<th>Krani Buah</th>
 			<th>Afdeling</th>
 			<th>Mandor Panen</th>
@@ -44,7 +43,6 @@
 		
 		@foreach ( $data_header as $key => $q )
 			<tr>
-				<td>{{ $q['tanggal_rencana'] }}</td>
 				<td>{{ $q['nama_krani_buah'] }}</td>
 				<td>{{ $q['id_afd'] }}</td>
 				<td>{{ $q['nama_mandor'] }}</td>
@@ -82,10 +80,6 @@
 
 				columns: [
 				{
-					field: "Tanggal",
-        			filterable: true,
-					width: 300
-				},{
 					field: "Krani Buah",
         			filterable: true,
 					width: 300
