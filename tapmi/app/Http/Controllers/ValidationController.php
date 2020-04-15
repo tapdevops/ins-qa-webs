@@ -220,8 +220,9 @@ class ValidationController extends Controller {
             }else{
                 $data['kondisi_foto'] = "TIDAK_BISA_DIVALIDASI,".$request->kondisi_foto ;
             }
-            $emp = Employee::where('NIK',session('NIK'))->first();
-            $fullname = $emp['emp_name'];
+            
+            $emp = Employee::where('EMPLOYEE_NIK',session('NIK'))->first();
+            $fullname = $emp['employee_fullname'];
             $data['insert_time'] = date('Y-M-d');
             $data['insert_user'] = session('NIK');
             $data['insert_user_fullname'] = $fullname;
