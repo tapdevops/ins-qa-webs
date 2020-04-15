@@ -84,9 +84,9 @@
 				{
 					field: "Tanggal",
         			filterable: true,
-					width: 300
-				}, 
-				{
+					width: 0,
+					visibility: false,
+				},{
 					field: "Krani Buah",
         			filterable: true,
 					width: 300
