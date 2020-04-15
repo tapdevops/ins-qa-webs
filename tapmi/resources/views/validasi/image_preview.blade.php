@@ -70,7 +70,7 @@ input[type="radio"]{
 					 }
 			 ?>
 				<!-- <img onerror="this.onerror=null;this.src='http://10.20.1.59/ebcc/array/uploads/{{$img}}'"  src="http://tap-motion.tap-agri.com/ebcc/array/uploads/"{{$img}} style="display:block;" width="80%" height="80%" > -->
-				<img onerror="this.onerror=null;this.src='https://webhostingmedia.net/wp-content/uploads/2018/01/http-error-404-not-found.png'"  src="http://tap-motion.tap-agri.com/ebcc/array/uploads/"{{$img}} style="display:block;" width="80%" height="80%" >
+				<img onerror="this.onerror=null;this.src='https://webhostingmedia.net/wp-content/uploads/2018/01/http-error-404-not-found.png'"  src='http://10.20.1.59/ebcc/array/uploads/{{$img}}' style="display:block;" width="80%" height="80%" >
 				<!-- <img onerror="this.onerror=null;this.src='{{storage_path($img_backup)}};'"  src="http://tap-motion.tap-agri.com/ebcc/array/uploads/{{$img}}" > -->
 				<!-- <img onerror="this.onerror=null;this.src='https://webhostingmedia.net/wp-content/uploads/2018/01/http-error-404-not-found.png;'"  src="http://tap-motion.tap-agri.com/ebcc/array/uploads/{{$img}}" > -->
 				<!-- <img src="http://127.0.0.1:8000/storage/app/public/notfound.jpg"> -->
