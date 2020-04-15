@@ -62,8 +62,17 @@ input[type="radio"]{
 		<td  rowspan="7" width="45%">
 			<div style="position:absolute;z-index: 1000">
 			<?php	$img = str_replace("/","",$q['picture_name']);
+					 $os = PHP_OS; 
+					 if( $os != "WINNT" ){
+						 $img_backup = 'app/public/notfound.jpg';
+					 }else{
+						 $img_backup = 'app\public\notfound.jpg';
+					 }
 			 ?>
-				<img src="http://tap-motion.tap-agri.com/ebcc/array/uploads/{{$img}}" >
+				<img onerror="this.onerror=null;this.src='{{storage_path($img_backup)}};'"  src="http://tap-motion.tap-agri.com/ebcc/array/uploads/{{$img}}" >
+				<!-- <img onerror="this.onerror=null;this.src='https://webhostingmedia.net/wp-content/uploads/2018/01/http-error-404-not-found.png;'"  src="http://tap-motion.tap-agri.com/ebcc/array/uploads/{{$img}}" > -->
+				<!-- <img src="http://127.0.0.1:8000/storage/app/public/notfound.jpg"> -->
+				
 			</div>
 		</td>
 		<td><h4>Validasi ke {{$no_validasi}} dari {{$target}}</h4></td>
@@ -173,6 +182,7 @@ input[type="radio"]{
 	
 	$(document).ready(function() {
 		MobileInspection.set_active_menu( '{{ $active_menu }}' );
+	
 	});
 
 	function sum() {

@@ -13,8 +13,8 @@
 					<input type="date" class="form-control m-input m-input--solid" max="{{ $dmin }}" placeholder="Select date..." id="generalSearch">
 				</div> --}}
 				<div class="input-daterange input-group">
-					<label for="TANGGAL_RENCANA">Tanggal &nbsp; &nbsp; </label>
-					<input type="text" class="form-control m-input" id="m_datepicker_5" name="TANGGAL_RENCANA" autocomplete="off" readonly="readonly" />
+					<label for="tanggal_rencana">Tanggal &nbsp; &nbsp; </label>
+					<input type="text" class="form-control m-input" id="generalSearch" name="tanggal_rencana" autocomplete="off" readonly="readonly" />
 					<div class="input-group-append">
 						<span class="input-group-text">
 							<i class="la la-calendar"></i>
@@ -29,10 +29,10 @@
 	</div>
 	
 </div>
-
 <table class="m-datatable" id="html_table" width="100%" style="margin-top:20px;">
 	<thead>
 		<tr>
+			<th>Tanggal</th>
 			<th>Krani Buah</th>
 			<th>Afdeling</th>
 			<th>Mandor Panen</th>
@@ -44,6 +44,7 @@
 		
 		@foreach ( $data_header as $key => $q )
 			<tr>
+				<td>{{ $q['tanggal_rencana'] }}</td>
 				<td>{{ $q['nama_krani_buah'] }}</td>
 				<td>{{ $q['id_afd'] }}</td>
 				<td>{{ $q['nama_mandor'] }}</td>
@@ -75,13 +76,18 @@
 					}
 				},
 				search: {
-					input: $( "#tgl_rencana" )
+					input: $( "#generalSearch" )
 				},
 
 
 				columns: [
 				{
+					field: "Tanggal",
+        			filterable: true,
+					width: 300
+				},{
 					field: "Krani Buah",
+        			filterable: true,
 					width: 300
 				}, {
 					field: "Afdeling",
@@ -105,69 +111,61 @@
 	});
 
 	$(document).ready(function () {
-		$("#m_datepicker_5").datepicker({
+		$("#generalSearch").datepicker({
 			todayHighlight: !0,
 			templates: {
 				leftArrow: '<i class="la la-angle-left"></i>',
 				rightArrow: '<i class="la la-angle-right"></i>'
 			},
 			endDate: "-1d",
-			format: 'dd-M-yy',
+			format: 'yyyy-mm-dd	',
 			
 		});
 
 		
-		$('#m_datepicker_5').datepicker().on('change', function(){
+		$('#generalSearch').datepicker().on('change', function(){
 				var selected = $(this).val();
 				var date_val = selected.toUpperCase();
-				load_data(date_val);
+				// load_data(date_val);
 			});
 
 			
-		function load_data(tanggal=''){
+		// function load_data(tanggal=''){
 
-			$.ajaxSetup({
-					headers: {
-						'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-					}
-				});
+		// 	$.ajaxSetup({
+		// 			headers: {
+		// 				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+		// 			}
+		// 		});
 
-				$.ajax({
-					url: "{{URL::to('validasi/filter_date')}}/"+tanggal,
-						type: "POST",
-						data: null,
-						success: function(result){
-																			
-							$(".m-datatable").mDatatable({
-									data: result,
-									search: {
-										input: $( "#tgl_rencana" )
-									},
+		// 		$.ajax({
+		// 			url: "{{URL::to('validasi/filter_date')}}/"+tanggal,
+		// 				type: "POST",
+		// 				data: tanggal,
+		// 				dataType: "json",
+		// 				success: function(response){
+		// 					// Retrieve data
+		// 					var data = response;
 
+		// 					// Modify data
+		// 					$.each(datatable.data, function(){
+		// 						this[0] = 'John Smith';
+		// 					});
+		// 					dataTable = $(".m-datatable").mDatatable();
 
-									columns: [
-									{
-										field: "Krani Buah",
-										width: 300
-									}, {
-										field: "Afdeling",
-										width: 120
-									},{
-										field: "Mandor Panen",
-										width: 300
-									}, {
-										field: "Jumlah Divalidasi",
-										width: 100
-									}
-								]
+		// 					// Clear table
+		// 					dataTable.fnClearTable();
 
-								})		
-							}				
-					});
-		}
+		// 					// Add updated data
+		// 					dataTable.fnAddData(datatable.data);
+
+		// 					// Redraw table
+		// 					dataTable.draw();
+		// 				}				
+		// 			});
+		// }
 
 	});
-	
 
 	
 </script>

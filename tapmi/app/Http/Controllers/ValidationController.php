@@ -41,148 +41,8 @@ class ValidationController extends Controller {
 
 	#   		 									  		            ▁ ▂ ▄ ▅ ▆ ▇ █ Index
     # -------------------------------------------------------------------------------------
-    public function xx_index(Request $request){
-        //view listheaderdata
-        $ba_afd_code =explode(",",session('LOCATION_CODE'));
-        $code = implode("','", $ba_afd_code);
-        $sql = "select distinct ebcc.id_ba,
-                                ebcc.id_afd,
-                                ebcc.tanggal_rencana,
-                                ebcc.nik_kerani_buah,
-                                ebcc.nama_krani_buah,
-                                ebcc.nik_mandor,
-                                ebcc.nama_mandor,
-                                ebcc.id_validasi,
-                                case when valid.jumlah_ebcc_validated is null then 0 else valid.jumlah_ebcc_validated end as jumlah_ebcc_validated,
-                                case when param.parameter_name = 'TARGET_VALIDASI' then param.parameter_desc end AS target_validasi  
-                from (SELECT SUBSTR (drp.id_ba_afd_blok, 1, 4) AS id_ba,
-                                SUBSTR (drp.id_ba_afd_blok, 5, 1) AS id_afd,
-                                hrp.id_rencana,
-                                hrp.tanggal_rencana,
-                                hrp.nik_kerani_buah,
-                                hrp.nik_mandor,
-                                emp_krani.emp_name 
-                                || ' - ' 
-                                || hrp.nik_kerani_buah AS nama_krani_buah,
-                                emp_mandor.emp_name
-                                || ' - '
-                                || hrp.nik_mandor AS nama_mandor,
-                                hrp.nik_kerani_buah
-                                || '-'
-                                || hrp.nik_mandor
-                                || '-'
-                                || to_char(hrp.tanggal_rencana,'YYYYMMDD')
-                                AS id_validasi
-                                FROM ebcc.t_header_rencana_panen hrp
-                                LEFT JOIN ebcc.t_detail_rencana_panen drp
-                                ON hrp.id_rencana = drp.id_rencana
-                                LEFT JOIN ebcc.t_employee emp_krani
-                                ON emp_krani.nik = hrp.nik_kerani_buah
-                                LEFT JOIN ebcc.t_employee emp_mandor
-                                ON emp_mandor.nik = hrp.nik_mandor
-                                WHERE SUBSTR (ID_BA_AFD_BLOK, 1, 2) IN (SELECT comp_code FROM tap_dw.tm_comp@dwh_link)
-                )  ebcc 
-                    left join MOBILE_INSPECTION.TR_VALIDASI_HEADER valid on EBCC.ID_VALIDASI = VALID.ID_VALIDASI 
-                    inner join MOBILE_INSPECTION.TM_PARAMETER param on 1 = 1
-                    WHERE ebcc.id_ba || ebcc.id_afd in ('$code')";
-                    $where = "and ebcc.tanggal_rencana = (sysdate-1)";
-                    $where2 = "and ebcc.tanggal_rencana = '$request->tanggal'";
-                    $order = "order by ebcc.tanggal_rencana desc";
-        if(request()->ajax())
-        {
-            if(!empty($request->tanggal))
-            {
-                $sql .= $where2;
-                $sql .= $order;
-                $data = Validation::select(DB::raw($sql))
-                        ->get();
-            }
-            else
-            {
-                $sql .= $where;
-                $sql .= $order;
-                $data = Validation::select(DB::raw($sql))
-                ->get();
-            }
-            return datatables()->of($data)->make(true);
-        }
-        
-		$data['active_menu'] = $this->active_menu;
-        return view('validasi.listheaderdata',$data);
-    }
-
-	public function index() {
-        //view datatable
-        $ba_afd_code =explode(",",session('LOCATION_CODE'));
-        $code = implode("','", $ba_afd_code);
-        $sql = "select distinct ebcc.id_ba,
-                                ebcc.id_afd,
-                                ebcc.tanggal_rencana,
-                                ebcc.nik_kerani_buah,
-                                ebcc.nama_krani_buah,
-                                ebcc.nik_mandor,
-                                ebcc.nama_mandor,
-                                ebcc.id_validasi,
-                                case when valid.jumlah_ebcc_validated is null then 0 else valid.jumlah_ebcc_validated end as jumlah_ebcc_validated,
-                                case when param.parameter_name = 'TARGET_VALIDASI' then param.parameter_desc end AS target_validasi  
-                from (SELECT SUBSTR (drp.id_ba_afd_blok, 1, 4) AS id_ba,
-                                SUBSTR (drp.id_ba_afd_blok, 5, 1) AS id_afd,
-                                hrp.id_rencana,
-                                hrp.tanggal_rencana,
-                                hrp.nik_kerani_buah,
-                                hrp.nik_mandor,
-                                emp_krani.emp_name 
-                                || ' - ' 
-                                || hrp.nik_kerani_buah AS nama_krani_buah,
-                                emp_mandor.emp_name
-                                || ' - '
-                                || hrp.nik_mandor AS nama_mandor,
-                                hrp.nik_kerani_buah
-                                || '-'
-                                || hrp.nik_mandor
-                                || '-'
-                                || to_char(hrp.tanggal_rencana,'YYYYMMDD')
-                                AS id_validasi
-                                FROM ebcc.t_header_rencana_panen hrp
-                                LEFT JOIN ebcc.t_detail_rencana_panen drp
-                                ON hrp.id_rencana = drp.id_rencana
-                                LEFT JOIN ebcc.t_employee emp_krani
-                                ON emp_krani.nik = hrp.nik_kerani_buah
-                                LEFT JOIN ebcc.t_employee emp_mandor
-                                ON emp_mandor.nik = hrp.nik_mandor
-                                WHERE SUBSTR (ID_BA_AFD_BLOK, 1, 2) IN (SELECT comp_code FROM tap_dw.tm_comp@dwh_link)
-                )  ebcc 
-                    left join MOBILE_INSPECTION.TR_VALIDASI_HEADER valid on EBCC.ID_VALIDASI = VALID.ID_VALIDASI 
-                    inner join MOBILE_INSPECTION.TM_PARAMETER param on 1 = 1
-                    WHERE ebcc.id_ba || ebcc.id_afd in ('$code')";
-                    $where = "and ebcc.tanggal_rencana = (sysdate-1)";
-                    $where2 = "and ebcc.tanggal_rencana = '$request->tanggal'";
-                    $order = "order by ebcc.tanggal_rencana desc";
-                if(request()->ajax())
-                {
-                    if(!empty($request->tanggal))
-                    {
-                        $sql .= $where2;
-                        $sql .= $order;
-                        $data = Validation::select(DB::raw($sql))
-                                ->get();
-                    }
-                    else
-                    {
-                        $sql .= $where;
-                        $sql .= $order;
-                        $data = Validation::select(DB::raw($sql))
-                        ->get();
-                    }
-                    return datatables()->of($data)->make(true);
-                }
-                
-                $data['active_menu'] = $this->active_menu;
-        return view( 'validasi.datatable', $data );
-    }
-
-
-	public function x_index() {
+    
+    public function index() {
         //original
         $ba_afd_code =explode(",",session('LOCATION_CODE'));
         $code = implode("','", $ba_afd_code);
@@ -191,7 +51,7 @@ class ValidationController extends Controller {
 		$data['active_menu'] = $this->active_menu;
         $sql = "select distinct ebcc.id_ba,
                                 ebcc.id_afd,
-                                ebcc.tanggal_rencana,
+                                to_char(ebcc.tanggal_rencana,'YYYY-MM-DD') AS tanggal_rencana,
                                 ebcc.nik_kerani_buah,
                                 ebcc.nama_krani_buah,
                                 ebcc.nik_mandor,
@@ -229,13 +89,15 @@ class ValidationController extends Controller {
                     left join MOBILE_INSPECTION.TR_VALIDASI_HEADER valid on EBCC.ID_VALIDASI = VALID.ID_VALIDASI 
                     inner join MOBILE_INSPECTION.TM_PARAMETER param on 1 = 1
                     WHERE 
-                    ebcc.tanggal_rencana = (sysdate-1)
+                    ebcc.tanggal_rencana > trunc(sysdate, 'yyyy') - interval '1' year
+                    and ebcc.tanggal_rencana <=  trunc(sysdate, 'yyyy')
                     and ebcc.id_ba || ebcc.id_afd in ('$code')
-                    order by ebcc.tanggal_rencana desc";
-
+                    order by tanggal_rencana desc";
                     // ebcc.tanggal_rencana > trunc(sysdate, 'yyyy') - interval '1' year
                     // and ebcc.tanggal_rencana <=  trunc(sysdate, 'yyyy')
                     // and 
+                    
+                    // ebcc.tanggal_rencana = (sysdate-1)
         $valid_data = json_encode($this->db_mobile_ins->select($sql));
 		$result = json_decode( $valid_data,true);
 
@@ -245,19 +107,6 @@ class ValidationController extends Controller {
 		
 	}
 
-	// public function xx_index(){
-		
-	// 	$data['active_menu'] = $this->active_menu;
-    //     return view('validasi.datatable',$data);
-    // }
-
-    // public function headerList(){
-        
-    //     $model = Validation::query()->orderBy('tanggal_rencana','DESC');
-    //     return DataTables::eloquent($model)
-    //             ->make(true);
-        
-    // }
     
     public function create($id)
     {   
@@ -381,67 +230,6 @@ class ValidationController extends Controller {
 
     }
 
-
-    public function filter_date($date) {
-		$ba_afd_code =explode(",",session('LOCATION_CODE'));
-        $code = implode("','", $ba_afd_code);
-        // dd($code);
-		ini_set('memory_limit', '-1');
-		$data['active_menu'] = $this->active_menu;
-        $sql = "select distinct ebcc.id_ba,
-                                ebcc.id_afd,
-                                ebcc.tanggal_rencana,
-                                ebcc.nik_kerani_buah,
-                                ebcc.nama_krani_buah,
-                                ebcc.nik_mandor,
-                                ebcc.nama_mandor,
-                                ebcc.id_validasi,
-                                case when valid.jumlah_ebcc_validated is null then 0 else valid.jumlah_ebcc_validated end as jumlah_ebcc_validated,
-                                case when param.parameter_name = 'TARGET_VALIDASI' then param.parameter_desc end AS target_validasi  
-                from (SELECT SUBSTR (drp.id_ba_afd_blok, 1, 4) AS id_ba,
-                                SUBSTR (drp.id_ba_afd_blok, 5, 1) AS id_afd,
-                                hrp.id_rencana,
-                                hrp.tanggal_rencana,
-                                hrp.nik_kerani_buah,
-                                hrp.nik_mandor,
-                                emp_krani.emp_name 
-                                || ' - ' 
-                                || hrp.nik_kerani_buah AS nama_krani_buah,
-                                emp_mandor.emp_name
-                                || ' - '
-                                || hrp.nik_mandor AS nama_mandor,
-                                hrp.nik_kerani_buah
-                                || '-'
-                                || hrp.nik_mandor
-                                || '-'
-                                || to_char(hrp.tanggal_rencana,'YYYYMMDD')
-                                AS id_validasi
-                                FROM ebcc.t_header_rencana_panen hrp
-                                LEFT JOIN ebcc.t_detail_rencana_panen drp
-                                ON hrp.id_rencana = drp.id_rencana
-                                LEFT JOIN ebcc.t_employee emp_krani
-                                ON emp_krani.nik = hrp.nik_kerani_buah
-                                LEFT JOIN ebcc.t_employee emp_mandor
-                                ON emp_mandor.nik = hrp.nik_mandor
-                                WHERE SUBSTR (ID_BA_AFD_BLOK, 1, 2) IN (SELECT comp_code FROM tap_dw.tm_comp@dwh_link)
-                )  ebcc 
-                    left join MOBILE_INSPECTION.TR_VALIDASI_HEADER valid on EBCC.ID_VALIDASI = VALID.ID_VALIDASI 
-                    inner join MOBILE_INSPECTION.TM_PARAMETER param on 1 = 1
-                    WHERE 
-                    ebcc.tanggal_rencana = '$date'
-                    and ebcc.id_ba || ebcc.id_afd in ('$code')
-                    order by ebcc.tanggal_rencana desc";
-        $valid_data = json_encode($this->db_mobile_ins->select($sql));
-        $result = json_decode( $valid_data,true);
-        $res = $this->db_mobile_ins->select($sql);
-        $data['data_header'] = $result;
-        // var_dump($sql);
-        // var_dump($valid_data);
-        return $valid_data;
-		
-		// return view( 'validasi.listheader', $data );
-		
-	}
 
 
 }
