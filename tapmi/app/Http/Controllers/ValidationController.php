@@ -19,6 +19,7 @@
 	use DateTime;
 	use Maatwebsite\Excel\Facades\Excel;
 	use App\Validation;
+	use App\Employee;
 	use App\TMParameter;
 	use App\TRValidasiHeader;
 	use App\TRValidasiDetail;
@@ -45,6 +46,9 @@ class ValidationController extends Controller {
 
 
 	public function index() {
+        // $emp = Employee::where('EMPLOYEE_NIK',session('NIK'))->first();
+        // $fullname = $emp['employee_fullname'];
+        // dd(session('NIK'),$emp,$fullname);
         //original
         $ba_afd_code =explode(",",session('LOCATION_CODE'));
         $code = implode("','", $ba_afd_code);
@@ -216,10 +220,11 @@ class ValidationController extends Controller {
             }else{
                 $data['kondisi_foto'] = "TIDAK_BISA_DIVALIDASI,".$request->kondisi_foto ;
             }
-
+            $emp = Employee::where('NIK',session('NIK'))->first();
+            $fullname = $emp['emp_name'];
             $data['insert_time'] = date('Y-M-d');
             $data['insert_user'] = session('NIK');
-            $data['insert_user_fullname'] = session('USERNAME');
+            $data['insert_user_fullname'] = $fullname;
             $data['insert_user_userrole'] = session('USER_ROLE');
 
 			TRValidasiDetail::create($request->except('id_validasi','jumlah_ebcc_validated','last_updated','kodisi_foto')+$data);

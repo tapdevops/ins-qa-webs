@@ -410,6 +410,7 @@ class ComposerStaticIniteaae0a39cca4eff65102ee69f70f00fc
         'App\\Console\\Commands\\INS_MSA_INSPECTION_TR_TRACK_INSPECTION' => __DIR__ . '/../..' . '/app/Console/Commands/INS_MSA_INSPECTION_TR_TRACK_INSPECTION.php',
         'App\\Console\\Commands\\TESTING_PRODUCER' => __DIR__ . '/../..' . '/app/Console/Commands/TESTING_PRODUCER.php',
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
+        'App\\Employee' => __DIR__ . '/../..' . '/app/Employee.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
         'App\\Http\\Controllers\\AuthController' => __DIR__ . '/../..' . '/app/Http/Controllers/AuthController.php',
         'App\\Http\\Controllers\\Auth\\ForgotPasswordController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/ForgotPasswordController.php',

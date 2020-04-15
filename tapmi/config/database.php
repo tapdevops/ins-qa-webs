@@ -100,6 +100,18 @@ return [
 			'password' => 'ebcc',
 			'charset'  => 'AL32UTF8',
 			'prefix'   => '',
+        ],
+
+        'tapdw' => [
+			'driver'   => 'oracle',
+			'tns'      =>  '',
+			'host'     => '10.20.1.103',
+			'port'     => '1521',
+			'database' => 'tapdw',
+			'username' => 'tap_dw',
+			'password' => 'tapdw123#',
+			'charset'  => 'AL32UTF8',
+			'prefix'   => '',
 		],
 
 		  /*'mobile_ins' => [
