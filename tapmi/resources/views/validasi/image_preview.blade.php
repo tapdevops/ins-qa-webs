@@ -59,7 +59,7 @@ input[type="radio"]{
 <input type="hidden" name="jumlah_ebcc_validated" value="{{$no_validasi}}">
 <input type="hidden" name="last_update" value="{{ date('Y-M-d') }}">
 	<tr>
-		<td  rowspan="7" width="45%">
+		<td  rowspan="7" width="45%"  style="vertical-align: top;">
 			<div style="position:absolute;z-index: 1000">
 			<?php	$img = str_replace("/","",$q['picture_name']);
 					 $os = PHP_OS; 
@@ -69,7 +69,8 @@ input[type="radio"]{
 						 $img_backup = 'app\public\notfound.jpg';
 					 }
 			 ?>
-				<img onerror="this.onerror=null;this.src='{{storage_path($img_backup)}};'"  src="http://tap-motion.tap-agri.com/ebcc/array/uploads/{{$img}}" >
+				<img onerror="this.onerror=null;this.src='https://webhostingmedia.net/wp-content/uploads/2018/01/http-error-404-not-found.png'"  src="http://tap-motion.tap-agri.com/ebcc/array/uploads/"{{$img}} style="display:block;" width="80%" height="80%" >
+				<!-- <img onerror="this.onerror=null;this.src='{{storage_path($img_backup)}};'"  src="http://tap-motion.tap-agri.com/ebcc/array/uploads/{{$img}}" > -->
 				<!-- <img onerror="this.onerror=null;this.src='https://webhostingmedia.net/wp-content/uploads/2018/01/http-error-404-not-found.png;'"  src="http://tap-motion.tap-agri.com/ebcc/array/uploads/{{$img}}" > -->
 				<!-- <img src="http://127.0.0.1:8000/storage/app/public/notfound.jpg"> -->
 				
