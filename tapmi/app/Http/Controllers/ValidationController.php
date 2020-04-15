@@ -41,8 +41,10 @@ class ValidationController extends Controller {
 
 	#   		 									  		            ▁ ▂ ▄ ▅ ▆ ▇ █ Index
     # -------------------------------------------------------------------------------------
-    
-    public function index() {
+   
+
+
+	public function index() {
         //original
         $ba_afd_code =explode(",",session('LOCATION_CODE'));
         $code = implode("','", $ba_afd_code);
@@ -229,7 +231,6 @@ class ValidationController extends Controller {
             }
 
     }
-
 
 
 }

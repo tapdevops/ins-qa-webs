@@ -73,6 +73,7 @@ Route::group( [ 'middleware' => 'web' ], function() {
 		Route::get( '/listvalidasi', 'ValidationController@index'); 
 		Route::get( '/validasi/create/{id}', 'ValidationController@create' );
 		Route::post( '/validasi/create_action', 'ValidationController@create_action')->name('create_validation');
+		Route::post( '/validasi/filter_date/{date}', 'ValidationController@filter_date' );
 
 
 	});
