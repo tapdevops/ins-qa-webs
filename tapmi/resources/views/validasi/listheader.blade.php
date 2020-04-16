@@ -80,6 +80,7 @@
 					}
 				},
 				search: {
+					onChange: false,
 					input: $( "#generalSearch" )
 				},
 
@@ -132,6 +133,7 @@
 				var selected = $(this).val();
 				var date_val = selected.toUpperCase();
 				// load_data(date_val);
+				datatable.init();
 			});
 
 			
