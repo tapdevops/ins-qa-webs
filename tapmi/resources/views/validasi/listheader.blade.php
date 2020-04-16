@@ -125,6 +125,7 @@
 			},
 			endDate: "-1d",
 			format: 'yyyy-mm-dd',
+            orientation: 'bottom'
 			
 		});
 
