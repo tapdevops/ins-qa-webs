@@ -50,9 +50,13 @@
 				<td>{{ $q['nama_mandor'] }}</td>
 				<td>{{ $q['jumlah_ebcc_validated'] }} /{{ $q['target_validasi'] }}  </td>
 				<?php 
-				$id = str_replace("/",".",$q['id_validasi']);
-				 ?>
+					$id = str_replace("/",".",$q['id_validasi']);
+				?>
+				@if ($q['jumlah_ebcc_validated'] === $q['target_validasi'])
+				<td><p class="text-success">Selesai divalidasi</p></td>
+				@else
 				<td><a href={{ URL::to('/validasi/create/'.$id.'-'.$q['id_ba'].'-'.$q['id_afd']) }}><button type="button" class="btn btn-primary btn-sm">Validasi</button></a></td>
+				@endif	
 			</tr>
 		@endforeach
 	</tbody>
