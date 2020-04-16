@@ -114,9 +114,7 @@
 	jQuery(document).ready(function() {
 		datatable.init()
 		MobileInspection.set_active_menu( '{{ $active_menu }}' );
-	});
-
-	$(document).ready(function () {
+		
 		$("#generalSearch").datepicker({
 			todayHighlight: !0,
 			templates: {
@@ -124,17 +122,19 @@
 				rightArrow: '<i class="la la-angle-right"></i>'
 			},
 			endDate: "-1d",
-			format: 'yyyy-mm-dd',
+			format: 'dd-M-yy',
             orientation: 'bottom'
 			
 		});
 
 		
+	});
+
+	$(document).ready(function () {
 		$('#generalSearch').datepicker().on('change', function(){
 				var selected = $(this).val();
 				var date_val = selected.toUpperCase();
 				// load_data(date_val);
-				datatable.init();
 			});
 
 			

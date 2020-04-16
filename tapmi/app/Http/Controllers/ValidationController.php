@@ -57,7 +57,7 @@ class ValidationController extends Controller {
 		$data['active_menu'] = $this->active_menu;
         $sql = "select distinct ebcc.id_ba,
                                 ebcc.id_afd,
-                                to_char(ebcc.tanggal_rencana,'YYYY-MM-DD') AS tanggal_rencana,
+                                to_char(ebcc.tanggal_rencana,'DD-MON-YY') AS tanggal_rencana,
                                 ebcc.nik_kerani_buah,
                                 ebcc.nama_krani_buah,
                                 ebcc.nik_mandor,
