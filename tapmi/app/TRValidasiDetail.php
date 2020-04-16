@@ -13,6 +13,7 @@ class TRValidasiDetail extends Model
     public $timestamps = false;
     protected $primaryKey = 'UUID';
     protected $fillable = [
+        'uuid',
         'id_validasi',
         'tanggal_ebcc',
         'nik_krani_buah',
