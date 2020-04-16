@@ -48,7 +48,7 @@ class ValidationController extends Controller {
 	public function index() {
         // $emp = Employee::where('EMPLOYEE_NIK',session('NIK'))->first();
         // $fullname = $emp['employee_fullname'];
-        // dd(session('NIK'),$emp,$fullname);
+        // dd($fullname);
         //original
         $ba_afd_code =explode(",",session('LOCATION_CODE'));
         $code = implode("','", $ba_afd_code);
@@ -212,31 +212,52 @@ class ValidationController extends Controller {
         $id_val = $request->id_validasi."-".$request->ba_code."-".$request->afd_code;
         $id = str_replace("/",".",$id_val);
         $jml = $request->jumlah_ebcc_validated;
-            TRValidasiHeader::firstOrCreate($request->only('id_validasi','jumlah_ebcc_validated','last_update'));
             // TRValidasiDetail::create($request->all());
-            $data['uuid']	= Uuid::uuid1()->toString();
+            // $data['uuid']	= Uuid::uuid1()->toString();
             if($request->kondisi_foto == null){
-                $data['kondisi_foto'] = "BISA_DIVALIDASI";
+                if($request->jjg_validate_total == null or $request->jjg_validate_total == "0" ){
+                    $data['kondisi_foto'] = "TIDAK_BISA_DIVALIDASI";
+                    $jml_validate = $jml-1;
+                }else{
+                    $data['kondisi_foto'] = "BISA_DIVALIDASI";
+                    $jml_validate = $jml;
+                }
             }else{
                 $data['kondisi_foto'] = "TIDAK_BISA_DIVALIDASI,".$request->kondisi_foto ;
+                $jml_validate = $jml - 1;
             }
-            
+            $jmlh['jumlah_ebcc_validated'] = $jml_validate;
+            TRValidasiHeader::firstOrCreate($request->only('id_validasi','last_update')+$jmlh);            
             $emp = Employee::where('EMPLOYEE_NIK',session('NIK'))->first();
             $fullname = $emp['employee_fullname'];
             $data['insert_time'] = date('Y-M-d');
             $data['insert_user'] = session('NIK');
             $data['insert_user_fullname'] = $fullname;
             $data['insert_user_userrole'] = session('USER_ROLE');
-
+            $data['uuid']	= Uuid::uuid1()->toString();
 			TRValidasiDetail::create($request->except('id_validasi','jumlah_ebcc_validated','last_updated','kodisi_foto')+$data);
            
-            if($jml < 3){
+            if($jml_validate < 3){
                 return Redirect::to('validasi/create/'.$id);
             }else{
                 return Redirect::to('listvalidasi');
             }
 
     }
+
+
+    // public function view_page_report_ebcc_compare( Request $req ) {
+	// 	$results = array();
+	// 	$results['data'] = ( new ReportOracle() )->EBCC_COMPARE_PREVIEW( $req->id );
+
+	// 	if ( !empty( $results['data'] ) ) {
+	// 		return view( 'orareport/preview-ebcc-compare', $results );
+	// 	}
+	// 	else {
+	// 		return 'Data not found.';
+	// 	}
+	// }
+
 
 
 }

@@ -55,7 +55,7 @@
 				@if ($q['jumlah_ebcc_validated'] === $q['target_validasi'])
 				<td><p class="text-success">Selesai divalidasi</p></td>
 				@else
-				<td><a href={{ URL::to('/validasi/create/'.$id.'-'.$q['id_ba'].'-'.$q['id_afd']) }}><button type="button" class="btn btn-primary btn-sm">Validasi</button></a></td>
+				<td><a href={{ URL::to('/validasi/create/'.$id.'-'.$q['id_ba'].'-'.$q['id_afd']) }} target="_blank"><button type="button" class="btn btn-primary btn-sm">Validasi</button></a></td>
 				@endif	
 			</tr>
 		@endforeach
@@ -80,7 +80,7 @@
 					}
 				},
 				search: {
-					onChange: false,
+					onEnter: false,
 					input: $( "#generalSearch" )
 				},
 
@@ -114,7 +114,7 @@
 	jQuery(document).ready(function() {
 		datatable.init()
 		MobileInspection.set_active_menu( '{{ $active_menu }}' );
-		
+
 		$("#generalSearch").datepicker({
 			todayHighlight: !0,
 			templates: {
@@ -131,47 +131,11 @@
 	});
 
 	$(document).ready(function () {
-		$('#generalSearch').datepicker().on('change', function(){
+		$('#generalSearch').datepicker().on('click', function(){
 				var selected = $(this).val();
 				var date_val = selected.toUpperCase();
-				// load_data(date_val);
+				datatable.init();
 			});
-
-			
-		// function load_data(tanggal=''){
-
-		// 	$.ajaxSetup({
-		// 			headers: {
-		// 				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-		// 			}
-		// 		});
-
-		// 		$.ajax({
-		// 			url: "{{URL::to('validasi/filter_date')}}/"+tanggal,
-		// 				type: "POST",
-		// 				data: tanggal,
-		// 				dataType: "json",
-		// 				success: function(response){
-		// 					// Retrieve data
-		// 					var data = response;
-
-		// 					// Modify data
-		// 					$.each(datatable.data, function(){
-		// 						this[0] = 'John Smith';
-		// 					});
-		// 					dataTable = $(".m-datatable").mDatatable();
-
-		// 					// Clear table
-		// 					dataTable.fnClearTable();
-
-		// 					// Add updated data
-		// 					dataTable.fnAddData(datatable.data);
-
-		// 					// Redraw table
-		// 					dataTable.draw();
-		// 				}				
-		// 			});
-		// }
 
 	});
 

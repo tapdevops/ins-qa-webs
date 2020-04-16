@@ -84,7 +84,7 @@ input[type="radio"]{
 	</tr>
 	<tr>
 		<td>
-			<table class="table table-bordered">
+			<table class="table table-bordered" id="tform">
   				<thead style="background-color:#dadbd5">
 				<tr>
 					<td>BM<input type="hidden" name="jjg_ebcc_bm" value="{{$q['ebcc_jml_bm']}}"></td>
@@ -99,13 +99,13 @@ input[type="radio"]{
 				</thead>
  				<tbody>
 				<tr>
-					<td><input type="number" min=0 class="form-control" required name="jjg_validate_bm" id="bm" onkeyup="sum()"></td>
-					<td><input type="number" min=0 class="form-control" required name="jjg_validate_bk" id="bk" onkeyup="sum()"></td>
-					<td><input type="number" min=0 class="form-control" required name="jjg_validate_ms" id="ms" onkeyup="sum()"></td>
-					<td><input type="number" min=0 class="form-control" required name="jjg_validate_or" id="or" onkeyup="sum()"></td>
-					<td><input type="number" min=0 class="form-control" required name="jjg_validate_bb" id="bb" onkeyup="sum()"></td>
-					<td><input type="number" min=0 class="form-control" required name="jjg_validate_jk" id="jk" onkeyup="sum()"></td>
-					<td><input type="number" min=0 class="form-control" required name="jjg_validate_ba" id="ba" onkeyup="sum()"></td>
+					<td><input type="number" min=0 class="form-control fields" required name="jjg_validate_bm" id="bm" onkeyup="sum()" autofocus></td>
+					<td><input type="number" min=0 class="form-control fields" required name="jjg_validate_bk" id="bk" onkeyup="sum()"></td>
+					<td><input type="number" min=0 class="form-control fields" required name="jjg_validate_ms" id="ms" onkeyup="sum()"></td>
+					<td><input type="number" min=0 class="form-control fields" required name="jjg_validate_or" id="or" onkeyup="sum()"></td>
+					<td><input type="number" min=0 class="form-control fields" required name="jjg_validate_bb" id="bb" onkeyup="sum()"></td>
+					<td><input type="number" min=0 class="form-control fields" required name="jjg_validate_jk" id="jk" onkeyup="sum()"></td>
+					<td><input type="number" min=0 class="form-control fields" required name="jjg_validate_ba" id="ba" onkeyup="sum()"></td>
 					<td><input type="text" min=0 class="form-control" required  readonly="readonly" name="jjg_validate_total" id="total_jjg"></td>
 				</tr>
 				</tbody>
@@ -216,44 +216,18 @@ input[type="radio"]{
        }
    }
 
+
+   $('.btnselect').change(function(){
+		$('.fields').removeAttr('required');
+	});
+
+	$("input").change(function () {
+		$("input").prop('required',true);
+	});
+
+
+
+
 </script>
-<!-- 
-	ID_VALIDASI
-	TANGGAL_EBCC
-	NIK_KRANI_BUAH
-	NAMA_KRANI_BUAH
-	BA_CODE
-	BA_NAME
-	AFD_CODE
-	BLOCK_CODE
-	BLOCK_NAME
-	NO_TPH
-	NO_BCC
-	JJG_EBCC_BM
-	JJG_EBCC_BK
-	JJG_EBCC_MS
-	JJG_EBCC_OR
-	JJG_EBCC_BB
-	JJG_EBCC_JK
-	JJG_EBCC_BA
-	JJG_EBCC_TOTAL
-	JJG_EBCC_1
-	JJG_EBCC_2
-	JJG_VALIDATE_BM
-	JJG_VALIDATE_BK
-	JJG_VALIDATE_MS
-	JJG_VALIDATE_OR
-	JJG_VALIDATE_BB
-	JJG_VALIDATE_JK
-	JJG_VALIDATE_BA
-	JJG_VALIDATE_TOTAL
-	JJG_VALIDATE_1
-	JJG_VALIDATE_2
-	KONDISI_FOTO
-	INSERT_TIME
-	INSERT_USER
-	INSERT_USER_FULLNAME
-	INSERT_USER_USERROLE
- -->
 
 @endsection
