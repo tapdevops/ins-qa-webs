@@ -217,14 +217,16 @@ class ValidationController extends Controller {
             if($request->kondisi_foto == null){
                 if($request->jjg_validate_total == null or $request->jjg_validate_total == "0" ){
                     $data['kondisi_foto'] = "TIDAK BISA DIVALIDASI, KARENA ".$request->kondisi_foto;
-                    $jml_validate = $jml-1;
+                    $jml_validate = $jml;
+                    // $jml_validate = $jml-1;
                 }else{
                     $data['kondisi_foto'] = "BISA DIVALIDASI";
                     $jml_validate = $jml;
                 }
             }else{
                 $data['kondisi_foto'] = "TIDAK BISA DIVALIDASI, KARENA ".$request->kondisi_foto ;
-                $jml_validate = $jml - 1;
+                // $jml_validate = $jml - 1;
+                $jml_validate = $jml;
             }
             $jmlh['jumlah_ebcc_validated'] = $jml_validate;
             // $result1 =TRValidasiHeader::firstOrCreate($request->only('id_validasi','last_update')+$jmlh);            
