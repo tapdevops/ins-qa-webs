@@ -77,10 +77,11 @@
 				data: {
 					saveState: {
 						cookie: !1
-					}
+					},
+					
+					autoColumns: false
 				},
 				search: {
-					onEnter: false,
 					input: $( "#generalSearch" )
 				},
 
@@ -89,21 +90,30 @@
 					{
 						field: "Tanggal",
 						filterable: true,
+						sortable: false,
 						width: 0,
 						visibility: false,
 					},{
 						field: "Krani Buah",
 						filterable: true,
+						sortable: false,
 						width: 300
 					}, {
 						field: "Afdeling",
-						width: 120
+						width: 120,
+						sortable: false,
 					},{
 						field: "Mandor Panen",
-						width: 300
+						width: 300,
+						sortable: false,
 					}, {
-						field: "Jumlah Divalidasi",
-						width: 100
+						field: "Jumlah BCC yang Divalidasi",
+						width: 100,
+						sortable: false,
+					}, {
+						field: "Aksi",
+						width: 100,
+						sortable: false,
 					}
 				]
 
@@ -144,9 +154,12 @@
 	
 
 	$("#tampilkan").click(function(){
+		var search = document.getElementById('generalSearch').value;
+		if(search !== ''){
 			var e = jQuery.Event("keypress");
 			e.which = 13;
 			$("input").trigger(e);
+		}
 	});
 
 	

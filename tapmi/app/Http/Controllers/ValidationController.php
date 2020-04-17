@@ -97,6 +97,7 @@ class ValidationController extends Controller {
                     WHERE 
                     ebcc.tanggal_rencana > trunc(sysdate, 'yyyy') - interval '3' year
                     and ebcc.tanggal_rencana <=  trunc(sysdate, 'yyyy')
+                    and ebcc.tanggal_rencana <= (sysdate-1)
                     and ebcc.id_ba || ebcc.id_afd in ('$code')
                     order by tanggal_rencana desc";
                     // ebcc.tanggal_rencana > trunc(sysdate, 'yyyy') - interval '1' year
