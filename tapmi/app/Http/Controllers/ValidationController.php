@@ -239,7 +239,7 @@ class ValidationController extends Controller {
             $data['insert_user_userrole'] = session('USER_ROLE');
             $data['uuid']	= Uuid::uuid1()->toString();
 			// $result = TRValidasiDetail::create($request->except('jumlah_ebcc_validated','last_updated','kodisi_foto')+$data);
-			TRValidasiDetail::create($request->except('jumlah_ebcc_validated','last_updated','kodisi_foto')+$data);
+			TRValidasiDetail::create($request->except('jumlah_ebcc_validated','last_updated')+$data);
             // dd($result1);
             if($jml_validate < 3){
                 return Redirect::to('validasi/create/'.$id);
