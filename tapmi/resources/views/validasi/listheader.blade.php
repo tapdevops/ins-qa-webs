@@ -8,23 +8,24 @@
 <div class="row">
 	<div class="col-md-8">
 		<div class="row">
-			<div class="col-md-4">
+			<div class="col-md-6">
 				{{-- <div class="m-input-icon m-input-icon--left">
 					<input type="date" class="form-control m-input m-input--solid" max="{{ $dmin }}" placeholder="Select date..." id="generalSearch">
 				</div> --}}
 				<div class="input-daterange input-group">
 					<label for="tanggal_rencana">Tanggal &nbsp; &nbsp; </label>
 					<input type="text" class="form-control m-input" id="generalSearch" name="tanggal_rencana" autocomplete="off" readonly="readonly" />
+					
 					<div class="input-group-append">
 						<span class="input-group-text">
 							<i class="la la-calendar"></i>
 						</span>
-					</div>
+					</div>&nbsp;&nbsp;&nbsp;
+					<button type="button" id="tampilkan" class="btn btn-primary btn-sm">Tampilkan</button>
 				</div>
+
 			</div>
-			<div class="col-md-4">
-			</div>
-			<div class="col-md-4"></div>
+			<div class="col-md-6"></div>
 		</div>
 	</div>
 	
@@ -126,7 +127,6 @@
             orientation: 'bottom'
 			
 		});
-
 		
 	});
 
@@ -134,10 +134,22 @@
 		$('#generalSearch').datepicker().on('click', function(){
 				var selected = $(this).val();
 				var date_val = selected.toUpperCase();
-				datatable.init();
-			});
+				// datatable.init();
+		});
+		
 
 	});
+
+	
+
+	$("#tampilkan").click(function(){
+			var e = jQuery.Event("keypress");
+			e.which = 13;
+			$("input").trigger(e);
+	});
+
+
+
 
 	
 </script>
