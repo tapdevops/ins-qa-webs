@@ -230,7 +230,7 @@ class ValidationController extends Controller {
             TRValidasiHeader::firstOrCreate($request->only('id_validasi','last_update')+$jmlh);            
             $emp = Employee::where('EMPLOYEE_NIK',session('NIK'))->first();
             $fullname = $emp['employee_fullname'];
-            $data['insert_time'] = date('Y-M-d');
+            $data['insert_time'] = date('Y-M-d H.i.s');
             $data['insert_user'] = session('NIK');
             $data['insert_user_fullname'] = $fullname;
             $data['insert_user_userrole'] = session('USER_ROLE');

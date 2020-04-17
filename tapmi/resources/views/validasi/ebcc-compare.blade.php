@@ -107,7 +107,7 @@
 									<tr>
 										<td>Waktu Pencatatan</td>
 										<td>:</td>
-										<td>{{ $dt['tanggal_ebcc'] }}</td>
+										<td>{{ date( 'd-M-Y H:i', strtotime( $dt['tanggal_ebcc'] ) ) }}</td>
 									</tr>
 									<tr>
 										<td>Kode EBCC</td>
@@ -172,7 +172,7 @@
 										<tr>
 											<td>Waktu Validasi</td>
 											<td>:</td>
-											<td>{{ date( 'Y-m-d', strtotime( $dt['tanggal_validasi'] ) ) }}</td>
+											<td>{{ date( 'd-M-Y H:i', strtotime( $dt['tanggal_validasi'] ) ) }}</td>
 										</tr>
 										<tr>
 											<td></td>
