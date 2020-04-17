@@ -91,5 +91,7 @@ Route::get( '/nohup', 'ReportOracleController@nohup' );
 Route::get( '/phpinfo', 'ReportOracleController@phpinfo' );
 Route::get( '/testings', 'KafkaProducerController@test' );
 
+Route::get( '/validasi/compare-ebcc/{id}', 'ValidationController@compare_ebcc');
+
 #image
 Route::get( '/storage/{filename}', 'StorageController@image' );

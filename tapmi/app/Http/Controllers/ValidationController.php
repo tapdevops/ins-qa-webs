@@ -246,17 +246,197 @@ class ValidationController extends Controller {
     }
 
 
-    // public function view_page_report_ebcc_compare( Request $req ) {
-	// 	$results = array();
-	// 	$results['data'] = ( new ReportOracle() )->EBCC_COMPARE_PREVIEW( $req->id );
-
-	// 	if ( !empty( $results['data'] ) ) {
-	// 		return view( 'orareport/preview-ebcc-compare', $results );
-	// 	}
-	// 	else {
-	// 		return 'Data not found.';
-	// 	}
-	// }
+    public function compare_ebcc( $id ) {
+        $sql = " SELECT tanggal_rencana AS tanggal_ebcc,
+        nik_kerani_buah,
+        nama_kerani_buah,
+        id_ba AS kode_ba,
+        est.comp_name AS nama_pt,
+        est.est_name AS bisnis_area,
+        id_afd AS afd,
+        id_blok AS blok,
+        est.block_name AS nama_blok,
+        no_tph AS tph,
+        no_bcc AS no_bcc,
+        picture_name,
+        ebcc_jml_bm,
+        ebcc_jml_bk,
+        ebcc_jml_ms,
+        ebcc_jml_or,
+        ebcc_jml_bb,
+        ebcc_jml_jk,
+        ebcc_jml_ba,
+        ebcc_total,
+        tanggal_validasi,
+        kondisi_foto,
+        nik_pembuat,
+        nama_pembuat,
+        user_role,
+        jjg_validate_bm,
+        jjg_validate_bk,
+        jjg_validate_ms,
+        jjg_validate_or,
+        jjg_validate_bb,
+        jjg_validate_jk,
+        jjg_validate_ba,
+        jjg_validate_total
+   FROM (SELECT ebcc.tanggal_rencana,
+                ebcc.nik_kerani_buah,
+                ebcc.nama_kerani_buah,
+                ebcc.id_ba,
+                ebcc.id_afd,
+                ebcc.id_blok,
+                ebcc.no_tph,
+                ebcc.no_bcc,
+                ebcc.picture_name,
+                ebcc.ebcc_jml_bm,
+                ebcc.ebcc_jml_bk,
+                ebcc.ebcc_jml_ms,
+                ebcc.ebcc_jml_or,
+                ebcc.ebcc_jml_bb,
+                ebcc.ebcc_jml_jk,
+                ebcc.ebcc_jml_ba,
+                  ebcc.ebcc_jml_bm
+                + ebcc.ebcc_jml_bk
+                + ebcc.ebcc_jml_ms
+                + ebcc.ebcc_jml_or
+                + ebcc.ebcc_jml_bb
+                + ebcc.ebcc_jml_jk
+                + ebcc.ebcc_jml_ba
+                   AS ebcc_total,
+                validasi.jjg_validate_bm,
+                validasi.jjg_validate_bk,
+                validasi.jjg_validate_ms,
+                validasi.jjg_validate_or,
+                validasi.jjg_validate_bb,
+                validasi.jjg_validate_jk,
+                validasi.jjg_validate_ba,
+                validasi.jjg_validate_total,
+                validasi.kondisi_foto,
+                TRUNC (validasi.insert_time) AS tanggal_validasi,
+                validasi.insert_user AS nik_pembuat,
+                validasi.insert_user_fullname AS nama_pembuat,
+                validasi.insert_user_userrole AS user_role
+           FROM (SELECT tanggal_rencana,
+                        nik_kerani_buah,
+                        nama_kerani_buah,
+                        id_ba,
+                        id_afd,
+                        id_blok,
+                        no_tph,
+                        no_bcc,
+                        ebcc_jml_bm,
+                        ebcc_jml_bk,
+                        ebcc_jml_ms,
+                        ebcc_jml_or,
+                        ebcc_jml_bb,
+                        ebcc_jml_jk,
+                        ebcc_jml_ba,
+                        picture_name
+                   FROM (  SELECT hrp.tanggal_rencana,
+                                  SUBSTR (id_ba_afd_blok, 1, 4) id_ba,
+                                  SUBSTR (id_ba_afd_blok, 5, 1) id_afd,
+                                  SUBSTR (id_ba_afd_blok, 6, 3) id_blok,
+                                  hp.no_tph no_tph,
+                                  hp.picture_name,
+                                  COUNT (DISTINCT hp.no_bcc) jlh_ebcc,
+                                  MAX (hrp.nik_kerani_buah) nik_kerani_buah,
+                                  MAX (emp_ebcc.emp_name) nama_kerani_buah,
+                                  MAX (no_bcc) no_bcc,
+                                  MAX (hp.no_rekap_bcc) no_rekap_bcc,
+                                  SUM (
+                                     CASE
+                                        WHEN thk.id_kualitas = 1 THEN thk.qty
+                                     END)
+                                     ebcc_jml_bm,
+                                  SUM (
+                                     CASE
+                                        WHEN thk.id_kualitas = 2 THEN thk.qty
+                                     END)
+                                     ebcc_jml_bk,
+                                  SUM (
+                                     CASE
+                                        WHEN thk.id_kualitas = 3 THEN thk.qty
+                                     END)
+                                     ebcc_jml_ms,
+                                  SUM (
+                                     CASE
+                                        WHEN thk.id_kualitas = 4 THEN thk.qty
+                                     END)
+                                     ebcc_jml_or,
+                                  SUM (
+                                     CASE
+                                        WHEN thk.id_kualitas = 6 THEN thk.qty
+                                     END)
+                                     ebcc_jml_bb,
+                                  SUM (
+                                     CASE
+                                        WHEN thk.id_kualitas = 15 THEN thk.qty
+                                     END)
+                                     ebcc_jml_jk,
+                                  SUM (
+                                     CASE
+                                        WHEN thk.id_kualitas = 16 THEN thk.qty
+                                     END)
+                                     ebcc_jml_ba
+                             FROM ebcc.t_header_rencana_panen hrp
+                                  LEFT JOIN ebcc.t_detail_rencana_panen drp
+                                     ON hrp.id_rencana = drp.id_rencana
+                                  LEFT JOIN ebcc.t_hasil_panen hp
+                                     ON     hp.id_rencana = drp.id_rencana
+                                        AND hp.no_rekap_bcc = drp.no_rekap_bcc
+                                  LEFT JOIN ebcc.t_employee emp_ebcc
+                                     ON emp_ebcc.nik = hrp.nik_kerani_buah
+                                  LEFT JOIN ebcc.t_hasilpanen_kualtas thk
+                                     ON     hp.no_bcc = thk.id_bcc
+                                        AND hp.id_rencana = thk.id_rencana
+                            WHERE     SUBSTR (id_ba_afd_blok, 1, 2) IN (SELECT comp_code
+                                                                          FROM tap_dw.tm_comp@proddw_link)
+                                  AND hp.no_bcc = '$id' --tinggal ganti nomor bcc nya
+                         GROUP BY hrp.tanggal_rencana,
+                                  SUBSTR (id_ba_afd_blok, 1, 4),
+                                  SUBSTR (id_ba_afd_blok, 5, 1),
+                                  SUBSTR (id_ba_afd_blok, 6, 3),
+                                  hp.no_tph,
+                                  hp.picture_name)) ebcc
+                LEFT JOIN mobile_inspection.tr_validasi_detail validasi
+                   ON     ebcc.no_bcc = REPLACE (validasi.no_bcc, '.')
+                      AND ebcc.nik_kerani_buah = validasi.nik_krani_buah
+                      AND ebcc.tanggal_rencana = validasi.tanggal_ebcc
+                      AND ebcc.id_ba = validasi.ba_code
+                      AND ebcc.id_afd = validasi.afd_code
+                      AND ebcc.id_blok = validasi.block_code
+                      AND ebcc.no_tph = validasi.no_tph) mst
+        LEFT JOIN
+        (SELECT DISTINCT tc.comp_name,
+                         est.werks,
+                         est.est_name,
+                         afd.afd_code,
+                         afd.afd_name,
+                         blok.block_code,
+                         blok.block_name
+           FROM tap_dw.tm_comp@proddw_link tc
+                LEFT JOIN tap_dw.tm_est@proddw_link est
+                   ON tc.comp_code = est.comp_code
+                LEFT JOIN tap_dw.tm_afd@proddw_link afd
+                   ON est.werks = afd.werks
+                LEFT JOIN tap_dw.tm_block@proddw_link blok
+                   ON afd.werks = blok.werks AND afd.afd_code = blok.afd_code
+          WHERE TRUNC (SYSDATE) BETWEEN est.start_valid AND est.end_valid) est
+           ON     mst.id_ba = est.werks
+              AND mst.id_afd = est.afd_code
+              AND mst.id_blok = est.block_code
+        ";
+        $valid_data = json_encode($this->db_mobile_ins->select($sql));
+        $results['data'] =  json_decode($valid_data,true);
+        // dd($result['data']== null);
+		if ( !empty( $results['data']) ) {
+			return view( 'validasi/ebcc-compare', $results );
+		}
+		else {
+			return 'Data not found.';
+		}
+	}
 
 
 

@@ -42,23 +42,28 @@
 	</style>
 </head>
 <body onload="return rotate_image();">
+@foreach ($data as $key => $dt)
 	<div class="container disable-select" id="capture" oncontextmenu="return false;">
 		<br />
-		<h4 class="text-center">LAPORAN SAMPLING EBCC vs EBCC</h4>
-		<p class="text-center">PT: {{ $data['val_est_name'] }}; BISNIS AREA: {{ $data['val_werks'] }}; AFD: {{ $data['val_afd_code'] }}; BLOCK: {{ $data['val_block_code'].'/'.$data['val_block_name'] }}; TPH: {{ $data['val_tph_code'] }}</p>
+		<h4 class="text-center">VALIDASI BCC OLEH KEPALA KEBUN</h4>
+		<p class="text-center">PT: {{ $dt['nama_pt'] }}; BISNIS AREA: {{ $dt['bisnis_area'] }}; AFD: {{ $dt['afd'] }}; BLOCK: {{ $dt['blok'].'/'.$dt['nama_blok'] }}; TPH: {{ $dt['tph'] }}</p>
 
+		<div class="row" style="margin-top: 20px;">
+			<div style="position:absolute;z-index: 1000">
+				<input id="input1" type="image" src="http://inspectiondev.tap-agri.com/storage/rotate_45.png" >
+			</div>
+			<!-- <img id="sampling_ebcc_img_jjg" src="{{ $dt['picture_name'] }}" width="496px" height="600px" class="rounded mx-auto d-block north"> -->
+			<img id="sampling_ebcc_img_jjg" onerror="this.onerror=null;this.src='https://webhostingmedia.net/wp-content/uploads/2018/01/http-error-404-not-found.png'"  src="http://10.20.1.59/ebcc/array/uploads/{{$dt['picture_name']}}" width="650px" height="496px" class="rounded mx-auto d-block north">
+					
+		</div>
 		<div class="row" style="margin-top: 20px;">
 			<div class="col-md-6">
 				<div class="card">
 					<div class="card-header text-center bg-warning">
-						<b>SAMPLING EBCC</b>
-					</div>
-					<div class="card-body" style="background-position: center center; background-repeat: no-repeat;overflow: hidden; ">
-						<div style="position:absolute;z-index: 1000">
-						<input id="input1" type="image" src="http://inspectiondev.tap-agri.com/storage/rotate_45.png" >
+						<b>EBCC</b>
 						</div>
-						<img id="sampling_ebcc_img_jjg" src="{{ $data['val_image_janjang'] }}" width="496px" height="600px" class="rounded mx-auto d-block north">
-						<br />
+					<div class="card-body" style="background-position: center center; background-repeat: no-repeat;overflow: hidden; ">
+							<br />
 						<table class="table table-bordered" style="font-weight: bold;">
 							<tr style="font-size:14px;">
 								<td class="text-center">BM (jjg)</td>
@@ -71,14 +76,14 @@
 								<td class="text-center">Total<br />Janjang<br />Panen</td>
 							</tr>
 							<tr>
-								<td class="text-center" style="color:{{ ( $data['ebcc_jml_bm'] == $data['val_jml_bm'] ? 'green' : 'red' ) }};">{{ $data['val_jml_bm'] }}</td>
-								<td class="text-center" style="color:{{ ( $data['ebcc_jml_bk'] == $data['val_jml_bk'] ? 'green' : 'red' ) }};">{{ $data['val_jml_bk'] }}</td>
-								<td class="text-center" style="color:{{ ( $data['ebcc_jml_ms'] == $data['val_jml_ms'] ? 'green' : 'red' ) }};">{{ $data['val_jml_ms'] }}</td>
-								<td class="text-center" style="color:{{ ( $data['ebcc_jml_or'] == $data['val_jml_or'] ? 'green' : 'red' ) }};">{{ $data['val_jml_or'] }}</td>
-								<td class="text-center" style="color:{{ ( $data['ebcc_jml_bb'] == $data['val_jml_bb'] ? 'green' : 'red' ) }};">{{ $data['val_jml_bb'] }}</td>
-								<td class="text-center" style="color:{{ ( $data['ebcc_jml_jk'] == $data['val_jml_jk'] ? 'green' : 'red' ) }};">{{ $data['val_jml_jk'] }}</td>
-								<td class="text-center" style="color:{{ ( $data['ebcc_jml_ba'] == $data['val_jml_ba'] ? 'green' : 'red' ) }};">{{ $data['val_jml_ba'] }}</td>
-								<td class="text-center" style="color:{{ ( $data['ebcc_jjg_panen'] == $data['val_jjg_panen'] ? 'green' : 'red' ) }};">{{ $data['val_jjg_panen'] }}</td>
+								<td class="text-center" style="color:{{ ( $dt['ebcc_jml_bm'] == $dt['jjg_validate_bm'] ? 'green' : 'red' ) }};">{{ $dt['ebcc_jml_bm'] }}</td>
+								<td class="text-center" style="color:{{ ( $dt['ebcc_jml_bk'] == $dt['jjg_validate_bk'] ? 'green' : 'red' ) }};">{{ $dt['ebcc_jml_bk'] }}</td>
+								<td class="text-center" style="color:{{ ( $dt['ebcc_jml_ms'] == $dt['jjg_validate_ms'] ? 'green' : 'red' ) }};">{{ $dt['ebcc_jml_ms'] }}</td>
+								<td class="text-center" style="color:{{ ( $dt['ebcc_jml_or'] == $dt['jjg_validate_or'] ? 'green' : 'red' ) }};">{{ $dt['ebcc_jml_or'] }}</td>
+								<td class="text-center" style="color:{{ ( $dt['ebcc_jml_bb'] == $dt['jjg_validate_bb'] ? 'green' : 'red' ) }};">{{ $dt['ebcc_jml_bb'] }}</td>
+								<td class="text-center" style="color:{{ ( $dt['ebcc_jml_jk'] == $dt['jjg_validate_jk'] ? 'green' : 'red' ) }};">{{ $dt['ebcc_jml_jk'] }}</td>
+								<td class="text-center" style="color:{{ ( $dt['ebcc_jml_ba'] == $dt['jjg_validate_ba'] ? 'green' : 'red' ) }};">{{ $dt['ebcc_jml_ba'] }}</td>
+								<td class="text-center" style="color:{{ ( $dt['ebcc_total'] == $dt['jjg_validate_total'] ? 'green' : 'red' ) }};">{{ $dt['ebcc_total'] }}</td>
 							</tr>
 						</table>
 						<div class="row">
@@ -87,32 +92,31 @@
 									<tr>
 										<td width="40%">NIK</td>
 										<td width="5%">:</td>
-										<td width="55%">{{ $data['val_nik_validator'] }}</td>
+										<td width="55%">{{ $dt['nik_kerani_buah'] }}</td>
 									</tr>
 									<tr>
 										<td>Nama Lengkap</td>
 										<td>:</td>
-										<td>{{ $data['val_nama_validator'] }}</td>
+										<td>{{ $dt['nama_kerani_buah'] }}</td>
 									</tr>
 									<tr>
 										<td>Jabatan</td>
 										<td>:</td>
-										<td>{{ $data['val_jabatan_validator'] }}</td>
+										<td>KRANI BUAH</td>
 									</tr>
 									<tr>
 										<td>Waktu Pencatatan</td>
 										<td>:</td>
-										<td>{{ $data['val_date_time'] }}</td>
+										<td>{{ $dt['tanggal_ebcc'] }}</td>
 									</tr>
 									<tr>
-										<td>Status Scan QR Code</td>
+										<td>Kode EBCC</td>
 										<td>:</td>
-										<td>{{ $data['val_status_tph_scan'].' '.$data['val_alasan_manual'] }}</td>
+										<td>{{ $dt['no_bcc'] }}</td>
 									</tr>
 								</table>
 							</div>
 							<div class="col-md-4">
-								<img id="sampling_ebcc_img_selfie" src="{{ $data['val_image_selfie'] }}" width="100%;">
 							</div>
 						</div>
 					</div>
@@ -121,18 +125,11 @@
 			<div class="col-md-6">
 				<div class="card">
 					<div class="card-header text-center bg-success" style="color:white !important">
-						<b>EBCC</b>
+						<b>KEPALA KEBUN</b>
 					</div>
 					<div class="card-body" style="background-position: center center; background-repeat: no-repeat;overflow: hidden;">
-					<div style="position:absolute;z-index: 1000">
-						<input id="input2" type="image" src="http://inspectiondev.tap-agri.com/storage/rotate_45.png" >
-					</div>
-						@if ( $data['ebcc_no_bcc'] == '' )
-							<img id="ebcc" src="{{ url( 'assets/notfound.jpg' ) }}" width="496px" height="600px" class="rounded mx-auto d-block north">
-							<h3 class="text-center">EBCC tidak ditemukan</h3><br />
-						@else
-							<img id="ebcc" src="{{ $data['ebcc_picture_name'] }}" width="496px" height="600px" class="rounded mx-auto d-block north"><br />
-							<table class="table table-bordered" style="font-weight: bold;">
+						<br />
+						<table class="table table-bordered" style="font-weight: bold;">
 								<tr style="font-size:14px;">
 									<td class="text-center">BM (jjg)</td>
 									<td class="text-center">BK (jjg)</td>
@@ -144,14 +141,14 @@
 									<td class="text-center">Total<br />Janjang<br />Panen</td>
 								</tr>
 								<tr>
-									<td class="text-center" style="color:{{ ( $data['ebcc_jml_bm'] == $data['val_jml_bm'] ? 'green' : 'red' ) }};">{{ $data['ebcc_jml_bm'] }}</td>
-									<td class="text-center" style="color:{{ ( $data['ebcc_jml_bk'] == $data['val_jml_bk'] ? 'green' : 'red' ) }};">{{ $data['ebcc_jml_bk'] }}</td>
-									<td class="text-center" style="color:{{ ( $data['ebcc_jml_ms'] == $data['val_jml_ms'] ? 'green' : 'red' ) }};">{{ $data['ebcc_jml_ms'] }}</td>
-									<td class="text-center" style="color:{{ ( $data['ebcc_jml_or'] == $data['val_jml_or'] ? 'green' : 'red' ) }};">{{ $data['ebcc_jml_or'] }}</td>
-									<td class="text-center" style="color:{{ ( $data['ebcc_jml_bb'] == $data['val_jml_bb'] ? 'green' : 'red' ) }};">{{ $data['ebcc_jml_bb'] }}</td>
-									<td class="text-center" style="color:{{ ( $data['ebcc_jml_jk'] == $data['val_jml_jk'] ? 'green' : 'red' ) }};">{{ $data['ebcc_jml_jk'] }}</td>
-									<td class="text-center" style="color:{{ ( $data['ebcc_jml_ba'] == $data['val_jml_ba'] ? 'green' : 'red' ) }};">{{ $data['ebcc_jml_ba'] }}</td>
-									<td class="text-center" style="color:{{ ( $data['ebcc_jjg_panen'] == $data['val_jjg_panen'] ? 'green' : 'red' ) }};">{{ $data['ebcc_jjg_panen'] }}</td>
+								<td class="text-center" style="color:{{ ( $dt['ebcc_jml_bm'] == $dt['jjg_validate_bm'] ? 'green' : 'red' ) }};">{{ $dt['jjg_validate_bm'] }}</td>
+								<td class="text-center" style="color:{{ ( $dt['ebcc_jml_bk'] == $dt['jjg_validate_bk'] ? 'green' : 'red' ) }};">{{ $dt['jjg_validate_bk'] }}</td>
+								<td class="text-center" style="color:{{ ( $dt['ebcc_jml_ms'] == $dt['jjg_validate_ms'] ? 'green' : 'red' ) }};">{{ $dt['jjg_validate_ms'] }}</td>
+								<td class="text-center" style="color:{{ ( $dt['ebcc_jml_or'] == $dt['jjg_validate_or'] ? 'green' : 'red' ) }};">{{ $dt['jjg_validate_or'] }}</td>
+								<td class="text-center" style="color:{{ ( $dt['ebcc_jml_bb'] == $dt['jjg_validate_bb'] ? 'green' : 'red' ) }};">{{ $dt['jjg_validate_bb'] }}</td>
+								<td class="text-center" style="color:{{ ( $dt['ebcc_jml_jk'] == $dt['jjg_validate_jk'] ? 'green' : 'red' ) }};">{{ $dt['jjg_validate_jk'] }}</td>
+								<td class="text-center" style="color:{{ ( $dt['ebcc_jml_ba'] == $dt['jjg_validate_ba'] ? 'green' : 'red' ) }};">{{ $dt['jjg_validate_ba'] }}</td>
+								<td class="text-center" style="color:{{ ( $dt['ebcc_total'] == $dt['jjg_validate_total'] ? 'green' : 'red' ) }};">{{ $dt['jjg_validate_total'] }}</td>
 								</tr>
 							</table>
 							<div class="row">
@@ -160,41 +157,74 @@
 										<tr>
 											<td width="40%">NIK</td>
 											<td width="5%">:</td>
-											<td width="55%">{{ $data['ebcc_nik_kerani_buah'] }}</td>
+											<td width="55%">{{ $dt['nik_pembuat'] }}</td>
 										</tr>
 										<tr>
 											<td>Nama Lengkap</td>
 											<td>:</td>
-											<td>{{ $data['ebcc_nama_kerani_buah'] }}</td>
+											<td>{{ $dt['nama_pembuat'] }}</td>
 										</tr>
 										<tr>
 											<td>Jabatan</td>
 											<td>:</td>
+											<td>KEPALA KEBUN</td>
+										</tr>
+										<tr>
+											<td>Waktu Validasi</td>
+											<td>:</td>
+											<td>{{ date( 'Y-m-d', strtotime( $dt['tanggal_validasi'] ) ) }}</td>
+										</tr>
+										<tr>
 											<td></td>
-										</tr>
-										<tr>
-											<td>Waktu Pencatatan</td>
-											<td>:</td>
-											<td>{{ date( 'Y-m-d', strtotime( $data['val_date_time'] ) ) }}</td>
-										</tr>
-										<tr>
-											<td>Status Scan QR Code</td>
-											<td>:</td>
-											<td>{{ $data['ebcc_status_tph'].' '.$data['ebcc_keterangan_qrcode'] }}</td>
+											<td></td>
+											<td></td>
 										</tr>
 									</table>
 								</div>
 								<div class="col-md-4">
-									<img src="{{ url( 'assets/user.jpg' ) }}" width="100%;">
 								</div>
 							</div>
-						@endif
 					</div>
 				</div>
 			</div>
 		</div>
+		<div class="row" style="margin-top: 20px; margin-left: 10px;">
+		<div class="col-md-6">
+			<table class"table">
+				<thead>
+					<tr>
+						<td colspan="2">
+							<b>Keterangan</b>
+						</td>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>
+							BM<br>
+							BK<br>
+							MS<br>
+							OR<br>
+							BB<br>
+							JK<br>
+							BA<br>
+						</td>
+						<td>
+							: a. Mentah<br>
+							: b. Mengkal/Kurang Masak<br>
+							: c. Masak<br>
+							: d. Overripe/Terlalu Masak<br>
+							: e. Busuk<br>
+							: f. Janjang Kosong<br>
+							: g. Buah Aborsi<br>
+						</td>
+				</tbody>
+			</table>
+			</div>
+		</div>
 		<br />
 	</div>
+@endforeach
 	<!--footer>
 		<br />
 		<center>
@@ -271,7 +301,7 @@
 			$( "#download-jpg" ).click( function() {
 
 				html2canvas( document.querySelector( "#capture" ) ).then( canvas => {
-					var filename = "{{ $data['val_est_name'].' ('.$data['val_werks'].$data['val_afd_code'].$data['val_block_code'].')-'.$data['val_ebcc_code'].'-'.$data['val_tph_code'].'-'.date( 'Ymd', strtotime( $data['val_date_time'] ) ).'-'.$data['val_nik_validator'].'-'.$data['val_nama_validator'] }}";
+					var filename = "{{ $dt['nama_pt'].' ('.$dt['bisnis_area'].$dt['afd'].$dt['blok'].')-'.$dt['no_bcc'].'-'.$dt['tph'].'-'.date( 'Ymd', strtotime( $dt['tanggal_ebcc'] ) ).'-'.$dt['nik_kerani_buah'].'-'.$dt['nama_kerani_buah'] }}";
 					saveAs( canvas.toDataURL(), filename + '.png' );
 				}, { 
 					allowTaint: true,
