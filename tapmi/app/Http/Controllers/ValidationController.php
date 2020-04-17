@@ -227,6 +227,7 @@ class ValidationController extends Controller {
                 $jml_validate = $jml - 1;
             }
             $jmlh['jumlah_ebcc_validated'] = $jml_validate;
+            // $result1 =TRValidasiHeader::firstOrCreate($request->only('id_validasi','last_update')+$jmlh);            
             TRValidasiHeader::firstOrCreate($request->only('id_validasi','last_update')+$jmlh);            
             $emp = Employee::where('EMPLOYEE_NIK',session('NIK'))->first();
             $fullname = $emp['employee_fullname'];
@@ -235,8 +236,9 @@ class ValidationController extends Controller {
             $data['insert_user_fullname'] = $fullname;
             $data['insert_user_userrole'] = session('USER_ROLE');
             $data['uuid']	= Uuid::uuid1()->toString();
-			TRValidasiDetail::create($request->except('id_validasi','jumlah_ebcc_validated','last_updated','kodisi_foto')+$data);
-           
+			// $result = TRValidasiDetail::create($request->except('jumlah_ebcc_validated','last_updated','kodisi_foto')+$data);
+			TRValidasiDetail::create($request->except('jumlah_ebcc_validated','last_updated','kodisi_foto')+$data);
+            // dd($result1);
             if($jml_validate < 3){
                 return Redirect::to('validasi/create/'.$id);
             }else{
