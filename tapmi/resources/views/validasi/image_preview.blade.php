@@ -20,6 +20,11 @@ input[type="radio"]{
   background-color:#4d9925;
   color: white;
 }
+.btnselect:focus:active{
+  background-color:#4d9925;
+  color: white;
+}
+
 .borderless td, .borderless th {
     border: none;
 }
