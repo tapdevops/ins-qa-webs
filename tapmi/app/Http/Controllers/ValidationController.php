@@ -182,6 +182,9 @@ class ValidationController extends Controller {
                         HDP.TANGGAL_RENCANA = '$tanggal' AND
                         SUBSTR (HDP.ID_BA_AFD_BLOK, 1, 4) = '$ba_code' AND --id_ba
                         SUBSTR (HDP.ID_BA_AFD_BLOK, 5, 1) = '$afd'  -- id_afd
+                        AND
+                        HP.NO_BCC NOT IN (SELECT NO_BCC FROM TR_VALIDASI_DETAIL WHERE ID_VALIDASI = 
+                        HDP.NIK_KERANI_BUAH || '-' || HDP.NIK_MANDOR || '-'  || to_char(HDP.TANGGAL_RENCANA,'YYYYMMDD'))
                 ORDER BY DBMS_RANDOM.VALUE FETCH NEXT 1 ROWS ONLY ";
 
 
@@ -239,7 +242,7 @@ class ValidationController extends Controller {
             $data['insert_user_userrole'] = session('USER_ROLE');
             $data['uuid']	= Uuid::uuid1()->toString();
 			// $result = TRValidasiDetail::create($request->except('jumlah_ebcc_validated','last_updated','kodisi_foto')+$data);
-			TRValidasiDetail::create($request->except('jumlah_ebcc_validated','last_updated')+$data);
+			TRValidasiDetail::create($request->except('last_updated')+$data);
             // dd($result1);
             if($jml_validate < 3){
                 return Redirect::to('validasi/create/'.$id);
