@@ -215,25 +215,27 @@ class ValidationController extends Controller {
         $id_val = $request->id_validasi."-".$request->ba_code."-".$request->afd_code;
         $id = str_replace("/",".",$id_val);
         $jml = $request->jumlah_ebcc_validated;
-            // TRValidasiDetail::create($request->all());
-            // $data['uuid']	= Uuid::uuid1()->toString();
             if($request->kondisi_foto == null){
                 if($request->jjg_validate_total == null or $request->jjg_validate_total == "0" ){
-                    $data['kondisi_foto'] = "TIDAK BISA DIVALIDASI, KARENA ".$request->kondisi_foto;
-                    $jml_validate = $jml;
-                    // $jml_validate = $jml-1;
+                    $foto = "TIDAK BISA DIVALIDASI, KARENA ".strtoupper($request->kondisi_foto);
+                    // $jml_validate = $jml;
+                    $jml_validate = $jml-1;
                 }else{
-                    $data['kondisi_foto'] = "BISA DIVALIDASI";
+                    $foto = "BISA DIVALIDASI";
                     $jml_validate = $jml;
                 }
             }else{
-                $data['kondisi_foto'] = "TIDAK BISA DIVALIDASI, KARENA ".$request->kondisi_foto ;
-                // $jml_validate = $jml - 1;
-                $jml_validate = $jml;
+                $foto = "TIDAK BISA DIVALIDASI, KARENA ".strtoupper($request->kondisi_foto) ;
+                $jml_validate = $jml - 1;
+                // $jml_validate = $jml;
             }
+            
             $jmlh['jumlah_ebcc_validated'] = $jml_validate;
-            // $result1 =TRValidasiHeader::firstOrCreate($request->only('id_validasi','last_update')+$jmlh);            
-            TRValidasiHeader::firstOrCreate($request->only('id_validasi','last_update')+$jmlh);            
+            // $result1 =TRValidasiHeader::firstOrCreate($request->only('id_validasi','last_update')+$jmlh);     
+            // dd($data);       
+            $request->merge([ 'jumlah_ebcc_validated' => $jml_validate ]);
+            $request->merge([ 'kondisi_foto' => $foto ]);
+            TRValidasiHeader::firstOrCreate($request->only('id_validasi','jumlah_ebcc_validated','last_update'));            
             $emp = Employee::where('EMPLOYEE_NIK',session('NIK'))->first();
             $fullname = $emp['employee_fullname'];
             $data['insert_time'] = date('Y-M-d H.i.s');

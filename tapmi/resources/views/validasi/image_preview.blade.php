@@ -124,35 +124,35 @@ input[type="radio"]{
 			<div data-toggle="buttons">
 				<div class="row">
 					<div class="col-md-3">
-						<button class="btn btn-radio btnselect" name="kondisi_foto" id="btnr">
-							<input type="radio" value="Foto Tidak Muncul">Foto Tidak Muncul</button>
+						<button class="btn btn-radio btnselect" id="btnr">
+							<input  type="radio"  name="kondisi_foto" value="Foto Tidak Muncul">Foto Tidak Muncul</button>
 					</div>
 					<div class="col-md-3">
-						<button class="btn btn-radio btnselect" name="kondisi_foto" id="btnr">
-							<input type="radio" value="Blur">Blur</button>
+						<button class="btn btn-radio btnselect" id="btnr">
+							<input  type="radio"  name="kondisi_foto" value="Blur">Blur</button>
 					</div>
 					<div class="col-md-3">
-						<button class="btn btn-radio btnselect" name="kondisi_foto" id="btnr">
-							<input type="radio" value="Jauh">Jauh</button>
+						<button class="btn btn-radio btnselect" id="btnr">
+							<input  type="radio"  name="kondisi_foto" value="Jauh">Jauh</button>
 					</div>
 					<div class="col-md-3">
-						<button class="btn btn-radio btnselect" name="kondisi_foto" id="btnr">
-							<input type="radio" value="Gambar Terpotong">Gambar Terpotong</button>
+						<button class="btn btn-radio btnselect" id="btnr">
+							<input  type="radio"  name="kondisi_foto" value="Gambar Terpotong">Gambar Terpotong</button>
 						</div>
 				</div>
 				<br>
 				<div class="row">
 					<div class="col-md-3">
-						<button class="btn btn-radio btnselect" name="kondisi_foto" id="btnr">
-							<input type="radio" value="Gelap/ Tidak Terlihat">Gelap/ Tidak Terlihat</button>
+						<button class="btn btn-radio btnselect" id="btnr">
+							<input  type="radio"  name="kondisi_foto" value="Gelap/ Tidak Terlihat">Gelap/ Tidak Terlihat</button>
 					</div>
 					<div class="col-md-3">
-						<button class="btn btn-radio btnselect" name="kondisi_foto" id="btnr">
-							<input type="radio" value="Angle Pengambilan Gambar">Angle Pengambilan Gambar</button>
+						<button class="btn btn-radio btnselect" id="btnr">
+							<input  type="radio"  name="kondisi_foto" value="Angle Pengambilan Gambar">Angle Pengambilan Gambar</button>
 					</div>
 					<div class="col-md-3">
-						<button class="btn btn-radio btnselect" name="kondisi_foto" id="btnr">
-							<input type="radio" value="Penyusunan TBS tidak sesuai SOP">Penyusunan TBS tidak sesuai SOP</button>
+						<button class="btn btn-radio btnselect" id="btnr">
+							<input  type="radio"  name="kondisi_foto" value="Penyusunan TBS tidak sesuai SOP">Penyusunan TBS tidak sesuai SOP</button>
 					</div>
 					</div>
 			</div>
@@ -224,6 +224,8 @@ input[type="radio"]{
 
    $('.btnselect').change(function(){
 		$('.fields').removeAttr('required');
+		$('.fields').val('');
+		$('#total_jjg').val('');
 	});
 
 	$("input").change(function () {

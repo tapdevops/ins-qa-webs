@@ -9,12 +9,11 @@
 	<div class="col-md-8">
 		<div class="row">
 			<div class="col-md-6">
-				{{-- <div class="m-input-icon m-input-icon--left">
-					<input type="date" class="form-control m-input m-input--solid" max="{{ $dmin }}" placeholder="Select date..." id="generalSearch">
-				</div> --}}
 				<div class="input-daterange input-group">
 					<label for="tanggal_rencana">Tanggal &nbsp; &nbsp; </label>
 					<input type="text" class="form-control m-input" id="generalSearch" name="tanggal_rencana" autocomplete="off" readonly="readonly" />
+					<?php $dmin = date("d-M-y", strtotime("yesterday"))?>
+					<input type="hidden" class="form-control m-input" id="tgldefault" value="{{$dmin}}"/>
 					
 					<div class="input-group-append">
 						<span class="input-group-text">
@@ -87,26 +86,26 @@
 
 
 				columns: [
-				{
-					field: "Tanggal",
-        			filterable: true,
-					width: 0,
-					visibility: false,
-				},{
-					field: "Krani Buah",
-        			filterable: true,
-					width: 300
-				}, {
-					field: "Afdeling",
-					width: 120
-				},{
-					field: "Mandor Panen",
-					width: 300
-				}, {
-					field: "Jumlah Divalidasi",
-					width: 100
-				}
-			]
+					{
+						field: "Tanggal",
+						filterable: true,
+						width: 0,
+						visibility: false,
+					},{
+						field: "Krani Buah",
+						filterable: true,
+						width: 300
+					}, {
+						field: "Afdeling",
+						width: 120
+					},{
+						field: "Mandor Panen",
+						width: 300
+					}, {
+						field: "Jumlah Divalidasi",
+						width: 100
+					}
+				]
 
 			})
 		}
@@ -128,7 +127,10 @@
 			
 		});
 		
+
+		
 	});
+
 
 	$(document).ready(function () {
 		$('#generalSearch').datepicker().on('click', function(){
@@ -139,7 +141,6 @@
 		
 
 	});
-
 	
 
 	$("#tampilkan").click(function(){
@@ -148,7 +149,16 @@
 			$("input").trigger(e);
 	});
 
-
+	
+    $( window ).on( "load", function() {
+		// console.log( "window loaded" );
+		var search = document.getElementById('tgldefault').value;
+		document.getElementById('generalSearch').value = search;
+		var e = jQuery.Event("keypress")
+		e.which = 13 //choose the one you want
+		$("input").trigger(e);
+		document.getElementById('generalSearch').value = '';
+    });
 
 
 	
