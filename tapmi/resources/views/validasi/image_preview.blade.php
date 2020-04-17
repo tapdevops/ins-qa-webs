@@ -229,7 +229,7 @@ input[type="radio"]{
 	});
 
 	$("input").change(function () {
-		$("input").prop('required',true);
+		$("input.fields").prop('required',true);
 	});
 
 

@@ -232,10 +232,10 @@ class ValidationController extends Controller {
             
             $jmlh['jumlah_ebcc_validated'] = $jml_validate;
             // $result1 =TRValidasiHeader::firstOrCreate($request->only('id_validasi','last_update')+$jmlh);     
-            // dd($data);       
+            // dd($request);       
             $request->merge([ 'jumlah_ebcc_validated' => $jml_validate ]);
             $request->merge([ 'kondisi_foto' => $foto ]);
-            TRValidasiHeader::firstOrCreate($request->only('id_validasi','jumlah_ebcc_validated','last_update'));            
+            TRValidasiHeader::updateOrCreate($request->only('id_validasi','jumlah_ebcc_validated','last_update'));            
             $emp = Employee::where('EMPLOYEE_NIK',session('NIK'))->first();
             $fullname = $emp['employee_fullname'];
             $data['insert_time'] = date('Y-M-d H.i.s');
