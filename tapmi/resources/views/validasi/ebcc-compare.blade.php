@@ -67,22 +67,22 @@
 						<table class="table table-bordered" style="font-weight: bold;">
 							<tr style="font-size:14px;">
 								<td class="text-center">BM (jjg)</td>
-								<td class="text-center">BK (jjg)</td>
+								<!-- <td class="text-center">BK (jjg)</td> -->
 								<td class="text-center">MS (jjg)</td>
 								<td class="text-center">OR (jjg)</td>
 								<td class="text-center">BB (jjg)</td>
 								<td class="text-center">JK (jjg)</td>
-								<td class="text-center">BA (jjg)</td>
+								<!-- <td class="text-center">BA (jjg)</td> -->
 								<td class="text-center">Total<br />Janjang<br />Panen</td>
 							</tr>
 							<tr>
 								<td class="text-center" style="color:{{ ( $dt['ebcc_jml_bm'] == $dt['jjg_validate_bm'] ? 'green' : 'red' ) }};">{{ $dt['ebcc_jml_bm'] }}</td>
-								<td class="text-center" style="color:{{ ( $dt['ebcc_jml_bk'] == $dt['jjg_validate_bk'] ? 'green' : 'red' ) }};">{{ $dt['ebcc_jml_bk'] }}</td>
+								<!-- <td class="text-center" style="color:{{ ( $dt['ebcc_jml_bk'] == $dt['jjg_validate_bk'] ? 'green' : 'red' ) }};">{{ $dt['ebcc_jml_bk'] }}</td> -->
 								<td class="text-center" style="color:{{ ( $dt['ebcc_jml_ms'] == $dt['jjg_validate_ms'] ? 'green' : 'red' ) }};">{{ $dt['ebcc_jml_ms'] }}</td>
 								<td class="text-center" style="color:{{ ( $dt['ebcc_jml_or'] == $dt['jjg_validate_or'] ? 'green' : 'red' ) }};">{{ $dt['ebcc_jml_or'] }}</td>
 								<td class="text-center" style="color:{{ ( $dt['ebcc_jml_bb'] == $dt['jjg_validate_bb'] ? 'green' : 'red' ) }};">{{ $dt['ebcc_jml_bb'] }}</td>
 								<td class="text-center" style="color:{{ ( $dt['ebcc_jml_jk'] == $dt['jjg_validate_jk'] ? 'green' : 'red' ) }};">{{ $dt['ebcc_jml_jk'] }}</td>
-								<td class="text-center" style="color:{{ ( $dt['ebcc_jml_ba'] == $dt['jjg_validate_ba'] ? 'green' : 'red' ) }};">{{ $dt['ebcc_jml_ba'] }}</td>
+								<!-- <td class="text-center" style="color:{{ ( $dt['ebcc_jml_ba'] == $dt['jjg_validate_ba'] ? 'green' : 'red' ) }};">{{ $dt['ebcc_jml_ba'] }}</td> -->
 								<td class="text-center" style="color:{{ ( $dt['ebcc_total'] == $dt['jjg_validate_total'] ? 'green' : 'red' ) }};">{{ $dt['ebcc_total'] }}</td>
 							</tr>
 						</table>
@@ -132,12 +132,12 @@
 						<table class="table table-bordered" style="font-weight: bold;">
 								<tr style="font-size:14px;">
 									<td class="text-center">BM (jjg)</td>
-									<td class="text-center">BK (jjg)</td>
+									<!-- <td class="text-center">BK (jjg)</td> -->
 									<td class="text-center">MS (jjg)</td>
 									<td class="text-center">OR (jjg)</td>
 									<td class="text-center">BB (jjg)</td>
 									<td class="text-center">JK (jjg)</td>
-									<td class="text-center">BA (jjg)</td>
+									<!-- <td class="text-center">BA (jjg)</td> -->
 									<td class="text-center">Total<br />Janjang<br />Panen</td>
 								</tr>
 								<tr>

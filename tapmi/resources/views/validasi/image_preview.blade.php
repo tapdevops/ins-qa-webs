@@ -90,25 +90,25 @@ input[type="radio"]{
 			<table class="table table-bordered" id="tform">
   				<thead style="background-color:#dadbd5">
 				<tr>
-					<td>BM<input type="hidden" name="jjg_ebcc_bm" value="{{$q['ebcc_jml_bm']}}"></td>
-					<td>BK<input type="hidden" name="jjg_ebcc_bk" value="{{$q['ebcc_jml_bk']}}"></td>
-					<td>MS<input type="hidden" name="jjg_ebcc_ms" value="{{$q['ebcc_jml_ms']}}"></td>
-					<td>OR<input type="hidden" name="jjg_ebcc_or" value="{{$q['ebcc_jml_or']}}"></td>
-					<td>BB<input type="hidden" name="jjg_ebcc_bb" value="{{$q['ebcc_jml_bb']}}"></td>
-					<td>JK<input type="hidden" name="jjg_ebcc_jk" value="{{$q['ebcc_jml_jk']}}"></td>
-					<td>BA<input type="hidden" name="jjg_ebcc_ba" value="{{$q['ebcc_jml_ba']}}"></td>
+					<input type="hidden" name="jjg_ebcc_bk" value="{{$q['ebcc_jml_bk']}}">
+					<input type="hidden" name="jjg_ebcc_ba" value="{{$q['ebcc_jml_ba']}}">
+					<td>Mentah<input type="hidden" name="jjg_ebcc_bm" value="{{$q['ebcc_jml_bm']}}"></td>
+					<td>Masak<input type="hidden" name="jjg_ebcc_ms" value="{{$q['ebcc_jml_ms']}}"></td>
+					<td>Terlalu Masak<input type="hidden" name="jjg_ebcc_or" value="{{$q['ebcc_jml_or']}}"></td>
+					<td>Busuk<input type="hidden" name="jjg_ebcc_bb" value="{{$q['ebcc_jml_bb']}}"></td>
+					<td>Janjang Kosong<input type="hidden" name="jjg_ebcc_jk" value="{{$q['ebcc_jml_jk']}}"></td>
 					<td>Total Janjang Panen<input type="hidden" name="jjg_ebcc_total" value="{{$q['jjg_panen']}}"></td>
 				</tr>
 				</thead>
  				<tbody>
 				<tr>
+					<input type="hidden" min=0 class="form-control fields" required name="jjg_validate_bk" id="bk" value="0" onkeyup="sum()">
+					<input type="hidden" min=0 class="form-control fields" required name="jjg_validate_ba" id="ba" value="0" onkeyup="sum()">
 					<td><input type="number" min=0 class="form-control fields" required name="jjg_validate_bm" id="bm" onkeyup="sum()" autofocus></td>
-					<td><input type="number" min=0 class="form-control fields" required name="jjg_validate_bk" id="bk" onkeyup="sum()"></td>
 					<td><input type="number" min=0 class="form-control fields" required name="jjg_validate_ms" id="ms" onkeyup="sum()"></td>
 					<td><input type="number" min=0 class="form-control fields" required name="jjg_validate_or" id="or" onkeyup="sum()"></td>
 					<td><input type="number" min=0 class="form-control fields" required name="jjg_validate_bb" id="bb" onkeyup="sum()"></td>
 					<td><input type="number" min=0 class="form-control fields" required name="jjg_validate_jk" id="jk" onkeyup="sum()"></td>
-					<td><input type="number" min=0 class="form-control fields" required name="jjg_validate_ba" id="ba" onkeyup="sum()"></td>
 					<td><input type="text" min=0 class="form-control" required  readonly="readonly" name="jjg_validate_total" id="total_jjg"></td>
 				</tr>
 				</tbody>
