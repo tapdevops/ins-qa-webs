@@ -155,24 +155,27 @@
 
 	$("#tampilkan").click(function(){
 		var search = document.getElementById('generalSearch').value;
-		if(search !== ''){
-			var e = jQuery.Event("keypress");
-			e.which = 13;
-			e.keyCode = 13;
-			$("input").trigger(e);
-			// $("input[name = btsearch]").trigger(e);
-		}
+		
+		$(".m-datatable").mDatatable().search(search, "Tanggal");
+		// if(search !== ''){
+		// 	var e = jQuery.Event("keypress");
+		// 	e.which = 13;
+		// 	e.keyCode = 13;
+		// 	$("input").trigger(e);
+		// 	// $("input[name = btsearch]").trigger(e);
+		// }
 	});
 
 	
     $( window ).on( "load", function() {
 			// console.log( "window loaded" );
 			var search = document.getElementById('tgldefault').value;
-			document.getElementById('generalSearch').value = search;
-			var e = jQuery.Event("keypress")
-			e.which = 13 //choose the one you want
-			$("input").trigger(e);
-			document.getElementById('generalSearch').value = '';
+			$(".m-datatable").mDatatable().search(search, "Tanggal");
+			// document.getElementById('generalSearch').value = search;
+			// var e = jQuery.Event("keypress")
+			// e.which = 13 //choose the one you want
+			// $("input").trigger(e);
+			// document.getElementById('generalSearch').value = '';
     });
 
 

@@ -86,18 +86,20 @@ class ValidationController extends Controller {
                                 ON emp_krani.nik = hrp.nik_kerani_buah
                                 LEFT JOIN ebcc.t_employee emp_mandor
                                 ON emp_mandor.nik = hrp.nik_mandor
-                                WHERE SUBSTR (ID_BA_AFD_BLOK, 1, 2) IN (SELECT comp_code FROM tap_dw.tm_comp@proddw_link)
+                                WHERE SUBSTR (ID_BA_AFD_BLOK, 1, 2) IN (SELECT comp_code FROM tap_dw.tm_comp@dwh_link)
                 )  ebcc 
                     left join MOBILE_INSPECTION.TR_VALIDASI_HEADER valid on EBCC.ID_VALIDASI = VALID.ID_VALIDASI 
                     inner join MOBILE_INSPECTION.TM_PARAMETER param on 1 = 1
                     WHERE 
-                    ebcc.tanggal_rencana > trunc(sysdate, 'yyyy') - interval '3' year
+                    ebcc.tanggal_rencana > trunc(sysdate, 'yyyy') - interval '1' year
                     and ebcc.tanggal_rencana <=  trunc(sysdate, 'yyyy')
                     and ebcc.tanggal_rencana <= (sysdate-1)
                     and ebcc.id_ba || ebcc.id_afd in ('$code')
                     order by tanggal_rencana desc";
                     // ebcc.tanggal_rencana > trunc(sysdate, 'yyyy') - interval '1' year
                     // and ebcc.tanggal_rencana <=  trunc(sysdate, 'yyyy')
+                    
+                  //   and ebcc.tanggal_rencana <= (sysdate-1)
                     // and 
                     
                     // ebcc.tanggal_rencana = (sysdate-1)
