@@ -20,7 +20,7 @@
 							<i class="la la-calendar"></i>
 						</span>
 					</div>&nbsp;&nbsp;&nbsp;
-					<button type="button" id="tampilkan" class="btn btn-primary btn-sm">Tampilkan</button>
+					<button type="button" id="tampilkan" name="btsearch" class="btn btn-primary btn-sm btsearch">Tampilkan</button>
 				</div>
 
 			</div>
@@ -158,19 +158,21 @@
 		if(search !== ''){
 			var e = jQuery.Event("keypress");
 			e.which = 13;
+			e.keyCode = 13;
 			$("input").trigger(e);
+			// $("input[name = btsearch]").trigger(e);
 		}
 	});
 
 	
     $( window ).on( "load", function() {
-		// console.log( "window loaded" );
-		var search = document.getElementById('tgldefault').value;
-		document.getElementById('generalSearch').value = search;
-		var e = jQuery.Event("keypress")
-		e.which = 13 //choose the one you want
-		$("input").trigger(e);
-		document.getElementById('generalSearch').value = '';
+			// console.log( "window loaded" );
+			var search = document.getElementById('tgldefault').value;
+			document.getElementById('generalSearch').value = search;
+			var e = jQuery.Event("keypress")
+			e.which = 13 //choose the one you want
+			$("input").trigger(e);
+			document.getElementById('generalSearch').value = '';
     });
 
 
