@@ -91,7 +91,7 @@ class ValidationController extends Controller {
                     left join MOBILE_INSPECTION.TR_VALIDASI_HEADER valid on EBCC.ID_VALIDASI = VALID.ID_VALIDASI 
                     inner join MOBILE_INSPECTION.TM_PARAMETER param on 1 = 1
                     WHERE 
-                    ebcc.tanggal_rencana > trunc(sysdate, 'yyyy') - interval '1' year
+                    ebcc.tanggal_rencana > trunc(sysdate, 'yyyy') - interval '3' year
                     and ebcc.tanggal_rencana <=  trunc(sysdate, 'yyyy')
                     and ebcc.tanggal_rencana <= (sysdate-1)
                     and ebcc.id_ba || ebcc.id_afd in ('$code')
