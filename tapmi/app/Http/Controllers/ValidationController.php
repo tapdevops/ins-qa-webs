@@ -320,7 +320,7 @@ class ValidationController extends Controller {
     }
 
 
-    public function compare_ebcc( $id ) {
+    public function compare_ebcc($id) {
         $sql = " SELECT tanggal_rencana AS tanggal_ebcc,
         nik_kerani_buah,
         nama_kerani_buah,

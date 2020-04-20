@@ -75,7 +75,7 @@ input[type="radio"]{
 					 }
 			 ?>
 				<!-- <img onerror="this.onerror=null;this.src='https://webhostingmedia.net/wp-content/uploads/2018/01/http-error-404-not-found.png'"  src="http://10.20.1.59/ebcc/array/uploads/{{$img}}" style="display:block;" width="80%" height="80%" > -->
-				<img onerror="this.onerror=null;this.src='https://webhostingmedia.net/wp-content/uploads/2018/01/http-error-404-not-found.png'"  src="http://tap-motion.tap-agri.com/ebcc/array/uploads/{{$img}}" style="display:block;" width="80%" height="80%" >
+				<img onerror="this.onerror=null;this.src='http://inspectiondev.tap-agri.com/storage/notfound.jpg'"  src="http://tap-motion.tap-agri.com/ebcc/array/uploads/{{$img}}" style="display:block;" width="80%" height="80%" >
 				
 				
 			</div>

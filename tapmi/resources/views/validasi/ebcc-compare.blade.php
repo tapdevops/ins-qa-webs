@@ -5,7 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 	<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-	<title>Preview - LAPORAN SAMPLING EBCC vs EBCC</title>
+	<title>Preview - LAPORAN EBCC vs KEPALA KEBUN</title>
 	<style type="text/css">
 		.north {
 		transform:rotate(0deg);
@@ -53,7 +53,7 @@
 				<input id="input1" type="image" src="http://inspectiondev.tap-agri.com/storage/rotate_45.png" >
 			</div>	
 			<!-- <img id="sampling_ebcc_img_jjg" onerror="this.onerror=null;this.src='https://webhostingmedia.net/wp-content/uploads/2018/01/http-error-404-not-found.png'"  src="http://10.20.1.59/ebcc/array/uploads/{{$dt['picture_name']}}" width="650px" height="496px" class="rounded mx-auto d-block north"> -->
-			<img id="sampling_ebcc_img_jjg" onerror="this.onerror=null;this.src='https://webhostingmedia.net/wp-content/uploads/2018/01/http-error-404-not-found.png'"  src="http://tap-motion.tap-agri.com/ebcc/array/uploads/{{$dt['picture_name']}}" width="650px" height="496px" class="rounded mx-auto d-block north">
+			<img id="sampling_ebcc_img_jjg" onerror="this.onerror=null;this.src='http://inspectiondev.tap-agri.com/storage/notfound.jpg'"  src="http://tap-motion.tap-agri.com/ebcc/array/uploads/{{$dt['picture_name']}}" width="650px" height="496px" class="rounded mx-auto d-block north">
 					
 		</div>
 		<div class="row" style="margin-top: 20px;">
@@ -142,12 +142,12 @@
 								</tr>
 								<tr>
 								<td class="text-center" style="color:{{ ( $dt['ebcc_jml_bm'] == $dt['jjg_validate_bm'] ? 'green' : 'red' ) }};">{{ $dt['jjg_validate_bm'] }}</td>
-								<td class="text-center" style="color:{{ ( $dt['ebcc_jml_bk'] == $dt['jjg_validate_bk'] ? 'green' : 'red' ) }};">{{ $dt['jjg_validate_bk'] }}</td>
+								<!-- <td class="text-center" style="color:{{ ( $dt['ebcc_jml_bk'] == $dt['jjg_validate_bk'] ? 'green' : 'red' ) }};">{{ $dt['jjg_validate_bk'] }}</td> -->
 								<td class="text-center" style="color:{{ ( $dt['ebcc_jml_ms'] == $dt['jjg_validate_ms'] ? 'green' : 'red' ) }};">{{ $dt['jjg_validate_ms'] }}</td>
 								<td class="text-center" style="color:{{ ( $dt['ebcc_jml_or'] == $dt['jjg_validate_or'] ? 'green' : 'red' ) }};">{{ $dt['jjg_validate_or'] }}</td>
 								<td class="text-center" style="color:{{ ( $dt['ebcc_jml_bb'] == $dt['jjg_validate_bb'] ? 'green' : 'red' ) }};">{{ $dt['jjg_validate_bb'] }}</td>
 								<td class="text-center" style="color:{{ ( $dt['ebcc_jml_jk'] == $dt['jjg_validate_jk'] ? 'green' : 'red' ) }};">{{ $dt['jjg_validate_jk'] }}</td>
-								<td class="text-center" style="color:{{ ( $dt['ebcc_jml_ba'] == $dt['jjg_validate_ba'] ? 'green' : 'red' ) }};">{{ $dt['jjg_validate_ba'] }}</td>
+								<!-- <td class="text-center" style="color:{{ ( $dt['ebcc_jml_ba'] == $dt['jjg_validate_ba'] ? 'green' : 'red' ) }};">{{ $dt['jjg_validate_ba'] }}</td> -->
 								<td class="text-center" style="color:{{ ( $dt['ebcc_total'] == $dt['jjg_validate_total'] ? 'green' : 'red' ) }};">{{ $dt['jjg_validate_total'] }}</td>
 								</tr>
 							</table>
