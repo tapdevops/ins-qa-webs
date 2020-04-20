@@ -46,10 +46,6 @@ class ValidationController extends Controller {
 
 
 	public function index() {
-        // $emp = Employee::where('EMPLOYEE_NIK',session('NIK'))->first();
-        // $fullname = $emp['employee_fullname'];
-        // dd($fullname);
-        //original
         $ba_afd_code =explode(",",session('LOCATION_CODE'));
         $code = implode("','", $ba_afd_code);
         // dd($code);
@@ -90,7 +86,7 @@ class ValidationController extends Controller {
                                 ON emp_krani.nik = hrp.nik_kerani_buah
                                 LEFT JOIN ebcc.t_employee emp_mandor
                                 ON emp_mandor.nik = hrp.nik_mandor
-                                WHERE SUBSTR (ID_BA_AFD_BLOK, 1, 2) IN (SELECT comp_code FROM tap_dw.tm_comp@dwh_link)
+                                WHERE SUBSTR (ID_BA_AFD_BLOK, 1, 2) IN (SELECT comp_code FROM tap_dw.tm_comp@proddw_link)
                 )  ebcc 
                     left join MOBILE_INSPECTION.TR_VALIDASI_HEADER valid on EBCC.ID_VALIDASI = VALID.ID_VALIDASI 
                     inner join MOBILE_INSPECTION.TM_PARAMETER param on 1 = 1
