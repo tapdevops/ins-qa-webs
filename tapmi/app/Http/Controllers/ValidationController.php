@@ -287,7 +287,8 @@ class ValidationController extends Controller {
             $request->merge([ 'jumlah_ebcc_validated' => $jml_validate ]);
             $request->merge([ 'kondisi_foto' => $foto ]);
             $request->merge([ 'last_update' => date('Y-M-d H.i.s') ]);
-            TRValidasiHeader::updateOrCreate(['id_validasi'=>$request->id_validasi, 'jumlah_ebcc_validated'=>$request->jumlah_ebcc_validated],$request->only('id_validasi','jumlah_ebcc_validated','last_update'));            
+            // ,$request->only('id_validasi','jumlah_ebcc_validated','last_update')
+            TRValidasiHeader::updateOrCreate(['id_validasi'=>$request->id_validasi],[ 'jumlah_ebcc_validated'=>$request->jumlah_ebcc_validated, 'last_update' => $request->last_update]);            
             $emp = Employee::where('EMPLOYEE_NIK',session('NIK'))->first();
             $fullname = $emp['employee_fullname'];
             $data['insert_time'] = date('Y-M-d H.i.s');
