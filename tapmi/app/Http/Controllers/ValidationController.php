@@ -55,7 +55,6 @@ class ValidationController extends Controller {
         $ba_afd_code =explode(",",session('LOCATION_CODE'));
         $code = implode("','", $ba_afd_code);
         // dd($code);
-		   ini_set('memory_limit', '-1');
 		   $data['active_menu'] = $this->active_menu;
          $sql = "SELECT ebcc.id_ba,
                         ebcc.id_afd,
@@ -116,58 +115,8 @@ class ValidationController extends Controller {
                               AND PARAMETER_NAME = 'TARGET_VALIDASI'
                         )param 
                            ON 1 = 1";
-      //   $sql = "select distinct ebcc.id_ba,
-      //                           ebcc.id_afd,
-      //                           to_char(ebcc.tanggal_rencana,'DD-MON-YY') AS tanggal_rencana,
-      //                           ebcc.nik_kerani_buah,
-      //                           ebcc.nama_krani_buah,
-      //                           ebcc.nik_mandor,
-      //                           ebcc.nama_mandor,
-      //                           ebcc.id_validasi,
-      //                           case when valid.jumlah_ebcc_validated is null then 0 else valid.jumlah_ebcc_validated end as jumlah_ebcc_validated,
-      //                           case when param.parameter_name = 'TARGET_VALIDASI' then param.parameter_desc end AS target_validasi  
-      //           from (SELECT SUBSTR (drp.id_ba_afd_blok, 1, 4) AS id_ba,
-      //                           SUBSTR (drp.id_ba_afd_blok, 5, 1) AS id_afd,
-      //                           hrp.id_rencana,
-      //                           hrp.tanggal_rencana,
-      //                           hrp.nik_kerani_buah,
-      //                           hrp.nik_mandor,
-      //                           emp_krani.emp_name 
-      //                           || ' - ' 
-      //                           || hrp.nik_kerani_buah AS nama_krani_buah,
-      //                           emp_mandor.emp_name
-      //                           || ' - '
-      //                           || hrp.nik_mandor AS nama_mandor,
-      //                           hrp.nik_kerani_buah
-      //                           || '-'
-      //                           || hrp.nik_mandor
-      //                           || '-'
-      //                           || to_char(hrp.tanggal_rencana,'YYYYMMDD')
-      //                           AS id_validasi
-      //                           FROM ebcc.t_header_rencana_panen hrp
-      //                           LEFT JOIN ebcc.t_detail_rencana_panen drp
-      //                           ON hrp.id_rencana = drp.id_rencana
-      //                           LEFT JOIN ebcc.t_employee emp_krani
-      //                           ON emp_krani.nik = hrp.nik_kerani_buah
-      //                           LEFT JOIN ebcc.t_employee emp_mandor
-      //                           ON emp_mandor.nik = hrp.nik_mandor
-      //                           WHERE SUBSTR (ID_BA_AFD_BLOK, 1, 2) IN (SELECT comp_code FROM tap_dw.tm_comp@$env)
-      //           )  ebcc 
-      //               left join MOBILE_INSPECTION.TR_VALIDASI_HEADER valid on EBCC.ID_VALIDASI = VALID.ID_VALIDASI 
-      //               inner join MOBILE_INSPECTION.TM_PARAMETER param on 1 = 1
-      //               WHERE 
-      //               ebcc.tanggal_rencana > trunc(sysdate, 'yyyy') - interval '3' year
-      //               and ebcc.tanggal_rencana <=  trunc(sysdate, 'yyyy')
-      //               and ebcc.tanggal_rencana <= (sysdate-1)
-      //               and ebcc.id_ba || ebcc.id_afd in ('$code')
-      //               order by tanggal_rencana desc";
-                    // ebcc.tanggal_rencana > trunc(sysdate, 'yyyy') - interval '1' year
-                    // and ebcc.tanggal_rencana <=  trunc(sysdate, 'yyyy')
                     
-                    //   and ebcc.tanggal_rencana <= (sysdate-1)
-                    // and 
-                    
-                    // ebcc.tanggal_rencana = (sysdate-1)
+		   ini_set('memory_limit', '-1');
          $valid_data = json_encode($this->db_mobile_ins->select($sql));
          $result = json_decode( $valid_data,true);
 
