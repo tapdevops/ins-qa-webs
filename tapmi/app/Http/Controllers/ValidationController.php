@@ -191,29 +191,18 @@ class ValidationController extends Controller {
         $afd = $arr[4];
         $id_validasi = $nik_kerani."-".$nik_mandor."-".$tgl;
 
-        $sql = " SELECT HDP.ID_RENCANA,
+        $sql = " SELECT 
                         HDP.TANGGAL_RENCANA,
                         HDP.NIK_MANDOR,
                         HDP.NIK_KERANI_BUAH,
                         EMP_EBCC.EMP_NAME,
                         HDP.ID_BA_AFD_BLOK,
-                        HDP.NO_REKAP_BCC,
                         HP.NO_TPH,
                         HP.NO_BCC,
-                        HP.STATUS_TPH,
                         HP.PICTURE_NAME,
                         TB.ID_BLOK,
                         TB.BLOK_NAME,
                         TBA.NAMA_BA,
-                        CASE
-                            WHEN HP.KETERANGAN_QRCODE IS NULL THEN ''
-                            ELSE
-                                CASE
-                                    WHEN HP.KETERANGAN_QRCODE = '1' THEN ' - QR Codenya Hilang'
-                                    WHEN HP.KETERANGAN_QRCODE = '2' THEN ' - QR Codenya Rusak'
-                                    ELSE ''
-                                END
-                        END AS KETERANGAN_QRCODE,
                         NVL( EBCC.F_GET_HASIL_PANEN_BUNCH ( TBA.ID_BA, HP.NO_REKAP_BCC, HP.NO_BCC, 'BUNCH_HARVEST' ), 0 ) as JJG_PANEN,
                         NVL( EBCC.F_GET_HASIL_PANEN_NUMBERX( HDP.ID_RENCANA, HP.NO_REKAP_BCC, HP.NO_BCC, 1 ), 0 ) AS EBCC_JML_BM,
                         NVL( EBCC.F_GET_HASIL_PANEN_NUMBERX( HDP.ID_RENCANA, HP.NO_REKAP_BCC, HP.NO_BCC, 2 ), 0 ) AS EBCC_JML_BK,
@@ -250,8 +239,6 @@ class ValidationController extends Controller {
                         HP.NO_BCC NOT IN (SELECT NO_BCC FROM TR_VALIDASI_DETAIL WHERE ID_VALIDASI = 
                         HDP.NIK_KERANI_BUAH || '-' || HDP.NIK_MANDOR || '-'  || to_char(HDP.TANGGAL_RENCANA,'YYYYMMDD'))
                 ORDER BY DBMS_RANDOM.VALUE FETCH NEXT 1 ROWS ONLY ";
-
-
         $valid_data = json_encode($this->db_mobile_ins->select($sql));
         $result = json_decode( $valid_data,true);
                    
