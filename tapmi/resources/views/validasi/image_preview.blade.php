@@ -63,6 +63,7 @@ input[type="radio"]{
 <input type="hidden" name="no_bcc" value="{{$q['no_bcc']}}">
 <input type="hidden" name="jumlah_ebcc_validated" value="{{$no_validasi}}">
 <input type="hidden" name="last_update" value="{{ date('Y-M-d') }}">
+<input type="hidden" name="target" value="{{$target}}">
 	<tr>
 		<td  rowspan="7" width="45%"  style="vertical-align: top;">
 			<div style="position:absolute;z-index: 1000">
