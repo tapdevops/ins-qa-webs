@@ -51,6 +51,7 @@ return array(
     'App\\TRValidasiDetail' => $baseDir . '/app/TRValidasiDetail.php',
     'App\\TRValidasiHeader' => $baseDir . '/app/TRValidasiHeader.php',
     'App\\User' => $baseDir . '/app/User.php',
+    'App\\ValidasiHeader' => $baseDir . '/app/ValidasiHeader.php',
     'App\\Validation' => $baseDir . '/app/Validation.php',
     'ArithmeticError' => $vendorDir . '/symfony/polyfill-php70/Resources/stubs/ArithmeticError.php',
     'AssertionError' => $vendorDir . '/symfony/polyfill-php70/Resources/stubs/AssertionError.php',

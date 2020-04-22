@@ -1,5 +1,6 @@
 <?php
 
+use App\ValidasiHeader as Validate;
 use Illuminate\Http\Request;
 
 /*
@@ -16,3 +17,16 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+// Route::get('header', function(){
+//     return Validate::data()->paginate(10);
+
+// });
+
+// Route::get('header/{date}', function(){
+//     return Validate::validasi_header($date);
+
+// });
+
+// Route::resource('/filter', 'ValidationController@getAllfilter');
+// Route::get('/filter/all', 'ValidationController@getAll');

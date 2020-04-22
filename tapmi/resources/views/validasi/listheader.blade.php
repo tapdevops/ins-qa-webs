@@ -41,14 +41,14 @@
 		</tr>
 	</thead>
 	<tbody>
-		
-		@foreach ( $data_header as $key => $q )
+	@foreach(array_chunk($data_header, 10) as $row)
+		@foreach ( $row as $key => $q )
 			<tr>
 				<td>{{ $q['tanggal_rencana'] }}</td>
 				<td>{{ $q['nama_krani_buah'] }}</td>
 				<td>{{ $q['id_afd'] }}</td>
 				<td>{{ $q['nama_mandor'] }}</td>
-				<td>{{ $q['jumlah_ebcc_validated'] }} /{{ $q['target_validasi'] }}  </td>
+				<td>{{ $q['jumlah_ebcc_validated'] }} / {{ $q['target_validasi'] }}  </td>
 				<?php 
 					$id = str_replace("/",".",$q['id_validasi']);
 				?>
@@ -58,6 +58,7 @@
 				<td><a href={{ URL::to('/validasi/create/'.$id.'-'.$q['id_ba'].'-'.$q['id_afd']) }} target="_blank"><button type="button" class="btn btn-primary btn-sm">Validasi</button></a></td>
 				@endif	
 			</tr>
+		@endforeach
 		@endforeach
 	</tbody>
 </table>
@@ -155,15 +156,55 @@
 
 	$("#tampilkan").click(function(){
 		var search = document.getElementById('generalSearch').value;
-		
 		$(".m-datatable").mDatatable().search(search, "Tanggal");
-		// if(search !== ''){
-		// 	var e = jQuery.Event("keypress");
-		// 	e.which = 13;
-		// 	e.keyCode = 13;
-		// 	$("input").trigger(e);
-		// 	// $("input[name = btsearch]").trigger(e);
-		// }
+		// $(".m-datatable").mDatatable({
+		// 						data:{type: 'remote',
+		// 								source: {
+		// 									read: {
+		// 										url: "{{ url( '/filter' ) }}/12-Apr-18"
+		// 									}
+		// 								},
+		// 						saveState: {
+		// 							cookie: !1
+		// 						},
+		// 						serverPaging: false,
+		// 						serverFiltering: false,
+		// 						serverSorting: false,
+		// 						autoColumns: false
+		// 					},
+		// 					columns: [
+		// 						{
+		// 							field: "Tanggal",
+		// 							filterable: true,
+		// 							sortable: false,
+		// 							width: 0,
+		// 							visibility: false,
+		// 						},{
+		// 							field: "Krani Buah",
+		// 							filterable: true,
+		// 							sortable: false,
+		// 							width: 300
+		// 						}, {
+		// 							field: "Afdeling",
+		// 							width: 120,
+		// 							sortable: false,
+		// 						},{
+		// 							field: "Mandor Panen",
+		// 							width: 300,
+		// 							sortable: false,
+		// 						}, {
+		// 							field: "Jumlah BCC yang Divalidasi",
+		// 							width: 100,
+		// 							sortable: false,
+		// 						}, {
+		// 							field: "Aksi",
+		// 							width: 100,
+		// 							sortable: false,
+		// 						}
+		// 					]
+		// 				});
+		
+		// $(".m-datatable").mDatatable().load();
 	});
 
 	

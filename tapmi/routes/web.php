@@ -69,12 +69,9 @@ Route::group( [ 'middleware' => 'web' ], function() {
 		});
 
 		#validation_image_data
-		Route::resource('listval', 'ValidationController');
 		Route::get( '/listvalidasi', 'ValidationController@index'); 
 		Route::get( '/validasi/create/{id}', 'ValidationController@create' );
 		Route::post( '/validasi/create_action', 'ValidationController@create_action')->name('create_validation');
-		Route::post( '/validasi/filter_date/{date}', 'ValidationController@filter_date' );
-
 
 	});
 
@@ -91,7 +88,16 @@ Route::get( '/nohup', 'ReportOracleController@nohup' );
 Route::get( '/phpinfo', 'ReportOracleController@phpinfo' );
 Route::get( '/testings', 'KafkaProducerController@test' );
 
+
+Route::get( '/getGuzzleRequest', 'ValidationController@getGuzzleRequest' );
+
 Route::get( '/validasi/compare-ebcc/{id}', 'ValidationController@compare_ebcc');
+
 
 #image
 Route::get( '/storage/{filename}', 'StorageController@image' );
+
+#json
+
+Route::get('/filter/{date}', 'ValidationController@getAllfilter');
+Route::get('/filter', 'ValidationController@getAll');

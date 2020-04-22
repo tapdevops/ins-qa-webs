@@ -46,6 +46,10 @@ class APIData extends Model
 				return APISetup::url()['msa']['ins']['report'];
 				break;
 				# DEFAULT
+			case 'url_api_ins_msa_mivalidation':
+				return APISetup::url()['msa']['ins']['mivalidation'];
+				break;
+				# DEFAULT
 			default:
 				return '';
 				break;
@@ -471,4 +475,23 @@ class APIData extends Model
 		}
 		return $data;
 	}
+	
+	
+	# 											 ▁ ▂ ▄ ▅ ▆ ▇ █ WEB VALIDASI - HEADER - Find
+	# -------------------------------------------------------------------------------------
+	public static function val_header_find()
+	{
+		$url = self::url('url_api_ins_msa_mivalidation') . '/filter/all';
+		$client = APISetup::ins_rest_client('GET', $url);
+		$data = [];
+		if ($client['status'] == true) {
+			if (isset($client['data'])) {
+				$data = $client['data'];
+			}
+		}
+		return $data;
+	}
+
+
+
 }

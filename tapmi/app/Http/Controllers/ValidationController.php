@@ -9,7 +9,9 @@
 	use Illuminate\Support\Facades\Input;
 	use Illuminate\Support\Collection;
 	use Illuminate\Support\Facades\File;
-	use Illuminate\Support\Facades\Storage;
+   use Illuminate\Support\Facades\Storage;
+   use GuzzleHttp\Exception\GuzzleException;
+   use GuzzleHttp\Client;
 	use View;
 	use Validator;
 	use Redirect;
@@ -23,12 +25,15 @@
 	use App\TMParameter;
 	use App\TRValidasiHeader;
 	use App\TRValidasiDetail;
-    use DataTables;
-    use Ramsey\Uuid\Uuid;
+   use DataTables;
+   use Ramsey\Uuid\Uuid;
+   use App\ValidasiHeader;
 
 
-# API Setup
-	use App\APIData as Data;
+   # API Setup
+   use App\APISetup;
+   use App\APIData as Data;
+
 
 class ValidationController extends Controller {
 
@@ -43,14 +48,66 @@ class ValidationController extends Controller {
 	#   		 									  		            ▁ ▂ ▄ ▅ ▆ ▇ █ Index
     # -------------------------------------------------------------------------------------
    
+   public function index(){
+      $day =  date("Y-m-d", strtotime("yesterday"));
+      $ba_afd_code =explode(",",session('LOCATION_CODE'));
+      $code = implode("','", $ba_afd_code);
+      $data['active_menu'] = $this->active_menu;
+      $res = json_encode(( new ValidasiHeader() )->validasi_header($day));
+      $data['data_header'] = json_decode($res,true);
+      return view( 'validasi.listheader', $data );
+   }
 
+   public function ss_index() {
+      // $day =  date("Y-m-d", strtotime("yesterday"));
+		$data['active_menu'] = $this->active_menu;
+		// if ( in_array( session('USER_ROLE'), $allowed_role ) ) {
+			$data['data_header'] = array();
+			if ( !empty( Data::val_header_find() ) ) {
+				$i = 0;
+				foreach ( Data::val_header_find() as $q ) {
+					if ( isset( $q['nama_krani_buah'] ) && isset( $q['tanggal_rencana'] ) ) {
+						$data['data_header'][$i]['tanggal_rencana'] = $q['tanggal_rencana'];
+						$data['data_header'][$i]['nama_krani_buah'] = $q['nama_krani_buah'];
+						$data['data_header'][$i]['id_afd'] = $q['id_afd'];
+						$data['data_header'][$i]['nama_mandor'] = $$q['nama_mandor'];
+						$data['data_header'][$i]['jumlah_ebcc_validated'] = $q['jumlah_ebcc_validated'];
+						$data['data_header'][$i]['target_validasi'] =  $q['target_validasi'];
+						$data['data_header'][$i]['id_validasi'] = $q['id_validasi'];
+						$data['data_header'][$i]['id_ba'] = $q['id_ba'];
+						$i++;
+					}
+					
+				}
+			}
 
-	public function index() {
-      if (env('APP_ENV') == 'local'){
-         $env = 'dwh_link';
-      } else{
-         $env = 'proddw_link';
-      }
+			return view( 'validasi.listheader', $data );
+		// }
+		
+	}
+
+   public function getAllfilter($date){
+      $day =  date("Y-m-d", strtotime($date));
+      $res = ( new ValidasiHeader() )->validasi_header($day);
+      return response()->json($res);
+   }
+   public function getAll(){
+      $ba_afd_code =explode(",",session('LOCATION_CODE'));
+      $code = implode("','", $ba_afd_code);
+      $res = ( new ValidasiHeader() )->data();
+      return response()->json($res);
+      // return response()->json([
+      //       "data" => $res
+      // ], 201);
+   }
+
+	public function xx_index() {
+      // if (env('APP_ENV') == 'local'){
+      //    $env = 'dwh_link';
+      // } else{
+      //    $env = 'proddw_link';
+      // }
+      $day =  date("Y-m-d", strtotime("yesterday"));
 
         $ba_afd_code =explode(",",session('LOCATION_CODE'));
         $code = implode("','", $ba_afd_code);
@@ -87,7 +144,8 @@ class ValidationController extends Controller {
                                  LEFT JOIN ebcc.t_employee emp_mandor
                                     ON emp_mandor.nik = hrp.nik_mandor
                            WHERE     SUBSTR (ID_BA_AFD_BLOK, 1, 2) IN (SELECT comp_code
-                                                                        FROM tap_dw.tm_comp@$env)
+                                                                        FROM tap_dw.tm_comp@dwh_link)
+                                 AND hrp.tanggal_rencana = TO_DATE ('$day', 'YYYY-MM-DD')
                                  AND SUBSTR (drp.id_ba_afd_blok, 1, 5) in ('$code')
                                  -- SID - tambahin group by
                            GROUP BY SUBSTR (drp.id_ba_afd_blok, 1, 4),
@@ -114,14 +172,13 @@ class ValidationController extends Controller {
                               WHERE PARAMETER_GROUP = 'VALIDASI_ASKEP'
                               AND PARAMETER_NAME = 'TARGET_VALIDASI'
                         )param 
-                           ON 1 = 1";
+                           ON 1 = 1  
+                           ";
                     
 		   ini_set('memory_limit', '-1');
          $valid_data = json_encode($this->db_mobile_ins->select($sql));
          $result = json_decode( $valid_data,true);
-
-         $data['data_header'] = $result;
-         
+         $data['data_header'] = $result;         
          return view( 'validasi.listheader', $data );
 		
 	}
