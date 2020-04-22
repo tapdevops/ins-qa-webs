@@ -66,12 +66,12 @@
 							<br />
 						<table class="table table-bordered" style="font-weight: bold;">
 							<tr style="font-size:14px;">
-								<td class="text-center">BM (jjg)</td>
+								<td class="text-center">Mentah (jjg)</td>
 								<!-- <td class="text-center">BK (jjg)</td> -->
-								<td class="text-center">MS (jjg)</td>
-								<td class="text-center">OR (jjg)</td>
-								<td class="text-center">BB (jjg)</td>
-								<td class="text-center">JK (jjg)</td>
+								<td class="text-center">Masak (jjg)</td>
+								<td class="text-center">Terlalu Masak (jjg)</td>
+								<td class="text-center">Busuk (jjg)</td>
+								<td class="text-center">Janjang Kosong (jjg)</td>
 								<!-- <td class="text-center">BA (jjg)</td> -->
 								<td class="text-center">Total<br />Janjang<br />Panen</td>
 							</tr>
@@ -131,12 +131,12 @@
 						<br />
 						<table class="table table-bordered" style="font-weight: bold;">
 								<tr style="font-size:14px;">
-									<td class="text-center">BM (jjg)</td>
+									<td class="text-center">Mentah (jjg)</td>
 									<!-- <td class="text-center">BK (jjg)</td> -->
-									<td class="text-center">MS (jjg)</td>
-									<td class="text-center">OR (jjg)</td>
-									<td class="text-center">BB (jjg)</td>
-									<td class="text-center">JK (jjg)</td>
+									<td class="text-center">Masak (jjg)</td>
+									<td class="text-center">Terlalu Masak (jjg)</td>
+									<td class="text-center">Busuk (jjg)</td>
+									<td class="text-center">Janjang Kosong (jjg)</td>
 									<!-- <td class="text-center">BA (jjg)</td> -->
 									<td class="text-center">Total<br />Janjang<br />Panen</td>
 								</tr>

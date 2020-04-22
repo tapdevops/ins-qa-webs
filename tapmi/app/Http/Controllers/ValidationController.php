@@ -58,39 +58,22 @@ class ValidationController extends Controller {
       return view( 'validasi.listheader', $data );
    }
 
-   public function ss_index() {
-      // $day =  date("Y-m-d", strtotime("yesterday"));
-		$data['active_menu'] = $this->active_menu;
-		// if ( in_array( session('USER_ROLE'), $allowed_role ) ) {
-			$data['data_header'] = array();
-			if ( !empty( Data::val_header_find() ) ) {
-				$i = 0;
-				foreach ( Data::val_header_find() as $q ) {
-					if ( isset( $q['nama_krani_buah'] ) && isset( $q['tanggal_rencana'] ) ) {
-						$data['data_header'][$i]['tanggal_rencana'] = $q['tanggal_rencana'];
-						$data['data_header'][$i]['nama_krani_buah'] = $q['nama_krani_buah'];
-						$data['data_header'][$i]['id_afd'] = $q['id_afd'];
-						$data['data_header'][$i]['nama_mandor'] = $$q['nama_mandor'];
-						$data['data_header'][$i]['jumlah_ebcc_validated'] = $q['jumlah_ebcc_validated'];
-						$data['data_header'][$i]['target_validasi'] =  $q['target_validasi'];
-						$data['data_header'][$i]['id_validasi'] = $q['id_validasi'];
-						$data['data_header'][$i]['id_ba'] = $q['id_ba'];
-						$i++;
-					}
-					
-				}
-			}
 
-			return view( 'validasi.listheader', $data );
-		// }
-		
-	}
+   public function getEbccValHeader(request $request){
+      $data['active_menu'] = $this->active_menu;
+      $day = $request->tanggal;
+      $res = json_encode(( new ValidasiHeader() )->validasi_header($day));
+      $data['data_header'] = json_decode($res,true);
+      return view( 'validasi.listheader', $data );
+   }
 
+   
    public function getAllfilter($date){
       $day =  date("Y-m-d", strtotime($date));
       $res = ( new ValidasiHeader() )->validasi_header($day);
       return response()->json($res);
    }
+
    public function getAll(){
       $ba_afd_code =explode(",",session('LOCATION_CODE'));
       $code = implode("','", $ba_afd_code);
@@ -100,90 +83,7 @@ class ValidationController extends Controller {
       //       "data" => $res
       // ], 201);
    }
-
-	public function xx_index() {
-      // if (env('APP_ENV') == 'local'){
-      //    $env = 'dwh_link';
-      // } else{
-      //    $env = 'proddw_link';
-      // }
-      $day =  date("Y-m-d", strtotime("yesterday"));
-
-        $ba_afd_code =explode(",",session('LOCATION_CODE'));
-        $code = implode("','", $ba_afd_code);
-        // dd($code);
-		   $data['active_menu'] = $this->active_menu;
-         $sql = "SELECT ebcc.id_ba,
-                        ebcc.id_afd,
-                        to_char(ebcc.tanggal_rencana,'DD-MON-YY') AS tanggal_rencana,
-                        ebcc.nik_kerani_buah,
-                        ebcc.nama_krani_buah,
-                        ebcc.nik_mandor,
-                        ebcc.nama_mandor,
-                        ebcc.id_validasi,
-                        case when valid.jumlah_ebcc_validated is null then 0 else valid.jumlah_ebcc_validated end as jumlah_ebcc_validated,
-                        param.parameter_desc AS target_validasi 
-                     FROM (SELECT SUBSTR (drp.id_ba_afd_blok, 1, 4) AS id_ba,
-                                 SUBSTR (drp.id_ba_afd_blok, 5, 1) AS id_afd, 
-                                 hrp.tanggal_rencana,
-                                 hrp.nik_kerani_buah,
-                                 emp_krani.emp_name AS nama_krani_buah,
-                                 hrp.nik_mandor,
-                                 emp_mandor.emp_name AS nama_mandor,
-                                    hrp.nik_kerani_buah
-                                 || '-'
-                                 || hrp.nik_mandor
-                                 || '-'
-                                 || to_char(hrp.tanggal_rencana,'YYYYMMDD')
-                                    AS id_validasi
-                           FROM ebcc.t_header_rencana_panen hrp
-                                 LEFT JOIN ebcc.t_detail_rencana_panen drp
-                                    ON hrp.id_rencana = drp.id_rencana
-                                 LEFT JOIN ebcc.t_employee emp_krani
-                                    ON emp_krani.nik = hrp.nik_kerani_buah
-                                 LEFT JOIN ebcc.t_employee emp_mandor
-                                    ON emp_mandor.nik = hrp.nik_mandor
-                           WHERE     SUBSTR (ID_BA_AFD_BLOK, 1, 2) IN (SELECT comp_code
-                                                                        FROM tap_dw.tm_comp@dwh_link)
-                                 AND hrp.tanggal_rencana = TO_DATE ('$day', 'YYYY-MM-DD')
-                                 AND SUBSTR (drp.id_ba_afd_blok, 1, 5) in ('$code')
-                                 -- SID - tambahin group by
-                           GROUP BY SUBSTR (drp.id_ba_afd_blok, 1, 4),
-                                 SUBSTR (drp.id_ba_afd_blok, 5, 1),
-                                 hrp.tanggal_rencana,
-                                 hrp.nik_kerani_buah,
-                                 emp_krani.emp_name ,
-                                 hrp.nik_mandor,
-                                 emp_mandor.emp_name,
-                                    hrp.nik_kerani_buah
-                                 || '-'
-                                 || hrp.nik_mandor
-                                 || '-'
-                                 || to_char(hrp.tanggal_rencana,'YYYYMMDD')
-                           order by hrp.tanggal_rencana desc
-                                 ) 
-                        ebcc
-                        LEFT JOIN mobile_inspection.tr_validasi_header valid
-                           ON ebcc.id_validasi = valid.id_validasi
-                           -- SID - ubah
-                        JOIN (
-                              SELECT PARAMETER_DESC
-                              FROM mobile_inspection.tm_parameter 
-                              WHERE PARAMETER_GROUP = 'VALIDASI_ASKEP'
-                              AND PARAMETER_NAME = 'TARGET_VALIDASI'
-                        )param 
-                           ON 1 = 1  
-                           ";
-                    
-		   ini_set('memory_limit', '-1');
-         $valid_data = json_encode($this->db_mobile_ins->select($sql));
-         $result = json_decode( $valid_data,true);
-         $data['data_header'] = $result;         
-         return view( 'validasi.listheader', $data );
-		
-	}
-
-    
+	    
     public function create($id)
     {   
         $data['active_menu'] = $this->active_menu;
@@ -505,7 +405,6 @@ class ValidationController extends Controller {
 			return 'Data not found.';
 		}
 	}
-
 
 
 }

@@ -15,6 +15,7 @@ class ValidasiHeader extends Model{
 		$this->env = 'DEV';
 	}
 
+   //filter H-1
 	public function validasi_header($date){
       $day =  date("Y-m-d", strtotime($date));
       $ba_afd_code = explode(",",session('LOCATION_CODE'));
@@ -52,7 +53,7 @@ class ValidasiHeader extends Model{
                                     ON emp_mandor.nik = hrp.nik_mandor
                            WHERE     SUBSTR (ID_BA_AFD_BLOK, 1, 2) IN (SELECT comp_code
                                                                         FROM tap_dw.tm_comp@dwh_link)
-                                 AND hrp.tanggal_rencana <= TO_DATE ('$day', 'YYYY-MM-DD')
+                                 AND hrp.tanggal_rencana = TO_DATE ('$day', 'YYYY-MM-DD')
                                  AND SUBSTR (drp.id_ba_afd_blok, 1, 5) in ('$code')
                                  -- SID - tambahin group by
                            GROUP BY SUBSTR (drp.id_ba_afd_blok, 1, 4),
@@ -84,9 +85,8 @@ class ValidasiHeader extends Model{
 		return $get;
    }
    
-
+   // All Data
    public function data(){
-      // $day =  date("Y-m-d", strtotime("yesterday"));
       $ba_afd_code = explode(",",session('LOCATION_CODE'));
       $code = implode("','", $ba_afd_code);
 		$get = $this->db_mobile_ins->select("
@@ -151,5 +151,6 @@ class ValidasiHeader extends Model{
                            ON 1 = 1
 		");
 		return $get;
-	}
+   }
+  
 }

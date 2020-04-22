@@ -29,6 +29,7 @@
 	</div>
 	
 </div>
+
 <table class="m-datatable" id="html_table" width="100%" style="margin-top:20px;">
 	<thead>
 		<tr>
@@ -62,6 +63,7 @@
 		@endforeach
 	</tbody>
 </table>
+
 @endsection
 
 @section( 'scripts' )
@@ -141,8 +143,7 @@
 
 		
 	});
-
-
+	
 	$(document).ready(function () {
 		$('#generalSearch').datepicker().on('click', function(){
 				var selected = $(this).val();
@@ -156,70 +157,27 @@
 
 	$("#tampilkan").click(function(){
 		var search = document.getElementById('generalSearch').value;
-		$(".m-datatable").mDatatable().search(search, "Tanggal");
-		// $(".m-datatable").mDatatable({
-		// 						data:{type: 'remote',
-		// 								source: {
-		// 									read: {
-		// 										url: "{{ url( '/filter' ) }}/12-Apr-18"
-		// 									}
-		// 								},
-		// 						saveState: {
-		// 							cookie: !1
-		// 						},
-		// 						serverPaging: false,
-		// 						serverFiltering: false,
-		// 						serverSorting: false,
-		// 						autoColumns: false
-		// 					},
-		// 					columns: [
-		// 						{
-		// 							field: "Tanggal",
-		// 							filterable: true,
-		// 							sortable: false,
-		// 							width: 0,
-		// 							visibility: false,
-		// 						},{
-		// 							field: "Krani Buah",
-		// 							filterable: true,
-		// 							sortable: false,
-		// 							width: 300
-		// 						}, {
-		// 							field: "Afdeling",
-		// 							width: 120,
-		// 							sortable: false,
-		// 						},{
-		// 							field: "Mandor Panen",
-		// 							width: 300,
-		// 							sortable: false,
-		// 						}, {
-		// 							field: "Jumlah BCC yang Divalidasi",
-		// 							width: 100,
-		// 							sortable: false,
-		// 						}, {
-		// 							field: "Aksi",
-		// 							width: 100,
-		// 							sortable: false,
-		// 						}
-		// 					]
-		// 				});
-		
-		// $(".m-datatable").mDatatable().load();
+		// $(".m-datatable").mDatatable().reload();
+		// $(".m-datatable").mDatatable().search(search, "Tanggal");
+		refreshData();
 	});
 
-	
-    $( window ).on( "load", function() {
-			// console.log( "window loaded" );
-			var search = document.getElementById('tgldefault').value;
-			$(".m-datatable").mDatatable().search(search, "Tanggal");
-			// document.getElementById('generalSearch').value = search;
-			// var e = jQuery.Event("keypress")
-			// e.which = 13 //choose the one you want
-			// $("input").trigger(e);
-			// document.getElementById('generalSearch').value = '';
-    });
-
-
+	function refreshData(){
+		var search = document.getElementById('generalSearch').value;
+		event.preventDefault();
+		const CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+		$.ajax({
+			url:'/getNewdata',
+			type:'get',
+			data:{
+				CSRF_TOKEN,
+				'tanggal' : search
+			},
+			success:function(data){
+				$("div#page").html(data);
+			}	
+		})
+	}
 	
 </script>
 @endsection

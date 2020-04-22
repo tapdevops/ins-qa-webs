@@ -89,7 +89,8 @@ Route::get( '/phpinfo', 'ReportOracleController@phpinfo' );
 Route::get( '/testings', 'KafkaProducerController@test' );
 
 
-Route::get( '/getGuzzleRequest', 'ValidationController@getGuzzleRequest' );
+// Route::get( '/getGuzzleRequest', 'ValidationController@getGuzzleRequest' );
+Route::get( '/getNewdata', 'ValidationController@getEbccValHeader' );
 
 Route::get( '/validasi/compare-ebcc/{id}', 'ValidationController@compare_ebcc');
 
