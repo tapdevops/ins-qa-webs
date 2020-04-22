@@ -10,7 +10,7 @@ class TRValidasiHeader extends Model
     
     protected $connection = 'mobile_ins';
     protected $table = 'TR_VALIDASI_HEADER';
-    protected $primaryKey = 'ID_VALIDASI';
+    protected $primaryKey = 'id_validasi';
     public $incrementing = false;
     public $timestamps = false;
     protected $fillable = [
