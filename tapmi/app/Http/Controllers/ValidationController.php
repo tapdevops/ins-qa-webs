@@ -262,7 +262,7 @@ class ValidationController extends Controller {
         jjg_validate_bb,
         jjg_validate_jk,
         jjg_validate_ba,
-        jjg_validate_total
+        nvl(jjg_validate_total,0) as jjg_validate_total
    FROM (SELECT ebcc.tanggal_rencana,
                 ebcc.nik_kerani_buah,
                 ebcc.nama_kerani_buah,

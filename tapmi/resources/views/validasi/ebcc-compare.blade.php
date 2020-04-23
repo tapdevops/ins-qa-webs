@@ -174,6 +174,13 @@
 											<td>:</td>
 											<td>{{ date( 'd-M-Y H:i', strtotime( $dt['tanggal_validasi'] ) ) }}</td>
 										</tr>
+										@if(strtoupper($dt['kondisi_foto']) != "BISA DIVALIDASI")
+											<tr>
+												<td valign="top">Kondisi Foto</td>
+												<td valign="top">:</td>
+												<td valign="top">{{ $dt['kondisi_foto'] }}</td>
+											</tr>
+										@endif
 										<tr>
 											<td></td>
 											<td></td>
