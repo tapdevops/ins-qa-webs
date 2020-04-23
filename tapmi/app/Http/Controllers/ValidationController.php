@@ -64,7 +64,22 @@ class ValidationController extends Controller {
       $day = $request->tanggal;
       $res = json_encode(( new ValidasiHeader() )->validasi_header($day));
       $data['data_header'] = json_decode($res,true);
+      $data['session'] = session();
       return view( 'validasi.listheader', $data );
+   }
+
+   public function getValHeader(request $request){
+      $data['active_menu'] = $this->active_menu;
+      $day = $request->tanggal;
+      $result = ( new ValidasiHeader() )->validasi_header($day);
+      $res = json_encode( $result);
+      $data['data_header'] = json_decode($res,true);
+      if(!empty($result)){
+         $data['records'] = json_decode('noRecords',true);
+      }else{
+         $data['records'] = $result;
+      }
+      return view( 'validasi.filtertable', $data );
    }
 
    

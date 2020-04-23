@@ -29,7 +29,7 @@
 	</div>
 	
 </div>
-
+<div id="table">
 <table class="m-datatable" id="html_table" width="100%" style="margin-top:20px;">
 	<thead>
 		<tr>
@@ -63,7 +63,7 @@
 		@endforeach
 	</tbody>
 </table>
-
+</div>
 @endsection
 
 @section( 'scripts' )
@@ -159,23 +159,77 @@
 		var search = document.getElementById('generalSearch').value;
 		// $(".m-datatable").mDatatable().reload();
 		// $(".m-datatable").mDatatable().search(search, "Tanggal");
+		
+		// $(".m-datatable").mDatatable().destroy();
 		refreshData();
 	});
 
 	function refreshData(){
 		var search = document.getElementById('generalSearch').value;
-		event.preventDefault();
+		var datatable = {
+							init: function() {
+								var e;
+								e = $(".m-datatable").mDatatable({
+									data: {
+										saveState: {
+											cookie: !1
+										},
+										
+										autoColumns: false
+									},
+									search: {
+										input: $( "#generalSearch" )
+									},
+
+
+									columns: [
+										{
+											field: "Tanggal",
+											filterable: true,
+											sortable: false,
+											width: 0,
+											visibility: false,
+										},{
+											field: "Krani Buah",
+											filterable: true,
+											sortable: false,
+											width: 300
+										}, {
+											field: "Afdeling",
+											width: 120,
+											sortable: false,
+										},{
+											field: "Mandor Panen",
+											width: 300,
+											sortable: false,
+										}, {
+											field: "Jumlah BCC yang Divalidasi",
+											width: 100,
+											sortable: false,
+										}, {
+											field: "Aksi",
+											width: 100,
+											sortable: false,
+										}
+									]
+
+								})
+							}
+						};
+		// event.preventDefault();
 		const CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
 		$.ajax({
-			url:'/getNewdata',
+			url:'/getNewdata2',
 			type:'get',
 			data:{
 				CSRF_TOKEN,
 				'tanggal' : search
 			},
 			success:function(data){
-				$("div#page").html(data);
-			}	
+				$("div#table").html(data);
+				datatable.init();
+				$("#generalSearch").val(search);
+			}
 		})
 	}
 	
