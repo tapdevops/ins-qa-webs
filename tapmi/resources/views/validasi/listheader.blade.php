@@ -6,14 +6,13 @@
 
 @section( 'content' )
 <div class="row">
-	<div class="col-md-8">
+	<div class="col-md-12">
 		<div class="row">
-			<div class="col-md-6">
+			<div class="col-md-4">
 				<div class="input-daterange input-group">
 					<label for="tanggal_rencana">Tanggal &nbsp; &nbsp; </label>
-					<input type="text" class="form-control m-input" id="generalSearch" name="tanggal_rencana" autocomplete="off" readonly="readonly" />
-					<?php $dmin = date("d-M-y", strtotime("yesterday"))?>
-					<input type="hidden" class="form-control m-input" id="tgldefault" value="{{$dmin}}"/>
+					<?php $tgl = date("d-M-y", strtotime($tgl_validasi))?>
+					<input type="text" class="form-control m-input" id="generalSearch" name="tanggal_rencana" value="{{$tgl}}" autocomplete="off" readonly="readonly" />
 					
 					<div class="input-group-append">
 						<span class="input-group-text">
@@ -24,12 +23,33 @@
 				</div>
 
 			</div>
-			<div class="col-md-6"></div>
+			<div class="col-md-4"></div>
+			<div class="col-md-4"></div>
 		</div>
 	</div>
 	
 </div>
 <div id="table">
+
+<div class="row">
+	<div class="col-md-12">
+		<div class="row">
+			<div class="col-md-4"></div>
+			<div class="col-md-4"></div>
+			<div class="col-md-4 m--align-right">
+			<!-- '.$id.'-'.$q['id_ba'].'-'.$q['id_afd']) ba afd dari session -->
+				<a href="{{ URL::to('/validasi/create/'.$tgl_validasi) }}" class="btn btn-focus m-btn m-btn--custom m-btn--icon m-btn--air m-btn--pill">
+					<span>
+						<i class="fa fa-clipboard"></i>
+						<span>Validasi</span>
+					</span>
+				</a>
+				<div class="m-separator m-separator--dashed d-xl-none"></div>
+			</div>
+		</div>
+	</div>
+	
+</div>
 <table class="m-datatable" id="html_table" width="100%" style="margin-top:20px;">
 	<thead>
 		<tr>
@@ -38,7 +58,7 @@
 			<th>Afdeling</th>
 			<th>Mandor Panen</th>
 			<th>Jumlah BCC yang Divalidasi</th>
-			<th>Aksi</th>
+			<th>Status</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -56,7 +76,7 @@
 				@if ($q['jumlah_ebcc_validated'] === $q['target_validasi'])
 				<td><p class="text-success">Selesai divalidasi</p></td>
 				@else
-				<td><a href={{ URL::to('/validasi/create/'.$id.'-'.$q['id_ba'].'-'.$q['id_afd']) }} target="_blank"><button type="button" class="btn btn-primary btn-sm">Validasi</button></a></td>
+				<td><p class="text-danger">Belum divalidasi</p></td>
 				@endif	
 			</tr>
 		@endforeach

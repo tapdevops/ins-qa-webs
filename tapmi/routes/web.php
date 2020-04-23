@@ -69,7 +69,7 @@ Route::group( [ 'middleware' => 'web' ], function() {
 		});
 
 		#validation_image_data
-		Route::get( '/listvalidasi', 'ValidationController@index'); 
+		Route::get( '/listvalidasi/{tgl?}', 'ValidationController@index'); 
 		Route::get( '/validasi/create/{id}', 'ValidationController@create' );
 		Route::post( '/validasi/create_action', 'ValidationController@create_action')->name('create_validation');
 

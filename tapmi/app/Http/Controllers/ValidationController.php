@@ -48,13 +48,18 @@ class ValidationController extends Controller {
 	#   		 									  		            ▁ ▂ ▄ ▅ ▆ ▇ █ Index
     # -------------------------------------------------------------------------------------
    
-   public function index(){
-      $day =  date("Y-m-d", strtotime("yesterday"));
+   public function index($tgl = null){
+      if(!empty($id)){
+         $day =  date("Y-m-d", strtotime("yesterday"));
+      }else{
+         $day =  date("Y-m-d", strtotime($tgl));
+      }
       $ba_afd_code =explode(",",session('LOCATION_CODE'));
       $code = implode("','", $ba_afd_code);
       $data['active_menu'] = $this->active_menu;
       $res = json_encode(( new ValidasiHeader() )->validasi_header($day));
       $data['data_header'] = json_decode($res,true);
+      $data['tgl_validasi'] = $day;
       return view( 'validasi.listheader', $data );
    }
 
@@ -73,6 +78,7 @@ class ValidationController extends Controller {
       $day = $request->tanggal;
       $result = ( new ValidasiHeader() )->validasi_header($day);
       $res = json_encode( $result);
+      $data['tgl_validasi'] = $day;
       $data['data_header'] = json_decode($res,true);
       if(!empty($result)){
          $data['records'] = json_decode('noRecords',true);
@@ -99,9 +105,18 @@ class ValidationController extends Controller {
       // ], 201);
    }
 	    
-    public function create($id)
+    public function xx_create($id) 
     {   
-        $data['active_menu'] = $this->active_menu;
+       
+      $data['active_menu'] = $this->active_menu;
+
+       //jika arr_id != null, maka explode utk daptkan id
+            //for check if id di tr_validasi_header ada dan validate < target? got next id, jika tidak ada / kurang dari target maka buka form validasi,
+            // get query berdasarkan kombinasi.
+            // break
+            //else kembali ke halaman list
+
+
         $string = str_replace(".","/",$id);
         $arr = explode("-", $string, 5);
         $nik_kerani = $arr[0];
@@ -112,58 +127,10 @@ class ValidationController extends Controller {
         $afd = $arr[4];
         $id_validasi = $nik_kerani."-".$nik_mandor."-".$tgl;
 
-        $sql = " SELECT 
-                        HDP.TANGGAL_RENCANA,
-                        HDP.NIK_MANDOR,
-                        HDP.NIK_KERANI_BUAH,
-                        EMP_EBCC.EMP_NAME,
-                        HDP.ID_BA_AFD_BLOK,
-                        HP.NO_TPH,
-                        HP.NO_BCC,
-                        HP.PICTURE_NAME,
-                        TB.ID_BLOK,
-                        TB.BLOK_NAME,
-                        TBA.NAMA_BA,
-                        NVL( EBCC.F_GET_HASIL_PANEN_BUNCH ( TBA.ID_BA, HP.NO_REKAP_BCC, HP.NO_BCC, 'BUNCH_HARVEST' ), 0 ) as JJG_PANEN,
-                        NVL( EBCC.F_GET_HASIL_PANEN_NUMBERX( HDP.ID_RENCANA, HP.NO_REKAP_BCC, HP.NO_BCC, 1 ), 0 ) AS EBCC_JML_BM,
-                        NVL( EBCC.F_GET_HASIL_PANEN_NUMBERX( HDP.ID_RENCANA, HP.NO_REKAP_BCC, HP.NO_BCC, 2 ), 0 ) AS EBCC_JML_BK,
-                        NVL( EBCC.F_GET_HASIL_PANEN_NUMBERX( HDP.ID_RENCANA, HP.NO_REKAP_BCC, HP.NO_BCC, 3 ), 0 ) AS EBCC_JML_MS,
-                        NVL( EBCC.F_GET_HASIL_PANEN_NUMBERX( HDP.ID_RENCANA, HP.NO_REKAP_BCC, HP.NO_BCC, 4 ), 0 ) AS EBCC_JML_OR,
-                        NVL( EBCC.F_GET_HASIL_PANEN_NUMBERX( HDP.ID_RENCANA, HP.NO_REKAP_BCC, HP.NO_BCC, 6 ), 0 ) AS EBCC_JML_BB,
-                        NVL( EBCC.F_GET_HASIL_PANEN_NUMBERX( HDP.ID_RENCANA, HP.NO_REKAP_BCC, HP.NO_BCC, 15 ), 0 ) AS EBCC_JML_JK,
-                        NVL( EBCC.F_GET_HASIL_PANEN_NUMBERX( HDP.ID_RENCANA, HP.NO_REKAP_BCC, HP.NO_BCC, 16 ), 0 ) AS EBCC_JML_BA,   
-                        NVL( EBCC.F_GET_HASIL_PANEN_BRDX ( HDP.ID_RENCANA, HP.NO_REKAP_BCC, HP.NO_BCC ), 0 ) AS EBCC_JML_BRD
-                    FROM (
-                            SELECT
-                                HRP.ID_RENCANA AS ID_RENCANA,
-                                HRP.TANGGAL_RENCANA AS TANGGAL_RENCANA,
-                                HRP.NIK_KERANI_BUAH AS NIK_KERANI_BUAH,
-                                HRP.NIK_MANDOR AS NIK_MANDOR,
-                                DRP.ID_BA_AFD_BLOK AS ID_BA_AFD_BLOK,
-                                DRP.NO_REKAP_BCC AS NO_REKAP_BCC
-                            FROM
-                                EBCC.T_HEADER_RENCANA_PANEN HRP 
-                                LEFT JOIN EBCC.T_DETAIL_RENCANA_PANEN DRP ON HRP.ID_RENCANA = DRP.ID_RENCANA
-                        ) HDP
-                        LEFT JOIN EBCC.T_HASIL_PANEN HP ON HP.ID_RENCANA = HDP.ID_RENCANA AND HP.NO_REKAP_BCC = HDP.NO_REKAP_BCC
-                        LEFT JOIN EBCC.T_BLOK TB ON TB.ID_BA_AFD_BLOK = HDP.ID_BA_AFD_BLOK
-                        LEFT JOIN EBCC.T_AFDELING TA ON TA.ID_BA_AFD = TB.ID_BA_AFD
-                        LEFT JOIN EBCC.T_BUSSINESSAREA TBA ON TBA.ID_BA = TA.ID_BA
-                        LEFT JOIN EBCC.T_EMPLOYEE EMP_EBCC ON EMP_EBCC.NIK = HDP.NIK_KERANI_BUAH 
-                WHERE
-                        HDP.NIK_KERANI_BUAH = '$nik_kerani' AND
-                        HDP.NIK_MANDOR = '$nik_mandor' AND
-                        HDP.TANGGAL_RENCANA = '$tanggal' AND
-                        SUBSTR (HDP.ID_BA_AFD_BLOK, 1, 4) = '$ba_code' AND --id_ba
-                        SUBSTR (HDP.ID_BA_AFD_BLOK, 5, 1) = '$afd'  -- id_afd
-                        AND
-                        HP.NO_BCC NOT IN (SELECT NO_BCC FROM TR_VALIDASI_DETAIL WHERE ID_VALIDASI = 
-                        HDP.NIK_KERANI_BUAH || '-' || HDP.NIK_MANDOR || '-'  || to_char(HDP.TANGGAL_RENCANA,'YYYYMMDD'))
-                ORDER BY DBMS_RANDOM.VALUE FETCH NEXT 1 ROWS ONLY ";
-        $valid_data = json_encode($this->db_mobile_ins->select($sql));
+        $valid_data = json_encode(( new ValidasiHeader() )->validasi_askep($id));
         $result = json_decode( $valid_data,true);
                    
-        $i = 1;
+        $i = 1; //start jumlah validasi
         $no_val = TRValidasiHeader::select('JUMLAH_EBCC_VALIDATED')->where('ID_VALIDASI',$id_validasi)->first();
         
         // dd($no_val,$no_val['jumlah_ebcc_validated']);
@@ -181,11 +148,81 @@ class ValidationController extends Controller {
         return view('validasi.image_preview',$data);
     }
 
+    public function create($tgl) 
+    {   
+      $data['active_menu'] = $this->active_menu;
+      
+      $target = TMParameter::select('PARAMETER_DESC')->where('PARAMETER_NAME','TARGET_VALIDASI')->get();
+      $target_validasi = $target[0]->parameter_desc;
+      $result = ( new ValidasiHeader() )->validasi_header($tgl);
+      $res = json_encode( $result);
+      $ids = array();
+      foreach (json_decode($res,true) as $dt) {
+            //   $ids =  array($dt['id_validasi']);
+              // jika kurang dari target validasi
+              if($dt['jumlah_ebcc_validated'] < $target_validasi){
+
+                  $nik_kerani = $dt['nik_kerani_buah'];
+                  $nik_mandor = $dt['nik_mandor'];
+                  $tgl_rencana = date("Y-m-d",strtotime($dt['tanggal_rencana']));
+                  $ba_code = $dt['id_ba'];
+                  $afd = $dt['id_afd'];
+                  $id_validasi = $dt['id_validasi'];
+
+                  $valid_data = json_encode(( new ValidasiHeader() )->validasi_askep($ba_code,$afd,$nik_kerani,$nik_mandor,$tgl_rencana));
+                  $data_validasi = json_decode( $valid_data,true);
+                              
+                  $i = 1; //start jumlah validasi
+                  $no_val = TRValidasiHeader::select('JUMLAH_EBCC_VALIDATED')->where('ID_VALIDASI',$id_validasi)->first();
+
+                  // dd($no_val,$no_val['jumlah_ebcc_validated']);
+                  if($no_val == null){
+                        $val = 1;
+                  }else{
+                        $val = $i + $no_val['jumlah_ebcc_validated'];
+                  }
+                  $data['data_validasi'] = $data_validasi;
+                  $data['no_validasi'] = $val;
+                  $data['target'] = $target_validasi;
+
+                  return view('validasi.image_preview',$data);
+              }
+              else{
+                  return Redirect::to('listvalidasi/'.$tgl);
+              }
+
+      }
+      // $data['ids'] = $ids;
+
+      // dd($data['ids']);
+
+       //jika arr_id != null, maka explode utk daptkan id
+            //for check if id di tr_validasi_header ada dan validate < target? got next id, jika tidak ada / kurang dari target maka buka form validasi,
+            // get query berdasarkan kombinasi.
+            // break
+            //else kembali ke halaman list
+
+
+
+      //   $string = str_replace(".","/",$id);
+      //   $arr = explode("-", $string, 5);
+      //   $nik_kerani = $arr[0];
+      //   $nik_mandor = $arr[1];
+      //   $tanggal = date("Y-m-d",strtotime($arr[2]));
+      //   $tgl = $arr[2];
+      //   $ba_code = $arr[3];
+      //   $afd = $arr[4];
+      //   $id_validasi = $nik_kerani."-".$nik_mandor."-".$tgl;
+      
+       
+    }
+
     public function create_action(Request $request)
     { 
         // dd($request);
         $id_val = $request->id_validasi."-".$request->ba_code."-".$request->afd_code;
         $id = str_replace("/",".",$id_val);
+        $tgl = $request->tanggal_ebcc;
         $jml = $request->jumlah_ebcc_validated;
             if($request->kondisi_foto == null){
                 if($request->jjg_validate_total == null or $request->jjg_validate_total == "0" ){
@@ -221,9 +258,9 @@ class ValidationController extends Controller {
 			TRValidasiDetail::create($request->except('last_updated','target')+$data);
             // dd($result1);
             if($jml_validate < $request->target){
-                return Redirect::to('validasi/create/'.$id);
+                return Redirect::to('validasi/create/'.$tgl);
             }else{
-                return Redirect::to('listvalidasi');
+                return Redirect::to('listvalidasi/'.$tgl);
             }
 
     }
