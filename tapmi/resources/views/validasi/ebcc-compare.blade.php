@@ -138,7 +138,7 @@
 									<!-- <td class="text-center">Busuk (jjg)</td> -->
 									<!-- <td class="text-center">Janjang Kosong (jjg)</td> -->
 									<!-- <td class="text-center">BA (jjg)</td> -->
-									<td class="text-center">Total Janjang Panen</td>
+									<td class="text-center">Total Janjang<br />Panen<br /><br /></td>
 								</tr>
 								<tr>
 								<!-- <td class="text-center" style="color:{{ ( $dt['ebcc_jml_bm'] == $dt['jjg_validate_bm'] ? 'green' : 'red' ) }};">{{ $dt['jjg_validate_bm'] }}</td> -->
@@ -193,40 +193,6 @@
 							</div>
 					</div>
 				</div>
-			</div>
-		</div>
-		<div class="row" style="margin-top: 20px; margin-left: 10px;">
-		<div class="col-md-6">
-			<table class"table">
-				<thead>
-					<tr>
-						<td colspan="2">
-							<b>Keterangan</b>
-						</td>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td>
-							BM<br>
-							BK<br>
-							MS<br>
-							OR<br>
-							BB<br>
-							JK<br>
-							BA<br>
-						</td>
-						<td>
-							: a. Mentah<br>
-							: b. Mengkal/Kurang Masak<br>
-							: c. Masak<br>
-							: d. Overripe/Terlalu Masak<br>
-							: e. Busuk<br>
-							: f. Janjang Kosong<br>
-							: g. Buah Aborsi<br>
-						</td>
-				</tbody>
-			</table>
 			</div>
 		</div>
 		<br />
