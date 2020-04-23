@@ -49,7 +49,7 @@ class ValidationController extends Controller {
     # -------------------------------------------------------------------------------------
    
    public function index($tgl = null){
-      if(!empty($id)){
+      if(empty($tgl)){
          $day =  date("Y-m-d", strtotime("yesterday"));
       }else{
          $day =  date("Y-m-d", strtotime($tgl));
