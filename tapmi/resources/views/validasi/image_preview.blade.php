@@ -263,7 +263,7 @@ input[type="radio"]{
    $('.btnselect').change(function(){
 		$('.fields').removeAttr('required');
 		$('.fields').val('');
-		$('#total_jjg').val('');
+		// $('#total_jjg').val('');
 	});
 
 	$("input").change(function () {

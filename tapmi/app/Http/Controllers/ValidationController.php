@@ -182,46 +182,73 @@ class ValidationController extends Controller {
       
       $target = TMParameter::select('PARAMETER_DESC')->where('PARAMETER_NAME','TARGET_VALIDASI')->get();
       $target_validasi = $target[0]->parameter_desc;
+      $result = array();
       $result = ( new ValidasiHeader() )->validasi_header($tgl);
       $res = json_encode( $result);
-      $ids = array();
-      foreach (json_decode($res,true) as $dt) {
-            //   $ids =  array($dt['id_validasi']);
-              // jika kurang dari target validasi
-              if($dt['jumlah_ebcc_validated'] < $target_validasi){
-
-                  $nik_kerani = $dt['nik_kerani_buah'];
-                  $nik_mandor = $dt['nik_mandor'];
-                  $tgl_rencana = date("Y-m-d",strtotime($dt['tanggal_rencana']));
-                  $ba_code = $dt['id_ba'];
-                  $afd = $dt['id_afd'];
-                  $id_validasi = $dt['id_validasi'];
-
-                  $valid_data = json_encode(( new ValidasiHeader() )->validasi_askep($ba_code,$afd,$nik_kerani,$nik_mandor,$tgl_rencana));
-                  $data_validasi = json_decode( $valid_data,true);
-                              
-                  $i = 1; //start jumlah validasi
-                  $no_val = TRValidasiHeader::select('JUMLAH_EBCC_VALIDATED')->where('ID_VALIDASI',$id_validasi)->first();
-
-                  // dd($no_val,$no_val['jumlah_ebcc_validated']);
-                  if($no_val == null){
-                        $val = 1;
-                  }else{
-                        $val = $i + $no_val['jumlah_ebcc_validated'];
-                  }
-                  $data['data_validasi'] = $data_validasi;
-                  $data['no_validasi'] = $val;
-                  $data['target'] = $target_validasi;
-                  return view('validasi.image_preview',$data);
-              }
-              else{
-                  continue;
-              }
-      }
       
-      return Redirect::to('listvalidasi/'.$tgl);
+      //check apakah semua sudah divalidasi
+      $valid = ( new ValidasiHeader() )->count_valid($tgl);
+      $count_valid = count($valid);
+      $status_validasi = 0;
+      if($count_valid == 1){
+         $status = $valid['0']->status_validasi;
+         if($status == "unfinished"){
+               $status_validasi = 1;
+         }
+         else{
+               $status_validasi = 0;
+         }        
+      }else{
+         $status_validasi = 1;
+      }
+      if($status_validasi == 1){
+         $dtval=json_decode($res,true);
+         foreach ( $dtval as $dt) {
+            $jml[] =  $dt['jumlah_ebcc_validated'];
+            $target_id[] =  $dt['target_validasi'];
+            $nik_kerani[] = $dt['nik_kerani_buah'];
+            $nik_mandor[] = $dt['nik_mandor'];
+            $tgl_rencana[] = date("Y-m-d",strtotime($dt['tanggal_rencana']));
+            $ba_code[] = $dt['id_ba'];
+            $afd[] = $dt['id_afd'];
+            $id_validasi[] = $dt['id_validasi'];
+         }
+         for($i=0; $i < count($dtval); $i++){
+                  // jika kurang dari target validasi
+                  if ($jml[$i] == $target_id[$i]){
+                     continue;
+                  }else{
+                     $nik_kerani_val = $nik_kerani[$i];
+                     $nik_mandor_val  = $nik_mandor[$i];
+                     $tgl_rencana_val  = $tgl_rencana[$i];
+                     $ba_code_val  = $ba_code[$i];
+                     $afd_val  = $afd[$i];
+                     $id_validasi_val  = $id_validasi[$i];
+
+                     $valid_data = json_encode(( new ValidasiHeader() )->validasi_askep($ba_code_val,$afd_val,$nik_kerani_val,$nik_mandor_val,$tgl_rencana_val));
+                     $data_validasi = json_decode( $valid_data,true);
+                                 
+                     $i = 1; //start jumlah validasi
+                     $no_val = TRValidasiHeader::select('JUMLAH_EBCC_VALIDATED')->where('ID_VALIDASI',$id_validasi_val)->first();
+
+                     // dd($no_val,$no_val['jumlah_ebcc_validated']);
+                     if($no_val == null){
+                           $val = 1;
+                     }else{
+                           $val = $i + $no_val['jumlah_ebcc_validated'];
+                     }
+                     $data['data_validasi'] = $data_validasi;
+                     $data['no_validasi'] = $val;
+                     $data['target'] = $target_id[$i];
+                     return view('validasi.image_preview',$data);
+                  }        
+            }
+      }
+      else{
+         return Redirect::to('listvalidasi/'.$tgl);
+      }
        
-    }
+   }
 
     public function create_action(Request $request)
     { 
@@ -262,12 +289,7 @@ class ValidationController extends Controller {
             $data['uuid']	= Uuid::uuid1()->toString();
 			// $result = TRValidasiDetail::create($request->except('jumlah_ebcc_validated','last_updated','kodisi_foto')+$data);
 			TRValidasiDetail::create($request->except('last_updated','target')+$data);
-            // dd($result1);
-            if($jml_validate < $request->target){
-                return Redirect::to('validasi/create/'.$tgl);
-            }else{
-                return Redirect::to('listvalidasi/'.$tgl);
-            }
+         return Redirect::to('validasi/create/'.$tgl);
 
     }
 
