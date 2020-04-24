@@ -52,7 +52,7 @@ class ValidasiHeader extends Model{
                                  LEFT JOIN ebcc.t_employee emp_mandor
                                     ON emp_mandor.nik = hrp.nik_mandor
                            WHERE     SUBSTR (ID_BA_AFD_BLOK, 1, 2) IN (SELECT comp_code
-                                                                        FROM tap_dw.tm_comp@dwh_link)
+                                                                        FROM tap_dw.tm_comp@proddw_link)
                                  AND hrp.tanggal_rencana = TO_DATE ('$day', 'YYYY-MM-DD')
                                  AND SUBSTR (drp.id_ba_afd_blok, 1, 5) in ('$code')
                                  -- SID - tambahin group by
@@ -121,7 +121,7 @@ class ValidasiHeader extends Model{
                                  LEFT JOIN ebcc.t_employee emp_mandor
                                     ON emp_mandor.nik = hrp.nik_mandor
                            WHERE     SUBSTR (ID_BA_AFD_BLOK, 1, 2) IN (SELECT comp_code
-                                                                        FROM tap_dw.tm_comp@dwh_link)
+                                                                        FROM tap_dw.tm_comp@proddw_link)
                                  AND SUBSTR (drp.id_ba_afd_blok, 1, 5) in ('$code')
                                  -- SID - tambahin group by
                            GROUP BY SUBSTR (drp.id_ba_afd_blok, 1, 4),
@@ -249,7 +249,7 @@ class ValidasiHeader extends Model{
                                              LEFT JOIN ebcc.t_employee emp_mandor
                                                 ON emp_mandor.nik = hrp.nik_mandor
                                        WHERE     SUBSTR (ID_BA_AFD_BLOK, 1, 2) IN (SELECT comp_code
-                                                                                    FROM tap_dw.tm_comp@dwh_link)
+                                                                                    FROM tap_dw.tm_comp@proddw_link)
                                              AND hrp.tanggal_rencana = TO_DATE ('$day', 'YYYY-MM-DD')
                                              AND SUBSTR (drp.id_ba_afd_blok, 1, 5) in ('$code')
                                              -- SID - tambahin group by

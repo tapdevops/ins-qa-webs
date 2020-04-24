@@ -8,5 +8,5 @@ class Employee extends Model
 {
     //
     protected $connection = 'tapdw';
-    protected $table = 'TM_EMPLOYEE_HRIS_SAMPLE';
+    protected $table = 'TM_EMPLOYEE_HRIS';
 }
