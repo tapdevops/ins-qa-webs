@@ -62,8 +62,21 @@ class ValidationController extends Controller {
       $data['data_header'] = json_decode($res,true);
       $data['tgl_validasi'] = $day;
       $data['records'] = $result;
-      $count_valid = count(( new ValidasiHeader() )->count_valid($day));
-      $data['count_valid'] = $count_valid;
+      $valid = ( new ValidasiHeader() )->count_valid($day);
+      $count_valid = count($valid);
+      $status_validasi = 0;
+      if($count_valid == 1){
+         $status = $valid['0']->status_validasi;
+         if($status == "unfinished"){
+               $status_validasi = 1;
+         }
+         else{
+               $status_validasi = 0;
+         }        
+      }else{
+         $status_validasi = 1;
+      }
+      $data['status'] = $status_validasi;
       return view( 'validasi.listheader', $data );
    }
 
@@ -85,8 +98,21 @@ class ValidationController extends Controller {
       $data['tgl_validasi'] = $day;
       $data['data_header'] = json_decode($res,true);
       $data['records'] = $result;
-      $count_valid = count(( new ValidasiHeader() )->count_valid($day));
-      $data['count_valid'] = $count_valid;
+      $valid = ( new ValidasiHeader() )->count_valid($day);
+      $count_valid = count($valid);
+      $status_validasi = 0;
+      if($count_valid == 1){
+         $status = $valid['0']->status_validasi;
+         if($status == "unfinished"){
+               $status_validasi = 1;
+         }
+         else{
+               $status_validasi = 0;
+         }        
+      }else{
+         $status_validasi = 1;
+      }
+      $data['status'] = $status_validasi;
       return view( 'validasi.filtertable', $data );
    }
 
