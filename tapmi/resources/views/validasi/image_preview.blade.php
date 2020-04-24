@@ -26,40 +26,21 @@ input[type="radio"]{
 .btnselect:focus:active{
   background-color:#4d9925;
   color: white;
+  padding-bottom:100px;
 }
 
 .borderless td, .borderless th {
     border: none;
 }
+tr
+{
+    line-height:30px;
+}
 </style>
 @endsection
 
 @foreach ( $data_validasi as $key => $q )
-	@section( 'subheader' )
-		<ul class="m-subheader__breadcrumbs m-nav m-nav--inline">
-			<li class="m-nav__item">
-					<span class="m-nav__link-text">
-						Nama Kerani Buah :<b> {{$q['emp_name']}}</b>
-					</span>
-			</li>
-			<li class="m-nav__separator">
-				|
-			</li>
-			<li class="m-nav__item">
-					<span class="m-nav__link-text">
-						Nama Mandor : <b>{{$q['nama_mandor']}}</b>
-					</span>
-			</li>
-			<li class="m-nav__separator">
-				|
-			</li>
-			<li class="m-nav__item">
-					<span class="m-nav__link-text">
-						Afdeling : <b>{{$q['id_afd']}}</b>
-					</span>
-			</li>
-		</ul>
-	@endsection
+	
 
 	@section( 'content' )
 	<div class="row">
@@ -116,31 +97,22 @@ input[type="radio"]{
 		</tr>
 		<tr>
 			<td>
-				<table class="table table-bordered" id="tform">
-					<thead style="background-color:#dadbd5">
-					<tr>
+				<table class="borderles" id="tform">
+				<!-- <table class="table table-bordered" id="tform"> -->
+					<!-- <thead style="background-color:#dadbd5">
+					<tr> -->
 						<input type="hidden" name="jjg_ebcc_bk" value="{{$q['ebcc_jml_bk']}}">
 						<input type="hidden" name="jjg_ebcc_ba" value="{{$q['ebcc_jml_ba']}}">
-						<!-- <td>Mentah -->
-							<input type="hidden" name="jjg_ebcc_bm" value="{{$q['ebcc_jml_bm']}}">
-						<!-- </td> -->
-						<!-- <td>Masak -->
-							<input type="hidden" name="jjg_ebcc_ms" value="{{$q['ebcc_jml_ms']}}">
-						<!-- </td> -->
-						<!-- <td>Terlalu Masak -->
-							<input type="hidden" name="jjg_ebcc_or" value="{{$q['ebcc_jml_or']}}">
-						<!-- </td>
-						<td>Busuk -->
-							<input type="hidden" name="jjg_ebcc_bb" value="{{$q['ebcc_jml_bb']}}">
-						<!-- </td>
-						<td>Janjang Kosong -->
-							<input type="hidden" name="jjg_ebcc_jk" value="{{$q['ebcc_jml_jk']}}">
-						<!-- </td> -->
-						<td>Total Janjang Panen<input type="hidden" name="jjg_ebcc_total" value="{{$q['jjg_panen']}}"></td>
-					</tr>
-					</thead>
+						<input type="hidden" name="jjg_ebcc_bm" value="{{$q['ebcc_jml_bm']}}">
+						<input type="hidden" name="jjg_ebcc_ms" value="{{$q['ebcc_jml_ms']}}">
+						<input type="hidden" name="jjg_ebcc_or" value="{{$q['ebcc_jml_or']}}">
+						<input type="hidden" name="jjg_ebcc_bb" value="{{$q['ebcc_jml_bb']}}">
+						<input type="hidden" name="jjg_ebcc_jk" value="{{$q['ebcc_jml_jk']}}">
+						
+					<!-- </tr>
+					</thead> -->
 					<tbody>
-					<tr>
+					
 						<!-- <input type="hidden" min=0 class="form-control fields" required name="jjg_validate_bk" id="bk" value="0" onkeyup="sum()">
 						<input type="hidden" min=0 class="form-control fields" required name="jjg_validate_ba" id="ba" value="0" onkeyup="sum()">
 						<td><input type="number" min=0 class="form-control fields" required name="jjg_validate_bm" id="bm" onkeyup="sum()" autofocus></td>
@@ -149,13 +121,17 @@ input[type="radio"]{
 						<td><input type="number" min=0 class="form-control fields" required name="jjg_validate_bb" id="bb" onkeyup="sum()"></td>
 						<td><input type="number" min=0 class="form-control fields" required name="jjg_validate_jk" id="jk" onkeyup="sum()"></td>
 						<td><input type="text" min=0 class="form-control" required  readonly="readonly" name="jjg_validate_total" id="total_jjg"></td> -->
-						<td><input type="text" min=0 class="form-control fields" required  name="jjg_validate_total" id="total_jjg"></td>
-					</tr>
+						<tr><td>Nama Kerani Buah </td><td>: </td><td><b> {{$q['emp_name']}}</b></tr>
+						<tr><td>Nama Mandor </td><td>: </td><td><b>{{$q['nama_mandor']}}</b></tr>
+						<tr><td>Afdeling </td><td>: </td><td><b>{{$q['id_afd']}}</b></tr>
+						<tr><td>Total Janjang Panen<input type="hidden" name="jjg_ebcc_total" value="{{$q['jjg_panen']}}"></td><td>:</td>
+							<td><input type="text" min=0 class="form-control fields" required  name="jjg_validate_total" id="total_jjg" autofocus></td>
+						</tr>
 					</tbody>
 				</table>
 			</tr>
 		<tr>
-			<td>Foto Tidak Bisa Divalidasi Karena:</td>
+			<td><br/>Foto Tidak Bisa Divalidasi Karena:</td>
 		</tr>
 		<tr>
 			<td>
