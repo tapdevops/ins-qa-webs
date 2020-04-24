@@ -49,13 +49,19 @@
 		<p class="text-center">PT: {{ $dt['nama_pt'] }}; BISNIS AREA: {{ $dt['bisnis_area'] }}; AFD: {{ $dt['afd'] }}; BLOCK: {{ $dt['blok'].'/'.$dt['nama_blok'] }}; TPH: {{ $dt['tph'] }}</p>
 
 		<div class="row" style="margin-top: 20px;">
-			<div style="position:absolute;z-index: 1000">
-				<input id="input1" type="image" src="http://inspectiondev.tap-agri.com/storage/rotate_45.png" >
-			</div>	
-			<!-- <img id="sampling_ebcc_img_jjg" onerror="this.onerror=null;this.src='https://webhostingmedia.net/wp-content/uploads/2018/01/http-error-404-not-found.png'"  src="http://10.20.1.59/ebcc/array/uploads/{{$dt['picture_name']}}" width="650px" height="496px" class="rounded mx-auto d-block north"> -->
-			<img id="sampling_ebcc_img_jjg" onerror="this.onerror=null;this.src='http://inspectiondev.tap-agri.com/storage/notfound.jpg'"  src="http://tap-motion.tap-agri.com/ebcc/array/uploads/{{$dt['picture_name']}}" width="650px" height="496px" class="rounded mx-auto d-block north">
-					
+		<div class="col-md-2"></div>
+		<div class="col-md-8">
+			<div class="card">
+				<div class="card-body" style="background-position: center center; background-repeat: no-repeat;overflow: hidden; padding-left: 30px;">
+					<div style="position:absolute;z-index: 1000">
+						<input id="input1" type="image" src="http://inspectiondev.tap-agri.com/storage/rotate_45.png" >
+					</div>	
+					<!-- <img id="sampling_ebcc_img_jjg" onerror="this.onerror=null;this.src='https://webhostingmedia.net/wp-content/uploads/2018/01/http-error-404-not-found.png'"  src="http://10.20.1.59/ebcc/array/uploads/{{$dt['picture_name']}}" width="650px" height="496px" class="rounded mx-auto d-block north"> -->
+					<img id="sampling_ebcc_img_jjg" onerror="this.onerror=null;this.src='http://inspectiondev.tap-agri.com/storage/notfound.jpg'"  src="http://tap-motion.tap-agri.com/ebcc/array/uploads/{{$dt['picture_name']}}" width="655px" height="496px" class="rounded mx-auto d-block north">	
+				</div>
+			</div>
 		</div>
+		<div class="col-md-2"></div>
 		<div class="row" style="margin-top: 20px;">
 			<div class="col-md-6">
 				<div class="card">

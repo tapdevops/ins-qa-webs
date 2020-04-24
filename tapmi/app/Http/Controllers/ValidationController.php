@@ -57,9 +57,13 @@ class ValidationController extends Controller {
       $ba_afd_code =explode(",",session('LOCATION_CODE'));
       $code = implode("','", $ba_afd_code);
       $data['active_menu'] = $this->active_menu;
-      $res = json_encode(( new ValidasiHeader() )->validasi_header($day));
+      $result = ( new ValidasiHeader() )->validasi_header($day);
+      $res = json_encode($result);
       $data['data_header'] = json_decode($res,true);
       $data['tgl_validasi'] = $day;
+      $data['records'] = $result;
+      $count_valid = count(( new ValidasiHeader() )->count_valid($day));
+      $data['count_valid'] = $count_valid;
       return view( 'validasi.listheader', $data );
    }
 
@@ -80,11 +84,9 @@ class ValidationController extends Controller {
       $res = json_encode( $result);
       $data['tgl_validasi'] = $day;
       $data['data_header'] = json_decode($res,true);
-      if(!empty($result)){
-         $data['records'] = json_decode('noRecords',true);
-      }else{
-         $data['records'] = $result;
-      }
+      $data['records'] = $result;
+      $count_valid = count(( new ValidasiHeader() )->count_valid($day));
+      $data['count_valid'] = $count_valid;
       return view( 'validasi.filtertable', $data );
    }
 
@@ -184,36 +186,14 @@ class ValidationController extends Controller {
                   $data['data_validasi'] = $data_validasi;
                   $data['no_validasi'] = $val;
                   $data['target'] = $target_validasi;
-
                   return view('validasi.image_preview',$data);
               }
               else{
-                  return Redirect::to('listvalidasi/'.$tgl);
+                  continue;
               }
-
       }
-      // $data['ids'] = $ids;
-
-      // dd($data['ids']);
-
-       //jika arr_id != null, maka explode utk daptkan id
-            //for check if id di tr_validasi_header ada dan validate < target? got next id, jika tidak ada / kurang dari target maka buka form validasi,
-            // get query berdasarkan kombinasi.
-            // break
-            //else kembali ke halaman list
-
-
-
-      //   $string = str_replace(".","/",$id);
-      //   $arr = explode("-", $string, 5);
-      //   $nik_kerani = $arr[0];
-      //   $nik_mandor = $arr[1];
-      //   $tanggal = date("Y-m-d",strtotime($arr[2]));
-      //   $tgl = $arr[2];
-      //   $ba_code = $arr[3];
-      //   $afd = $arr[4];
-      //   $id_validasi = $nik_kerani."-".$nik_mandor."-".$tgl;
       
+      return Redirect::to('listvalidasi/'.$tgl);
        
     }
 

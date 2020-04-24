@@ -149,7 +149,7 @@ input[type="radio"]{
 						<td><input type="number" min=0 class="form-control fields" required name="jjg_validate_bb" id="bb" onkeyup="sum()"></td>
 						<td><input type="number" min=0 class="form-control fields" required name="jjg_validate_jk" id="jk" onkeyup="sum()"></td>
 						<td><input type="text" min=0 class="form-control" required  readonly="readonly" name="jjg_validate_total" id="total_jjg"></td> -->
-						<td><input type="text" min=0 class="form-control" required  name="jjg_validate_total" id="total_jjg"></td>
+						<td><input type="text" min=0 class="form-control fields" required  name="jjg_validate_total" id="total_jjg"></td>
 					</tr>
 					</tbody>
 				</table>

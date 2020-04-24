@@ -6,12 +6,14 @@
 			<div class="col-md-4"></div>
 			<div class="col-md-4 m--align-right">
 			<!-- '.$id.'-'.$q['id_ba'].'-'.$q['id_afd']) ba afd dari session -->
+			@if(!empty($records) && $count_valid == 2)
 				<a href="{{ URL::to('/validasi/create/'.$tgl_validasi) }}" class="btn btn-focus m-btn m-btn--custom m-btn--icon m-btn--air m-btn--pill">
 					<span>
 						<i class="fa fa-clipboard"></i>
 						<span>Validasi</span>
 					</span>
 				</a>
+				@endif
 				<div class="m-separator m-separator--dashed d-xl-none"></div>
 			</div>
 		</div>

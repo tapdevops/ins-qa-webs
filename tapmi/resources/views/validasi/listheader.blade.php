@@ -11,7 +11,8 @@
 			<div class="col-md-4">
 				<div class="input-daterange input-group">
 					<label for="tanggal_rencana">Tanggal &nbsp; &nbsp; </label>
-					<?php $tgl = date("d-M-y", strtotime($tgl_validasi))?>
+					<?php $tgl = date("d-M-Y", strtotime($tgl_validasi));
+					?>
 					<input type="text" class="form-control m-input" id="generalSearch" name="tanggal_rencana" value="{{$tgl}}" autocomplete="off" readonly="readonly" />
 					
 					<div class="input-group-append">
@@ -38,12 +39,14 @@
 			<div class="col-md-4"></div>
 			<div class="col-md-4 m--align-right">
 			<!-- '.$id.'-'.$q['id_ba'].'-'.$q['id_afd']) ba afd dari session -->
+			@if(!empty($records) && $count_valid == 2)
 				<a href="{{ URL::to('/validasi/create/'.$tgl_validasi) }}" class="btn btn-focus m-btn m-btn--custom m-btn--icon m-btn--air m-btn--pill">
 					<span>
 						<i class="fa fa-clipboard"></i>
 						<span>Validasi</span>
 					</span>
 				</a>
+			@endif
 				<div class="m-separator m-separator--dashed d-xl-none"></div>
 			</div>
 		</div>
@@ -147,6 +150,7 @@
 	jQuery(document).ready(function() {
 		datatable.init()
 		MobileInspection.set_active_menu( '{{ $active_menu }}' );
+		var year = (new Date).getFullYear();
 
 		$("#generalSearch").datepicker({
 			todayHighlight: !0,
@@ -155,7 +159,7 @@
 				rightArrow: '<i class="la la-angle-right"></i>'
 			},
 			endDate: "-1d",
-			format: 'dd-M-yy',
+			format: 'dd-M-yyyy',
             orientation: 'bottom'
 			
 		});
@@ -164,15 +168,15 @@
 		
 	});
 	
-	$(document).ready(function () {
-		$('#generalSearch').datepicker().on('click', function(){
-				var selected = $(this).val();
-				var date_val = selected.toUpperCase();
-				// datatable.init();
-		});
+	// $(document).ready(function () {
+	// 	$('#generalSearch').datepicker().on('click', function(){
+	// 			var selected = $(this).val();
+	// 			var date_val = selected.toUpperCase();
+	// 			// datatable.init();
+	// 	});
 		
 
-	});
+	// });
 	
 
 	$("#tampilkan").click(function(){
