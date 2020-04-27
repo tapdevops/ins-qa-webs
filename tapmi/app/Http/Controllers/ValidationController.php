@@ -253,6 +253,7 @@ class ValidationController extends Controller {
     public function create_action(Request $request)
     { 
         // dd($request);
+        date_default_timezone_set('Asia/Jakarta');
         $id_val = $request->id_validasi."-".$request->ba_code."-".$request->afd_code;
         $id = str_replace("/",".",$id_val);
         $tgl = $request->tanggal_ebcc;

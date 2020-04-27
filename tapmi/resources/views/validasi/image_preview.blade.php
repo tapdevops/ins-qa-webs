@@ -26,7 +26,6 @@ input[type="radio"]{
 .btnselect:focus:active{
   background-color:#4d9925;
   color: white;
-  padding-bottom:100px;
 }
 
 .borderless td, .borderless th {
