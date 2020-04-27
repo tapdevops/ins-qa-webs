@@ -36,9 +36,9 @@
 		@foreach ( $data_header as $key => $q )
 			<tr>
 				<td>{{ $q['tanggal_rencana'] }}</td>
-				<td>{{ $q['nama_krani_buah'] }}</td>
+				<td>{{ $q['nama_krani_buah'] }} - {{$q['nik_kerani_buah']}}</td>
 				<td>{{ $q['id_afd'] }}</td>
-				<td>{{ $q['nama_mandor'] }}</td>
+				<td>{{ $q['nama_mandor'] }} - {{$q['nik_mandor']}}</td>
 				<td>{{ $q['jumlah_ebcc_validated'] }} / {{ $q['target_validasi'] }}  </td>
 				<?php 
 					$id = str_replace("/",".",$q['id_validasi']);
