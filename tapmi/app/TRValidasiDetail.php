@@ -18,6 +18,8 @@ class TRValidasiDetail extends Model
         'tanggal_ebcc',
         'nik_krani_buah',
         'nama_krani_buah',
+        'nik_mandor',
+        'nama_mandor',
         'ba_code',
         'ba_name',
         'afd_code',

@@ -35,6 +35,40 @@ tr
 {
     line-height:30px;
 }
+
+#container {
+  width: 620px;
+  height: 500px;
+  overflow: hidden;
+}
+#container.rotate90,
+#container.rotate270 {
+  width: 500px;
+  height: 620px
+}
+#image {
+  transform-origin: top left;
+  /* IE 10+, Firefox, etc. */
+  -webkit-transform-origin: top left;
+  /* Chrome */
+  -ms-transform-origin: top left;
+  /* IE 9 */
+}
+#container.rotate90 #image {
+  transform: rotate(90deg) translateY(-100%);
+  -webkit-transform: rotate(90deg) translateY(-100%);
+  -ms-transform: rotate(90deg) translateY(-100%);
+}
+#container.rotate180 #image {
+  transform: rotate(180deg) translate(-100%, -100%);
+  -webkit-transform: rotate(180deg) translate(-100%, -100%);
+  -ms-transform: rotate(180deg) translateX(-100%, -100%);
+}
+#container.rotate270 #image {
+  transform: rotate(270deg) translateX(-100%);
+  -webkit-transform: rotate(270deg) translateX(-100%);
+  -ms-transform: rotate(270deg) translateX(-100%);
+}
 </style>
 @endsection
 
@@ -61,6 +95,8 @@ tr
 	<input type="hidden" name="tanggal_ebcc" value="{{$q['tanggal_rencana']}}">
 	<input type="hidden" name="nik_krani_buah" value="{{$q['nik_kerani_buah']}}">
 	<input type="hidden" name="nama_krani_buah" value="{{$q['emp_name']}}">
+	<input type="hidden" name="nik_mandor" value="{{$q['nik_mandor']}}">
+	<input type="hidden" name="nama_mandor" value="{{$q['nama_mandor']}}">
 	<input type="hidden" name="ba_code" value="{{ substr($q['id_ba_afd_blok'], 0, 4) }}">
 	<input type="hidden" name="ba_name" value="{{$q['nama_ba']}}">
 	<input type="hidden" name="afd_code" value="{{ substr($q['id_ba_afd_blok'], 4, 1) }}">
@@ -82,9 +118,13 @@ tr
 							$img_backup = 'app\public\notfound.jpg';
 						}
 				?>
+					<div style="position:absolute;z-index: 1000">
+					<input id="button" type="image" src="http://inspectiondev.tap-agri.com/storage/rotate_45.png" >
+					</div>
 					<!-- <img onerror="this.onerror=null;this.src='https://webhostingmedia.net/wp-content/uploads/2018/01/http-error-404-not-found.png'"  src="http://10.20.1.59/ebcc/array/uploads/{{$img}}" style="display:block;" width="80%" height="80%" > -->
-					<img onerror="this.onerror=null;this.src='http://inspectiondev.tap-agri.com/storage/notfound.jpg'"  src="http://tap-motion.tap-agri.com/ebcc/array/uploads/{{$img}}" style="display:block;" width="80%" height="80%" >
-					
+					<div id="container"  style="background-position: center center; background-repeat: no-repeat;overflow: hidden;">
+					<img onerror="this.onerror=null;this.src='http://inspectiondev.tap-agri.com/storage/notfound.jpg'"  src="http://tap-motion.tap-agri.com/ebcc/array/uploads/{{$img}}" style="display:block;" width="80%" height="80%" id="image" >
+					</div> 
 					
 				</div>
 			</td>
@@ -120,11 +160,11 @@ tr
 						<td><input type="number" min=0 class="form-control fields" required name="jjg_validate_bb" id="bb" onkeyup="sum()"></td>
 						<td><input type="number" min=0 class="form-control fields" required name="jjg_validate_jk" id="jk" onkeyup="sum()"></td>
 						<td><input type="text" min=0 class="form-control" required  readonly="readonly" name="jjg_validate_total" id="total_jjg"></td> -->
-						<tr><td>Nama Kerani Buah </td><td>: </td><td><b> {{$q['emp_name']}}</b></tr>
+						<tr><td>Nama Krani Buah </td><td>: </td><td><b> {{$q['emp_name']}}</b></tr>
 						<tr><td>Nama Mandor </td><td>: </td><td><b>{{$q['nama_mandor']}}</b></tr>
 						<tr><td>Afdeling </td><td>: </td><td><b>{{$q['id_afd']}}</b></tr>
 						<tr><td>Total Janjang Panen<input type="hidden" name="jjg_ebcc_total" value="{{$q['jjg_panen']}}"></td><td>:</td>
-							<td><input type="text" min=0 class="form-control fields" required  name="jjg_validate_total" id="total_jjg" autofocus></td>
+							<td><input type="number" min=0 class="form-control fields" required  name="jjg_validate_total" id="total_jjg"></td>
 						</tr>
 					</tbody>
 				</table>
@@ -245,8 +285,22 @@ tr
 		$("input.fields").prop('required',true);
 	});
 
+	
+	// function rotateElem() { 
+	// 	// document.querySelector('.box').style.transform 
+	// 	// = 'rotate(90deg)'; 
+	// 	var img=document.getElementById('image');
+	// 	img.setAttribute('style','transform:rotate(90deg)');
+	// 	img.removeAttr('style','transform:rotate(90deg)');
+	// } 
+    
 
-
+	var angle = 0,
+  img = document.getElementById('container');
+	document.getElementById('button').onclick = function() {
+	angle = (angle + 90) % 360;
+	img.className = "rotate" + angle;
+}
 
 </script>
 
