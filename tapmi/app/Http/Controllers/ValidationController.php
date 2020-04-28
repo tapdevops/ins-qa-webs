@@ -224,6 +224,7 @@ class ValidationController extends Controller {
                      $ba_code_val  = $ba_code[$i];
                      $afd_val  = $afd[$i];
                      $id_validasi_val  = $id_validasi[$i];
+                     $trg = $target_id[$i];
 
                      $valid_data = json_encode(( new ValidasiHeader() )->validasi_askep($ba_code_val,$afd_val,$nik_kerani_val,$nik_mandor_val,$tgl_rencana_val));
                      $data_validasi = json_decode( $valid_data,true);
@@ -239,7 +240,7 @@ class ValidationController extends Controller {
                      }
                      $data['data_validasi'] = $data_validasi;
                      $data['no_validasi'] = $val;
-                     $data['target'] = $target_id[$i];
+                     $data['target'] = $trg;
                      return view('validasi.image_preview',$data);
                   }        
             }
