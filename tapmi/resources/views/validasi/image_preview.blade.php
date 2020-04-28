@@ -4,6 +4,7 @@
 <style>
 input[type="radio"]{
     visibility:hidden;
+	display: none;
 }
 .btn-radio {
     white-space: normal !important;
