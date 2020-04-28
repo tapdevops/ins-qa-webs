@@ -38,8 +38,8 @@ class KafkaController extends Controller {
 
 
 
-		$Kafka->addBrokers( config('app.kafkahost') );
-		// $Kafka->addBrokers( '149.129.221.137' );
+		//$Kafka->addBrokers( config('app.kafkahost') );
+		$Kafka->addBrokers( '147.139.139.160' );
 
 		$topicConf = new RdKafka\TopicConf();
 		$topicConf->set( 'auto.commit.interval.ms', 100 );
