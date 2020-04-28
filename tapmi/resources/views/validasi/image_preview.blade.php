@@ -16,7 +16,7 @@ input[type="radio"]{
 	white-space: normal !important;
 }
 .btnselect {
-  border-color: #c8c9c3;
+  border-color: #000000;
   color: black;
 }
 
