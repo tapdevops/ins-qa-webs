@@ -95,7 +95,7 @@
 						</table>
 						<div class="row">
 							<div class="col-md-8">
-								<table cellpadding="2px;" style="font-size: 12px;">
+								<table cellpadding="2px;" style="font-size: 12px;" width="100%">
 									<tr>
 										<td width="40%">NIK</td>
 										<td width="5%">:</td>
