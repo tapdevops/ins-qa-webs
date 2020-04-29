@@ -29,7 +29,7 @@
 			<th>Afdeling</th>
 			<th>Mandor Panen</th>
 			<th>Jumlah BCC yang Divalidasi</th>
-			<th>Aksi</th>
+			<th>Keterangan</th>
 		</tr>
 	</thead>
 <tbody>

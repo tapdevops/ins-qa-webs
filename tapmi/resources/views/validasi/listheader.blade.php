@@ -61,7 +61,7 @@
 			<th>Afdeling</th>
 			<th>Mandor Panen</th>
 			<th>Jumlah BCC yang Divalidasi</th>
-			<th>Status</th>
+			<th>Keterangan</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -137,7 +137,7 @@
 						width: 100,
 						sortable: false,
 					}, {
-						field: "Aksi",
+						field: "Keteranan",
 						width: 100,
 						sortable: false,
 					}
@@ -231,7 +231,7 @@
 											width: 100,
 											sortable: false,
 										}, {
-											field: "Aksi",
+											field: "Keterangan",
 											width: 100,
 											sortable: false,
 										}
