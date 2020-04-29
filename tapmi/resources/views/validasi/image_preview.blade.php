@@ -10,7 +10,9 @@ input[type="radio"]{
 	width: 50%;
 }
 .fields{
-	
+	border-color: #000000;
+}
+.fields:focus{
 	border-color: #000000;
 }
 .btn-radio {

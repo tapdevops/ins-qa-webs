@@ -41,7 +41,8 @@
 		}
 	</style>
 </head>
-<body onload="return rotate_image();">
+<!-- <body onload="return rotate_image();"> -->
+<body>
 @foreach ($data as $key => $dt)
 	<div class="container disable-select" id="capture" oncontextmenu="return false;">
 		<br />
@@ -56,7 +57,7 @@
 					<div style="position:absolute;z-index: 1000">
 						<input id="input1" type="image" src="http://inspectiondev.tap-agri.com/storage/rotate_45.png" >
 					</div>	
-					<!-- <img id="sampling_ebcc_img_jjg" onerror="this.onerror=null;this.src='https://webhostingmedia.net/wp-content/uploads/2018/01/http-error-404-not-found.png'"  src="http://10.20.1.59/ebcc/array/uploads/{{$dt['picture_name']}}" width="650px" height="496px" class="rounded mx-auto d-block north"> -->
+					<!-- <img id="sampling_ebcc_img_jjg" onerror="this.onerror=null;this.src='https://webhostingmedia.net/wp-content/uploads/2018/01/http-error-404-not-found.png'"  src="http://10.20.1.59/ebcc/array/uploads/{{$dt['picture_name']}}" width="655px" height="496px" class="rounded mx-auto d-block north"> -->
 					<img id="sampling_ebcc_img_jjg" onerror="this.onerror=null;this.src='http://inspectiondev.tap-agri.com/storage/notfound.jpg'"  src="http://tap-motion.tap-agri.com/ebcc/array/uploads/{{$dt['picture_name']}}" width="655px" height="496px" class="rounded mx-auto d-block north">	
 				</div>
 			</div>
@@ -229,72 +230,72 @@
 			}
 		});
 		
-		$('#input2').click(function(){
-			var img = $('#ebcc');
-			if(img.hasClass('rounded mx-auto d-block north')){
-				img.attr('class',' rounded mx-auto d-block west');
-			}else if(img.hasClass('rounded mx-auto d-block west')){
-				img.attr('class','rounded mx-auto d-block south');
-			}else if(img.hasClass('rounded mx-auto d-block south')){
-				img.attr('class','rounded mx-auto d-block east');
-			}else if(img.hasClass('rounded mx-auto d-block east')){
-				img.attr('class','rounded mx-auto d-block north');
-			}
-		});
+		// $('#input2').click(function(){
+		// 	var img = $('#ebcc');
+		// 	if(img.hasClass('rounded mx-auto d-block north')){
+		// 		img.attr('class',' rounded mx-auto d-block west');
+		// 	}else if(img.hasClass('rounded mx-auto d-block west')){
+		// 		img.attr('class','rounded mx-auto d-block south');
+		// 	}else if(img.hasClass('rounded mx-auto d-block south')){
+		// 		img.attr('class','rounded mx-auto d-block east');
+		// 	}else if(img.hasClass('rounded mx-auto d-block east')){
+		// 		img.attr('class','rounded mx-auto d-block north');
+		// 	}
+		// });
 		
-		function rotate_image() {
-			// Rotasi Image Selfie
-			var sampling_ebcc_img_selfie = document.getElementById( 'sampling_ebcc_img_selfie' );
-			var sampling_ebcc_img_selfie_width = sampling_ebcc_img_selfie.clientWidth;
-			var sampling_ebcc_img_selfie_height = sampling_ebcc_img_selfie.clientHeight;
+		// function rotate_image() {
+		// 	// Rotasi Image Selfie
+		// 	var sampling_ebcc_img_selfie = document.getElementById( 'sampling_ebcc_img_selfie' );
+		// 	var sampling_ebcc_img_selfie_width = sampling_ebcc_img_selfie.clientWidth;
+		// 	var sampling_ebcc_img_selfie_height = sampling_ebcc_img_selfie.clientHeight;
 	
-			if ( parseInt( sampling_ebcc_img_selfie_height ) < parseInt( sampling_ebcc_img_selfie_width ) ) {
-				$( "#sampling_ebcc_img_selfie" ).addClass( 'rotate' );
-			}
+		// 	if ( parseInt( sampling_ebcc_img_selfie_height ) < parseInt( sampling_ebcc_img_selfie_width ) ) {
+		// 		$( "#sampling_ebcc_img_selfie" ).addClass( 'rotate' );
+		// 	}
 
-			// Rotasi Image Janjang
-			var sampling_ebcc_img_jjg = document.getElementById( 'sampling_ebcc_img_jjg' );
-			var sampling_ebcc_img_jjg_width = sampling_ebcc_img_jjg.clientWidth;
-			var sampling_ebcc_img_jjg_height = sampling_ebcc_img_jjg.clientHeight;
+		// 	// Rotasi Image Janjang
+		// 	var sampling_ebcc_img_jjg = document.getElementById( 'sampling_ebcc_img_jjg' );
+		// 	var sampling_ebcc_img_jjg_width = sampling_ebcc_img_jjg.clientWidth;
+		// 	var sampling_ebcc_img_jjg_height = sampling_ebcc_img_jjg.clientHeight;
 			
-			if ( parseInt( sampling_ebcc_img_jjg_height ) > parseInt( sampling_ebcc_img_jjg_width ) ) {
-				//$( "#sampling_ebcc_img_jjg" ).addClass( 'rotate' );
-			}
-		}
+		// 	if ( parseInt( sampling_ebcc_img_jjg_height ) > parseInt( sampling_ebcc_img_jjg_width ) ) {
+		// 		//$( "#sampling_ebcc_img_jjg" ).addClass( 'rotate' );
+		// 	}
+		// }
 
-		function saveAs( uri, filename ) {
-			var link = document.createElement( 'a' );
-			if ( typeof link.download === 'string' ) {
-				link.href = uri;
-				link.download = filename;
-				document.body.appendChild( link );
-				link.click();
-				document.body.removeChild( link );
-			} 
-			else {
-				window.open( uri );
-			}
-		}
+		// function saveAs( uri, filename ) {
+		// 	var link = document.createElement( 'a' );
+		// 	if ( typeof link.download === 'string' ) {
+		// 		link.href = uri;
+		// 		link.download = filename;
+		// 		document.body.appendChild( link );
+		// 		link.click();
+		// 		document.body.removeChild( link );
+		// 	} 
+		// 	else {
+		// 		window.open( uri );
+		// 	}
+		// }
 
-		$( document ).ready( function() {
-			$( "#download-jpg" ).click( function() {
+		// $( document ).ready( function() {
+		// 	$( "#download-jpg" ).click( function() {
 
-				html2canvas( document.querySelector( "#capture" ) ).then( canvas => {
-					var filename = "{{ $dt['nama_pt'].' ('.$dt['bisnis_area'].$dt['afd'].$dt['blok'].')-'.$dt['no_bcc'].'-'.$dt['tph'].'-'.date( 'Ymd', strtotime( $dt['tanggal_ebcc'] ) ).'-'.$dt['nik_kerani_buah'].'-'.$dt['nama_kerani_buah'] }}";
-					saveAs( canvas.toDataURL(), filename + '.png' );
-				}, { 
-					allowTaint: true,
-					width: 1200,
-					height: 1200
-				} );
-			} );
+		// 		html2canvas( document.querySelector( "#capture" ) ).then( canvas => {
+		// 			var filename = "{{ $dt['nama_pt'].' ('.$dt['bisnis_area'].$dt['afd'].$dt['blok'].')-'.$dt['no_bcc'].'-'.$dt['tph'].'-'.date( 'Ymd', strtotime( $dt['tanggal_ebcc'] ) ).'-'.$dt['nik_kerani_buah'].'-'.$dt['nama_kerani_buah'] }}";
+		// 			saveAs( canvas.toDataURL(), filename + '.png' );
+		// 		}, { 
+		// 			allowTaint: true,
+		// 			width: 1200,
+		// 			height: 1200
+		// 		} );
+		// 	} );
 
-			var images = {
-				'sampling_ebcc': {
-					'img_selfie': $( "#sampling_ebcc_img_selfie" )
-				}
-			};
-		} );
+		// 	var images = {
+		// 		'sampling_ebcc': {
+		// 			'img_selfie': $( "#sampling_ebcc_img_selfie" )
+		// 		}
+		// 	};
+		// } );
 	</script>
 </body>
 </html>

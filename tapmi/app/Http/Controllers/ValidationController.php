@@ -476,6 +476,7 @@ class ValidationController extends Controller {
            ON     mst.id_ba = est.werks
               AND mst.id_afd = est.afd_code
               AND mst.id_blok = est.block_code
+              WHERE ROWNUM = '1'
         ";
         $valid_data = json_encode($this->db_mobile_ins->select($sql));
         $results['data'] =  json_decode($valid_data,true);
