@@ -82,14 +82,14 @@
 								<td class="text-center">Total<br />Janjang<br />Panen</td>
 							</tr>
 							<tr>
-								<td class="text-center" style="color:{{ ( $dt['ebcc_jml_bm'] == $dt['jjg_validate_bm'] ? 'green' : 'red' ) }};">{{ $dt['ebcc_jml_bm'] }}</td>
+								<td class="text-center" >{{ $dt['ebcc_jml_bm'] }}</td>
 								<!-- <td class="text-center" style="color:{{ ( $dt['ebcc_jml_bk'] == $dt['jjg_validate_bk'] ? 'green' : 'red' ) }};">{{ $dt['ebcc_jml_bk'] }}</td> -->
-								<td class="text-center" style="color:{{ ( $dt['ebcc_jml_ms'] == $dt['jjg_validate_ms'] ? 'green' : 'red' ) }};">{{ $dt['ebcc_jml_ms'] }}</td>
-								<td class="text-center" style="color:{{ ( $dt['ebcc_jml_or'] == $dt['jjg_validate_or'] ? 'green' : 'red' ) }};">{{ $dt['ebcc_jml_or'] }}</td>
-								<td class="text-center" style="color:{{ ( $dt['ebcc_jml_bb'] == $dt['jjg_validate_bb'] ? 'green' : 'red' ) }};">{{ $dt['ebcc_jml_bb'] }}</td>
-								<td class="text-center" style="color:{{ ( $dt['ebcc_jml_jk'] == $dt['jjg_validate_jk'] ? 'green' : 'red' ) }};">{{ $dt['ebcc_jml_jk'] }}</td>
+								<td class="text-center" >{{ $dt['ebcc_jml_ms'] }}</td>
+								<td class="text-center" >{{ $dt['ebcc_jml_or'] }}</td>
+								<td class="text-center" >{{ $dt['ebcc_jml_bb'] }}</td>
+								<td class="text-center" >{{ $dt['ebcc_jml_jk'] }}</td>
 								<!-- <td class="text-center" style="color:{{ ( $dt['ebcc_jml_ba'] == $dt['jjg_validate_ba'] ? 'green' : 'red' ) }};">{{ $dt['ebcc_jml_ba'] }}</td> -->
-								<td class="text-center" style="color:{{ ( $dt['ebcc_total'] == $dt['jjg_validate_total'] ? 'green' : 'red' ) }};">{{ $dt['ebcc_total'] }}</td>
+								<td class="text-center" style="background-color:{{ ( $dt['ebcc_total'] == $dt['jjg_validate_total'] ? 'green' : 'red' ) }}; color:white;">{{ $dt['ebcc_total'] }}</td>
 							</tr>
 						</table>
 						<div class="row">
@@ -113,7 +113,7 @@
 									<tr>
 										<td>Waktu Pencatatan</td>
 										<td>:</td>
-										<td>{{ date( 'd-M-Y H:i', strtotime( $dt['tanggal_ebcc'] ) ) }}</td>
+										<td>{{ date( 'd-M-Y', strtotime( $dt['tanggal_ebcc'] ) ) }}</td>
 									</tr>
 									<tr>
 										<td>Kode EBCC</td>
@@ -154,7 +154,7 @@
 								<!-- <td class="text-center" style="color:{{ ( $dt['ebcc_jml_bb'] == $dt['jjg_validate_bb'] ? 'green' : 'red' ) }};">{{ $dt['jjg_validate_bb'] }}</td> -->
 								<!-- <td class="text-center" style="color:{{ ( $dt['ebcc_jml_jk'] == $dt['jjg_validate_jk'] ? 'green' : 'red' ) }};">{{ $dt['jjg_validate_jk'] }}</td> -->
 								<!-- <td class="text-center" style="color:{{ ( $dt['ebcc_jml_ba'] == $dt['jjg_validate_ba'] ? 'green' : 'red' ) }};">{{ $dt['jjg_validate_ba'] }}</td> -->
-								<td class="text-center" style="color:{{ ( $dt['ebcc_total'] == $dt['jjg_validate_total'] ? 'green' : 'red' ) }};">{{ $dt['jjg_validate_total'] }}</td>
+								<td class="text-center" style="background-color:{{ ( $dt['ebcc_total'] == $dt['jjg_validate_total'] ? 'green' : ( $dt['jjg_validate_total'] == '0' ? 'grey' : 'red' ) ) }}; color:white;">{{ ( $dt['jjg_validate_total'] == '0' ? '-' : $dt['jjg_validate_total'] )  }}</td>
 								</tr>
 							</table>
 							<div class="row">

@@ -6,6 +6,13 @@ input[type="radio"]{
     visibility:hidden;
 	display: none;
 }
+.w-50{
+	width: 50%;
+}
+.fields{
+	
+	border-color: #000000;
+}
 .btn-radio {
     white-space: normal !important;
     height: 70px;
@@ -137,7 +144,7 @@ tr
 		</tr>
 		<tr>
 			<td>
-				<table class="borderles" id="tform">
+				<table class="borderless" width = "100%" id="tform">
 				<!-- <table class="table table-bordered" id="tform"> -->
 					<!-- <thead style="background-color:#dadbd5">
 					<tr> -->
@@ -161,11 +168,14 @@ tr
 						<td><input type="number" min=0 class="form-control fields" required name="jjg_validate_bb" id="bb" onkeyup="sum()"></td>
 						<td><input type="number" min=0 class="form-control fields" required name="jjg_validate_jk" id="jk" onkeyup="sum()"></td>
 						<td><input type="text" min=0 class="form-control" required  readonly="readonly" name="jjg_validate_total" id="total_jjg"></td> -->
-						<tr><td>Nama Krani Buah </td><td>: </td><td><b> {{$q['emp_name']}}</b></tr>
-						<tr><td>Nama Mandor </td><td>: </td><td><b>{{$q['nama_mandor']}}</b></tr>
-						<tr><td>Afdeling </td><td>: </td><td><b>{{$q['id_afd']}}</b></tr>
+						<tr><td>Nama Krani Buah </td><td>: </td><td colspan="2"><b> {{$q['emp_name']}}</b></tr>
+						<tr><td>Nama Mandor </td><td>: </td><td colspan="2"><b>{{$q['nama_mandor']}}</b></tr>
+						<tr><td>Afdeling </td><td>: </td><td colspan="2"><b>{{$q['id_afd']}}</b></tr>
 						<tr><td>Total Janjang Panen<input type="hidden" name="jjg_ebcc_total" value="{{$q['jjg_panen']}}"></td><td>:</td>
-							<td><input type="number" min=0 class="form-control fields" required  name="jjg_validate_total" id="total_jjg"></td>
+							<td> <div class="w-50"><input type="number" min=0 class="form-control fields" required autofocus name="jjg_validate_total" id="total_jjg"></div></td>
+							<td align="right">
+								<button type="submit" class="btn btn-block btn-success pull-right btn-next">SIMPAN & LANJUT BERIKUTNYA</button>
+							</td>
 						</tr>
 					</tbody>
 				</table>
@@ -217,16 +227,6 @@ tr
 			<td>
 			<div class="row">
 			</div>
-				<div class="row">
-						<div class="col-md-4">
-							<!-- <a class="btn btn-block btn-dark" href={{URL::to('/listvalidasi')}}>KEMBALI</a> -->
-						</div>
-						<div class="col-md-2">
-						</div>
-						<div class="col-md-6">
-							<button type="submit" class="btn btn-block btn-success pull-right btn-next">SIMPAN & LANJUT BERIKUTNYA</button>
-						</div>
-				</div>
 			</td>
 		</tr>
 		</form>

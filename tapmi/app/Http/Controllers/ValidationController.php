@@ -363,7 +363,7 @@ class ValidationController extends Controller {
                 validasi.jjg_validate_ba,
                 validasi.jjg_validate_total,
                 validasi.kondisi_foto,
-                TRUNC (validasi.insert_time) AS tanggal_validasi,
+                TO_CHAR(validasi.insert_time, 'YYYY-MM-DD HH24:MI') AS tanggal_validasi,
                 validasi.insert_user AS nik_pembuat,
                 validasi.insert_user_fullname AS nama_pembuat,
                 validasi.insert_user_userrole AS user_role
