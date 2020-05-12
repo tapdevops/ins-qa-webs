@@ -230,6 +230,7 @@ class ReportOracleController extends Controller {
 		$results['data'] = array();
 		$results['summary'] = array();
 		$results['periode'] = date( 'Ym', strtotime( $START_DATE ) );
+		
 
 		# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 		# REPORT EBCC VALIDATION ESTATE/MILL
@@ -286,7 +287,7 @@ class ReportOracleController extends Controller {
 				$excel->sheet( 'Compare', function( $sheet ) use ( $results ) {
 					$sheet->loadView( 'orareport.excel-ebcc-compare', $results );
 				} );
-			} )->export( 'xls' );
+			} )->export( 'xlsx' );
 			
 		}
 
@@ -345,7 +346,7 @@ class ReportOracleController extends Controller {
 				$excel->sheet( 'Per Inspeksi', function( $sheet ) use ( $results ) {
 					$sheet->loadView( 'orareport.excel-inspection-header', $results );
 				} );
-			} )->export( 'xls' );
+			} )->export( 'xlsx' );
 		}
 
 		# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -397,7 +398,7 @@ class ReportOracleController extends Controller {
 				$excel->sheet( 'Peserta Genba', function( $sheet ) use ( $results ) {
 					$sheet->loadView( 'orareport.excel-inspection-genba', $results );
 				} );
-			} )->export( 'xls' );
+			} )->export( 'xlsx' );
 		}
 
 		# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -431,7 +432,7 @@ class ReportOracleController extends Controller {
 				$excel->sheet( $results['sheet_name'], function( $sheet ) use ( $results ) {
 					$sheet->loadView( $results['view'], $results );
 				} );
-			} )->export( 'xls' );
+			} )->export( 'xlsx' );
 			/*return view( $results['view'], $results );*/
 		}
 	}
