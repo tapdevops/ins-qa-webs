@@ -12,7 +12,7 @@ class ReportOracle extends Model{
 	
 	public function __construct() {
 		$this->db_mobile_ins = DB::connection( 'mobile_ins' );
-		$this->env = 'PROD';
+		$this->env = 'DEV';
 		$this->image = array(
 			'DEV' => array(
 				'domain' => 'image.tap-agri.com',
@@ -663,6 +663,16 @@ class ReportOracle extends Model{
 		$where .= ( $AFD_CODE != "" && $BLOCK_CODE == "" ) ? " AND EBCC_HEADER.WERKS||EBCC_HEADER.AFD_CODE = '$AFD_CODE'  ": "";
 		$where .= ( $AFD_CODE != "" && $BLOCK_CODE != "" ) ? " AND EBCC_HEADER.WERKS||EBCC_HEADER.AFD_CODE||EBCC_HEADER.BLOCK_CODE = '$BLOCK_CODE'  ": "";
 		
+		$where2 = "";
+		$where2 .= ( $REGION_CODE != "" && $COMP_CODE == "" ) ? " AND SUBSTR (id_ba_afd_blok, 1, 2) in 
+																	(SELECT comp_code
+                                                                       FROM tap_dw.tm_comp@dwh_link
+                                                                      WHERE region_code = '$REGION_CODE')  ": "";
+		$where2 .= ( $COMP_CODE != "" && $BA_CODE == "" ) ? " AND SUBSTR (id_ba_afd_blok, 1, 2) = '$COMP_CODE'  ": "";
+		$where2 .= ( $BA_CODE != "" && $AFD_CODE == "" ) ? " AND SUBSTR (id_ba_afd_blok, 1, 4) = '$BA_CODE'  ": "";
+		$where2 .= ( $AFD_CODE != "" && $BLOCK_CODE == "" ) ? " AND SUBSTR (id_ba_afd_blok, 1, 5) = '$AFD_CODE'  ": "";
+		$where2 .= ( $AFD_CODE != "" && $BLOCK_CODE != "" ) ? " AND id_ba_afd_blok = '$BLOCK_CODE'  ": "";
+		
 		$sql = "
 				SELECT header.*,
                        NVL (detail.jml_1, 0) AS val_jml_1,
@@ -935,15 +945,10 @@ class ReportOracle extends Model{
                                                       on emp_ebcc.nik = hrp.nik_kerani_buah
                                                    left join ebcc.t_hasilpanen_kualtas thk
                                                       on hp.no_bcc = thk.id_bcc and hp.id_rencana = thk.id_rencana
-                                             where substr(ID_BA_AFD_BLOK,1,2) IN ( select comp_code from tap_dw.tm_comp@dwh_link
-																					where region_code ='$REGION_CODE')
-                                               and hrp.tanggal_rencana between TO_DATE ('$START_DATE', 'YYYY-MM-DD')
+                                             where hrp.tanggal_rencana between TO_DATE ('$START_DATE', 'YYYY-MM-DD')
                                                                                and  TO_DATE ('$END_DATE', 'YYYY-MM-DD')
-                                          group by hrp.tanggal_rencana,
-                                                   substr(ID_BA_AFD_BLOK,1,4),
-                                                   substr(ID_BA_AFD_BLOK,5,1),
-                                                   substr(ID_BA_AFD_BLOK,6,3),
-                                                   /*SUBSTR (no_bcc, 12, 3)*/
+												   $where2
+                                          group by hrp.tanggal_rencana, id_ba_afd_blok,
 												   hp.no_tph)) ebcc
                           on     TRUNC (ebcc.tanggal_rencana) = TRUNC (val_date_time)
                              and ebcc.id_ba = val_werks
