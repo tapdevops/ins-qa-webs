@@ -2209,7 +2209,7 @@ class ReportOracle extends Model{
 						CASE WHEN employee_resigndate IS NULL THEN TO_DATE ('9999-12-31', 'RRRR-MM-DD') ELSE employee_resigndate END employee_regisndate 
 					FROM 
 						tap_dw.tm_employee_hris@DWH_LINK
-				) emp ON user_auth.employee_nik = emp.nik 
+				) emp ON user_auth.employee_nik = emp.nik AND inspeksi.inspection_date BETWEEN emp.start_valid AND emp.end_valid
 			ORDER BY 
 				\"Tanggal Inspeksi\" ASC, 
 				\"Nama Reporter\" ASC
