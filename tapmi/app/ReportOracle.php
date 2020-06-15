@@ -2120,7 +2120,12 @@ class ReportOracle extends Model{
 				emp.employee_name \"Nama Participant\", 
 				REPLACE(user_auth.user_role, '_', ' ') \"Jabatan Participant\" 
 			FROM 
-				mobile_inspection.tr_inspection_genba genba 
+				(SELECT block_inspection_code, genba_user FROM mobile_inspection.tr_inspection_genba
+				  UNION
+				  SELECT hd.block_inspection_code, insert_user
+					FROM mobile_inspection.tr_block_inspection_h hd JOIN mobile_inspection.tr_inspection_genba genba
+							ON hd.block_inspection_code = genba.block_inspection_code
+				   WHERE 1 = 1 AND TRUNC( hd.inspection_date ) BETWEEN TRUNC( TO_DATE( '$START_DATE', 'RRRR-MM-DD' ) ) AND TRUNC( TO_DATE( '$END_DATE', 'RRRR-MM-DD' ))) genba 
 				INNER JOIN (
 					SELECT 
 						hd.block_inspection_code \"Kode Inspeksi\", 
