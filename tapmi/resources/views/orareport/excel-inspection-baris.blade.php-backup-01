@@ -1,0 +1,55 @@
+<style>
+	tr > td, tr > th { border: 1px solid #000000; }
+	tr > th { text-align: center; }
+</style>
+<table>
+	<tr>
+		@if( !empty( $data_baris ) )
+			@foreach( array_keys( $data_baris[0] ) as $key )
+				<th style="text-align: center;">{{ strtoupper( $key ) }}</th>
+			@endforeach
+		@endif
+	</tr>
+	@if( !empty( $data_baris ) )
+		@foreach( $data_baris as $data )
+			<tr>
+				<td style="text-align: center;">{{ $data['kode inspeksi'] }}</td>
+				<td style="text-align: center;">{{ $data['kode ba'] }}</td>
+				<td style="text-align: center;">{{ $data['business area'] }}</td>
+				<td style="text-align: center;">{{ $data['afd'] }}</td>
+				<td style="text-align: center;">{{ $data['kode block'] }}</td>
+				<td style="text-align: center;">{{ $data['block deskripsi'] }}</td>
+				<td style="text-align: center;">{{ $data['tanggal inspeksi'] }}</td>
+				<td style="text-align: center;">{{ $data['lama inspeksi'] }}</td>
+				<td style="text-align: center;">{{ $data['baris'] }}</td>
+				<td style="text-align: center;">{{ $data['nik reporter'] }}</td>
+				<td style="text-align: center;">{{ $data['nama reporter'] }}</td>
+				<td style="text-align: center;">{{ $data['jabatan reporter'] }}</td>
+				<td style="text-align: center;">{{ $data['periode'] }}</td>
+				<td style="text-align: center;">{{ $data['maturity status'] }}</td>
+				<td style="text-align: center;">{{ $data['lat start'] }}</td>
+				<td style="text-align: center;">{{ $data['long start'] }}</td>
+				<td style="text-align: center;">{{ ( $data['pokok panen'] == '' ? '0' : $data['pokok panen'] ) }}</td>
+				<td style="text-align: center;">{{ ( $data['buah tinggal'] == '' ? '0' : $data['buah tinggal'] ) }}</td>
+				<td style="text-align: center;">{{ ( $data['brondolan di piringan'] == '' ? '0' : $data['brondolan di piringan'] ) }}</td>
+				<td style="text-align: center;">{{ ( $data['brondolan di tph'] == '' ? '0' : $data['brondolan di tph'] ) }}</td>
+				<td style="text-align: center;">{{ ( $data['pokok tidak di pupuk'] == '' ? '0' : $data['pokok tidak di pupuk'] ) }}</td>
+				<td style="text-align: center;">{{ $data['piringan'] }}</td>
+				<td style="text-align: center;">{{ $data['pasar pikul'] }}</td>
+				<td style="text-align: center;">{{ $data['tph'] }}</td>
+				<td style="text-align: center;">{{ $data['gawangan'] }}</td>
+				<td style="text-align: center;">{{ $data['prunning'] }}</td>
+				<td style="text-align: center;">{{ $data['titi panen'] }}</td>
+				<td style="text-align: center;">{{ $data['sistem penaburan'] }}</td>
+				<td style="text-align: center;">{{ $data['kondisi pupuk'] }}</td>
+				<td style="text-align: center;">{{ $data['kastrasi'] }}</td>
+				<td style="text-align: center;">{{ $data['sanitasi'] }}</td>
+				<td style="text-align: center;">{{ ( $data['nilai piringan'] == '' ? '0' : $data['nilai piringan'] ) }}</td>
+				<td style="text-align: center;">{{ ( $data['nilai pasar pikul'] == '' ? '0' : $data['nilai pasar pikul'] ) }}</td>
+				<td style="text-align: center;">{{ ( $data['nilai tph'] == '' ? '0' : $data['nilai tph'] ) }}</td>
+				<td style="text-align: center;">{{ ( $data['nilai gawangan'] == '' ? '0' : $data['nilai gawangan'] ) }}</td>
+				<td style="text-align: center;">{{ ( $data['nilai prunning'] == '' ? '0' : $data['nilai prunning'] ) }}</td>
+			</tr>
+		@endforeach
+	@endif
+</table>

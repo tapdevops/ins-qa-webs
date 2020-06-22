@@ -56,7 +56,7 @@ class UserController extends Controller {
 						$data['master_user'][$i]['APK_DATE'] = '';
 
 						$client = new \GuzzleHttp\Client();
-						$res = $client->request( 'GET', $this->url_api_ins_msa_auth.'/api/v1.1/server/apk-version/'.$q['USER_AUTH_CODE'], 
+						$res = $client->request( 'GET', $this->url_api_ins_msa_auth.'/api/v2.0/server/apk-version/'.$q['USER_AUTH_CODE'], 
 							[
 								'headers' => [
 								'Authorization' => 'Bearer '.session( 'ACCESS_TOKEN' )
@@ -94,7 +94,7 @@ class UserController extends Controller {
 	public function create_proses() {
 
 		$client = new \GuzzleHttp\Client();
-		$res = $client->request( 'POST', $this->url_api_ins_msa_auth.'/api/user', [
+		$res = $client->request( 'POST', $this->url_api_ins_msa_auth.'/api/v2.0/user/create', [
 			'json' => [
 				'EMPLOYEE_NIK' => Input::get( 'EMPLOYEE_NIK'),
 				'USER_ROLE' => Input::get( 'ROLES'),
@@ -122,7 +122,7 @@ class UserController extends Controller {
 		$data['total_count'] = 0;
 		$data['items'] = array();
 		$data['incomplete_results'] = false;
-		$url = $this->url_api_ins_msa_auth.'/api/user-search?q='.$_GET['q'];
+		$url = $this->url_api_ins_msa_auth.'/api/v2.0/user-search?q='.$_GET['q'];
 
 		if ( isset( $_GET['q'] ) ) {
 			$client = APISetup::ins_rest_client( 'GET', $url );
@@ -162,7 +162,7 @@ class UserController extends Controller {
 	# -------------------------------------------------------------------------------------
 	public function edit_proses( Request $req ) {
 		$client = new \GuzzleHttp\Client();
-		$res = $client->request( 'PUT', $this->url_api_ins_msa_auth.'/api/user/'.$req->id, [
+		$res = $client->request( 'PUT', $this->url_api_ins_msa_auth.'/api/v2.0/user/update/'.$req->id, [
 			'json' => [
 				'USER_ROLE' => Input::get( 'USER_ROLE'),
 				'REF_ROLE' => Input::get( 'REFFERENCE_ROLE'),

@@ -26,42 +26,42 @@ class APISetup extends Model
 
 		$env = 'qa';
 
-
 		$data = array(
 			"dev" => array(
 				"msa" => array(
 					"ins" => array(
-						"auth" => "http://app.tap-agri.com/mobileinspection/ins-msa-auth",
+						"auth" => "http://app.tap-agri.com/mobileinspectiondev/ins-msa-dev-auth",
 						"hectarestatement" => "http://app.tap-agri.com/mobileinspectiondev/ins-msa-dev-hectarestatement",
 						"finding" => "http://app.tap-agri.com/mobileinspectiondev/ins-msa-dev-finding",
-						"inspection" => "http://app.tap-agri.com/mobileinspection/ins-msa-inspection",
-						// "report" => "http://app.tap-agri.com/mobileinspectiondev/ins-msa-dev-reports",
+						"inspection" => "http://app.tap-agri.com/mobileinspectiondev/ins-msa-dev-inspection",
+						// "report" => "http://apis.tap-agri.com/mobileinspectiondev/ins-msa-dev-reports",
 						"report" => "http://app.tap-agri.com/mobileinspection/ins-msa-reports",
-						"ebccvalidation" => "http://app.tap-agri.com/mobileinspectiondev/ins-msa-dev-ebccval"
+						"ebccvalidation" => "http://app.tap-agri.com/mobileinspectiondev/ins-msa-dev-ebccval",
+						"mivalidation" => "http://127.0.0.1:8000/api"
 					)
 				)
 			),
 			"qa" => array(
 				"msa" => array(
 					"ins" => array(
-						"auth" => "http://app.tap-agri.com/mobileinspectionqa/ins-msa-qa-auth",
-						"hectarestatement" => "http://app.tap-agri.com/mobileinspectionqa/ins-msa-qa-hectarestatement",
-						"finding" => "http://app.tap-agri.com/mobileinspectionqa/ins-msa-qa-finding",
-						"inspection" => "http://app.tap-agri.com/mobileinspectionqa/ins-msa-qa-inspection",
-						"report" => "http://app.tap-agri.com/mobileinspectionqa/ins-msa-qa-reports",
-						"ebccvalidation" => "http://app.tap-agri.com/mobileinspectionqa/ins-msa-qa-ebccval"
+						"auth" => "http://apisqa.tap-agri.com/mobileinspectionqa/ins-msa-qa-auth",
+						"hectarestatement" => "http://apisqa.tap-agri.com/mobileinspectionqa/ins-msa-qa-hectarestatement",
+						"finding" => "http://apisqa.tap-agri.com/mobileinspectionqa/ins-msa-qa-finding",
+						"inspection" => "http://apisqa.tap-agri.com/mobileinspectionqa/ins-msa-qa-inspection",
+						"report" => "http://apisqa.tap-agri.com/mobileinspectionqa/ins-msa-qa-reports",
+						"ebccvalidation" => "http://apisqa.tap-agri.com/mobileinspectionqa/ins-msa-qa-ebccval"
 					)
 				)
 			),
 			"prod" => array(
 				"msa" => array(
 					"ins" => array(
-						"auth" => "http://app.tap-agri.com/mobileinspection/ins-msa-auth",
-						"hectarestatement" => "http://app.tap-agri.com/mobileinspection/ins-msa-hectarestatement",
-						"finding" => "http://app.tap-agri.com/mobileinspection/ins-msa-finding",
-						"inspection" => "http://app.tap-agri.com/mobileinspection/ins-msa-inspection",
-						"report" => "http://app.tap-agri.com/mobileinspection/ins-msa-reports",
-						"ebccvalidation" => "http://app.tap-agri.com/mobileinspection/ins-msa-ebccval",
+						"auth" => "http://apis.tap-agri.com/mobileinspection/ins-msa-auth",
+						"hectarestatement" => "http://apis.tap-agri.com/mobileinspection/ins-msa-hectarestatement",
+						"finding" => "http://apis.tap-agri.com/mobileinspection/ins-msa-finding",
+						"inspection" => "http://apis.tap-agri.com/mobileinspection/ins-msa-inspection",
+						"report" => "http://apis.tap-agri.com/mobileinspection/ins-msa-reports",
+						"ebccvalidation" => "http://apis.tap-agri.com/mobileinspection/ins-msa-ebccval",
 					)
 				)
 			)

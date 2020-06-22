@@ -461,49 +461,49 @@
 					</button>
 					<div id="m_header_menu" class="m-header-menu m-aside-header-menu-mobile m-aside-header-menu-mobile--offcanvas  m-header-menu--skin-dark m-header-menu--submenu-skin-light m-aside-header-menu-mobile--skin-light m-aside-header-menu-mobile--submenu-skin-light "  >
 						@include( 'layouts.default.header-menu-02-'.session( 'USER_ROLE' ) )
-						<!--ul class="m-menu__nav  m-menu__nav--submenu-arrow "-->
 					</div>
 				</div>
-				<!-- end::Horizontal Menu -->
 			</div>
 		</div>
 	</div>
 </header>
+
 <div class="modal fade" id="m_modal_6" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered" role="document">
-		<div class="modal-content">
-			<div class="modal-body"><br /><br />
-				<table class="table table-bordered">
-					<tr>
-						<td colspan="2"><center>Profile</center></td>
-					</tr>
-					<tr>
-						<td>Username</td>
-						<td>{{ strtoupper( session( 'USERNAME' ) ) }}</td>
-					</tr>
-					<tr>
-						<td>NIK</td>
-						<td>{{ strtoupper( session( 'NIK' ) ) }}</td>
-					</tr>
-					<tr>
-						<td>Job</td>
-						<td>{{ strtoupper( session( 'JOB_CODE' ) ) }}</td>
-					</tr>
-					<tr>
-						<td>User Role</td>
-						<td>{{ str_replace( '_', ' ', strtoupper( session( 'USER_ROLE' ) ) ) }}</td>
-					</tr>
-					<tr>
-						<td>Lokasi</td>
-						<td>{{ strtoupper( session( 'LOCATION_CODE' ) ) }}</td>
-					</tr>
-				</table>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-dismiss="modal">
-					Close
-				</button>
+			
+			<div class="modal-dialog modal-dialog-centered" role="document">
+				<div class="modal-content">
+					<div class="modal-body"><br /><br />
+						<table class="table table-bordered">
+							<tr>
+								<td colspan="2"><center>Profile</center></td>
+							</tr>
+							<tr>
+								<td>Username</td>
+								<td>{{ strtoupper( session( 'USERNAME' ) ) }}</td>
+							</tr>
+							<tr>
+								<td>NIK</td>
+								<td>{{ strtoupper( session( 'NIK' ) ) }}</td>
+							</tr>
+							<tr>
+								<td>Job</td>
+								<td>{{ strtoupper( session( 'JOB_CODE' ) ) }}</td>
+							</tr>
+							<tr>
+								<td>User Role</td>
+								<td>{{ str_replace( '_', ' ', strtoupper( session( 'USER_ROLE' ) ) ) }}</td>
+							</tr>
+							<tr>
+								<td>Lokasi</td>
+								<td>{{ strtoupper( session( 'LOCATION_CODE' ) ) }}</td>
+							</tr>
+						</table>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">
+							Close
+						</button>
+					</div>
+				</div>
 			</div>
 		</div>
-	</div>
-</div>

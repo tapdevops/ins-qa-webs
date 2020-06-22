@@ -25,8 +25,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\APISetup;
 use App\APIData as Data;
 
-class ReportController extends Controller
-{
+class ReportController extends Controller {
 
 	protected $url_api_ins_msa_auth;
 	protected $url_api_ins_msa_hectarestatement;
@@ -34,8 +33,7 @@ class ReportController extends Controller
 	protected $active_menu;
 	protected $auth;
 
-	public function __construct()
-	{
+	public function __construct() {
 		$this->active_menu = '_' . str_replace('.', '', '02.03.00.00.00') . '_';
 		$this->url_api_ins_msa_auth = APISetup::url()['msa']['ins']['auth'];
 		$this->url_api_ins_msa_hectarestatement = APISetup::url()['msa']['ins']['hectarestatement'];
@@ -1275,6 +1273,12 @@ class ReportController extends Controller
 		$data['finding_data'] = array();
 		$finding_data = Data::web_report_finding_find($query_finding)['items'];
 		$i = 0;
+
+
+		// print '<pre>';
+		// print_r( $query_finding );
+		// print '<pre>';
+		// dd();
 
 		foreach ($finding_data as $finding) {
 

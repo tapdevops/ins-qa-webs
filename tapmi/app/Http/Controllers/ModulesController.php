@@ -63,7 +63,7 @@ class ModulesController extends Controller
 
 	#   		 									  	        ▁ ▂ ▄ ▅ ▆ ▇ █ Generate Menu
 	# -------------------------------------------------------------------------------------
-	public function generate_menu( $id = '', $url = 'http://inspectionqa.tap-agri.com/' ) {
+	public function generate_menu( $id = '', $url = 'http://inspectiondev.tap-agri.com/' ) {
 
 		if ($id != '') {
 			/*═════════════════════════════════════════════════════════════════╗
