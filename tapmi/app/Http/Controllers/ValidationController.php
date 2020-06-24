@@ -40,9 +40,9 @@ class ValidationController extends Controller {
 	protected $active_menu;
 
 	public function __construct() {
-		$this->active_menu = '_'.str_replace( '.', '', '02.04.00.00.00' ).'_';
-		$this->db_ebcc = DB::connection('ebcc');
+      $this->active_menu = '_'.str_replace( '.', '', '02.04.00.00.00' ).'_';
 		$this->db_mobile_ins = DB::connection('mobile_ins');
+      $this->db_ebcc = DB::connection('ebcc');
 	}
 
 	#   		 									  		            ▁ ▂ ▄ ▅ ▆ ▇ █ Index
@@ -289,7 +289,16 @@ class ValidationController extends Controller {
             $data['insert_user_fullname'] = $fullname;
             $data['insert_user_userrole'] = session('USER_ROLE');
             $data['uuid']	= Uuid::uuid1()->toString();
-			// $result = TRValidasiDetail::create($request->except('jumlah_ebcc_validated','last_updated','kodisi_foto')+$data);
+         // $result = TRValidasiDetail::create($request->except('jumlah_ebcc_validated','last_updated','kodisi_foto')+$data);
+         
+         // INSERT LOG TO EBCC
+         $this->db_ebcc->table('T_VALIDASI')->updateOrInsert(['NO_EBCC'=>$request->id_validasi],[
+            'TANGGAL_VALIDASI' => date('Y-m-d H:i:s'),
+            'ROLES' => session('USER_ROLE'),
+            'NIK' => session('NIK'),
+            'NAMA' => $fullname
+         ]);
+
 			TRValidasiDetail::create($request->except('last_updated','target')+$data);
          return Redirect::to('validasi/create/'.$tgl);
 
