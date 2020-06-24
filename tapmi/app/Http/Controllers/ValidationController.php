@@ -291,15 +291,16 @@ class ValidationController extends Controller {
             $data['uuid']	= Uuid::uuid1()->toString();
          // $result = TRValidasiDetail::create($request->except('jumlah_ebcc_validated','last_updated','kodisi_foto')+$data);
          
+         $TRValidasiDetail = TRValidasiDetail::create($request->except('last_updated','target')+$data);
+
          // INSERT LOG TO EBCC
-         $this->db_ebcc->table('T_VALIDASI')->updateOrInsert(['NO_EBCC'=>$request->id_validasi],[
+         $this->db_ebcc->table('T_VALIDASI')->insert([
+            'NO_BCC'=>$TRValidasiDetail->no_bcc,
             'TANGGAL_VALIDASI' => date('Y-m-d H:i:s'),
             'ROLES' => session('USER_ROLE'),
             'NIK' => session('NIK'),
             'NAMA' => $fullname
          ]);
-
-			TRValidasiDetail::create($request->except('last_updated','target')+$data);
          return Redirect::to('validasi/create/'.$tgl);
 
     }
