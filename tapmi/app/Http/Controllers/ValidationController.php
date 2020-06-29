@@ -253,7 +253,6 @@ class ValidationController extends Controller {
 
     public function create_action(Request $request)
     { 
-        // dd($request);
         date_default_timezone_set('Asia/Jakarta');
         $id_val = $request->id_validasi."-".$request->ba_code."-".$request->afd_code;
         $id = str_replace("/",".",$id_val);
@@ -317,9 +316,9 @@ class ValidationController extends Controller {
             {
                $selisih = $request->jumlah_ebcc_validated - intval($request->jjg_validate_total)+0;
                $data = $this->db_ebcc->table('T_HASILPANEN_KUALTAS')->
-                                       where(['ID_BCC'=>$TRValidasiDetail->no_bc])->
+                                       where(['ID_BCC'=>$TRValidasiDetail->no_bcc])->
                                        whereIn('ID_KUALITAS',[1,3,4,6,15])->
-                                       get()->pluck('QTY','ID_KUALITAS')->toArray();
+                                       get()->pluck('qty','id_kualitas')->toArray();
                // PENGURANGAN QUANTITY MENTAH
                if(ISSET($data[1]) && $selisih>0)
                {
