@@ -43,10 +43,6 @@ class ValidationController extends Controller {
       $this->active_menu = '_'.str_replace( '.', '', '02.04.00.00.00' ).'_';
 		$this->db_mobile_ins = DB::connection('mobile_ins');
       $this->db_ebcc = DB::connection('ebcc');
-
-		$data = $this->db_ebcc->table('T_HASILPANEN_KUALTAS')->
-		select('ID_BCC','ID_KUALITAS','QTY')->limit(100)->get()->pluck('ID_KUALITAS')->toArray();
-		dd($data);
 	}
 
 	#   		 									  		            ▁ ▂ ▄ ▅ ▆ ▇ █ Index
