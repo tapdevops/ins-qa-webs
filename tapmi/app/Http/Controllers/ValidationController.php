@@ -303,11 +303,11 @@ class ValidationController extends Controller {
          ]);
 
          // UPDATE BCC HASIL PANEN KUALITAS 
-         if($request->jumlah_ebcc_validated != $request->jjg_ebcc_total)
+         if(intval($request->jjg_validate_total)+0 != $request->jumlah_ebcc_validated)
          {
-            if($request->jumlah_ebcc_validated >= $request->jjg_ebcc_total)
+            if(intval($request->jjg_validate_total)+0 >= $request->jumlah_ebcc_validated)
             {
-               $selisih = $request->jumlah_ebcc_validated - $request->jjg_ebcc_total;
+               $selisih = intval($request->jjg_validate_total)+0 - $request->jumlah_ebcc_validated;
                $this->db_ebcc->table('T_HASILPANEN_KUALTAS')->where([
                   'ID_BCC'=>$TRValidasiDetail->no_bcc,
                   'ID_KUALITAS' => 3
@@ -315,7 +315,7 @@ class ValidationController extends Controller {
             }
             else 
             {
-               $selisih = $request->jjg_ebcc_total - $request->jumlah_ebcc_validated;
+               $selisih = $request->jumlah_ebcc_validated - intval($request->jjg_validate_total)+0;
                $data = $this->db_ebcc->table('T_HASILPANEN_KUALTAS')->
                                        where(['ID_BCC'=>$TRValidasiDetail->no_bc])->
                                        whereIn('ID_KUALITAS',[1,3,4,6,15])->
