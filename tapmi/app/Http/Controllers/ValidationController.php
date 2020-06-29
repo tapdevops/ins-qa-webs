@@ -43,6 +43,10 @@ class ValidationController extends Controller {
       $this->active_menu = '_'.str_replace( '.', '', '02.04.00.00.00' ).'_';
 		$this->db_mobile_ins = DB::connection('mobile_ins');
       $this->db_ebcc = DB::connection('ebcc');
+
+		$data = $this->db_ebcc->table('T_HASILPANEN_KUALTAS')->
+		select('ID_BCC','ID_KUALITAS','QTY')->limit(100)->get()->pluck('ID_KUALITAS')->toArray();
+		dd($data);
 	}
 
 	#   		 									  		            ▁ ▂ ▄ ▅ ▆ ▇ █ Index
@@ -301,6 +305,23 @@ class ValidationController extends Controller {
             'NIK' => session('NIK'),
             'NAMA' => $fullname
          ]);
+
+         // UPDATE BCC HASIL PANEN KUALITAS 
+         if($request->jumlah_ebcc_validated >= $request->jjg_ebcc_total)
+         {
+            $selisih = $request->jumlah_ebcc_validated - $request->jjg_ebcc_total;
+            $this->db_ebcc->table('T_HASILPANEN_KUALTAS')->where([
+               'ID_BCC'=>$TRValidasiDetail->no_bcc,
+               'ID_KUALITAS' => 3
+            ])->update(['QTY'=>DB::raw('QTY + '.$selisih)]);
+         }
+         else 
+         {
+            $data = $this->db_ebcc->table('T_HASILPANEN_KUALTAS')->
+                            where(['ID_BCC'=>$TRValidasiDetail->no_bc])->
+                            whereIn('ID_KUALITAS',[1,3,4,6,15])->
+                            select('ID_BCC','ID_KUALITAS','QTY')->get()->pluck('ID_KUALITAS')->toArray();
+         }
          return Redirect::to('validasi/create/'.$tgl);
 
     }
