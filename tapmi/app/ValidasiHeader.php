@@ -196,6 +196,7 @@ class ValidasiHeader extends Model{
                                              LEFT JOIN EBCC.T_AFDELING TA ON TA.ID_BA_AFD = TB.ID_BA_AFD
                                              LEFT JOIN EBCC.T_BUSSINESSAREA TBA ON TBA.ID_BA = TA.ID_BA
                                              LEFT JOIN EBCC.T_EMPLOYEE EMP_EBCC ON EMP_EBCC.NIK = HDP.NIK_KERANI_BUAH
+                                             JOIN EBCC.T_STATUS_TO_SAP_EBCC STAT_EBCC ON STAT_EBCC.NO_BCC = HP.NO_BCC
          WHERE
                HDP.NIK_KERANI_BUAH = '$nik_kerani' AND
                HDP.NIK_MANDOR = '$nik_mandor' AND
@@ -205,7 +206,7 @@ class ValidasiHeader extends Model{
                AND
                HP.NO_BCC NOT IN (SELECT NO_BCC FROM TR_VALIDASI_DETAIL WHERE ID_VALIDASI = 
                HDP.NIK_KERANI_BUAH || '-' || HDP.NIK_MANDOR || '-'  || to_char(HDP.TANGGAL_RENCANA,'YYYYMMDD'))
-               AND HP.NO_BCC IN ( SELECT NO_BCC FROM EBCC.T_STATUS_TO_SAP_EBCC STATUS_EBCC WHERE NO_BCC = HP.NO_BCC AND NVL(POST_STATUS,'') = '')
+               AND POST_STATUS is null
          ORDER BY DBMS_RANDOM.VALUE FETCH NEXT 1 ROWS ONLY ");
          
 		return $get;
