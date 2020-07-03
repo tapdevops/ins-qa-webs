@@ -299,8 +299,8 @@ class ValidationController extends Controller {
             'ROLES' => session('USER_ROLE'),
             'NIK' => session('NIK'),
             'NAMA' => $fullname,
-            'NIK_KRANI_BUAH' => session('NIK'),
-            'NIK_MANDOR' => session('NIK')
+            'NIK_KRANI_BUAH' => $TRValidasiDetail->nik_krani_buah,
+            'NIK_MANDOR' => $TRValidasiDetail->nik_mandor
          ]);
 
          // UPDATE BCC HASIL PANEN KUALITAS 
