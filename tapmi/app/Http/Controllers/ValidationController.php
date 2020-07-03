@@ -303,7 +303,9 @@ class ValidationController extends Controller {
             'TANGGAL_VALIDASI' => date('Y-m-d H:i:s'),
             'ROLES' => session('USER_ROLE'),
             'NIK' => session('NIK'),
-            'NAMA' => $fullname
+            'NAMA' => $fullname,
+            'NIK_KRANI_BUAH' => session('NIK'),
+            'NIK_MANDOR' => session('NIK')
          ]);
 
          // UPDATE BCC HASIL PANEN KUALITAS 
