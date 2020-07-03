@@ -43,10 +43,6 @@ class ValidationController extends Controller {
       $this->active_menu = '_'.str_replace( '.', '', '02.04.00.00.00' ).'_';
 		$this->db_mobile_ins = DB::connection('mobile_ins');
       $this->db_ebcc = DB::connection('ebcc');
-
-		$data = $this->db_ebcc->table('T_HASILPANEN_KUALTAS')->
-		select('ID_BCC','ID_KUALITAS','QTY')->limit(100)->get()->pluck('ID_KUALITAS')->toArray();
-		dd($data);
 	}
 
 	#   		 									  		            ▁ ▂ ▄ ▅ ▆ ▇ █ Index
@@ -257,7 +253,6 @@ class ValidationController extends Controller {
 
     public function create_action(Request $request)
     { 
-        // dd($request);
         date_default_timezone_set('Asia/Jakarta');
         $id_val = $request->id_validasi."-".$request->ba_code."-".$request->afd_code;
         $id = str_replace("/",".",$id_val);
@@ -309,21 +304,79 @@ class ValidationController extends Controller {
          ]);
 
          // UPDATE BCC HASIL PANEN KUALITAS 
-         if($request->jumlah_ebcc_validated >= $request->jjg_ebcc_total)
+         if(intval($request->jjg_validate_total)+0 != $request->jumlah_ebcc_validated)
          {
-            $selisih = $request->jumlah_ebcc_validated - $request->jjg_ebcc_total;
-            $this->db_ebcc->table('T_HASILPANEN_KUALTAS')->where([
-               'ID_BCC'=>$TRValidasiDetail->no_bcc,
-               'ID_KUALITAS' => 3
-            ])->update(['QTY'=>DB::raw('QTY + '.$selisih)]);
+            if(intval($request->jjg_validate_total)+0 >= $request->jumlah_ebcc_validated)
+            {
+               $selisih = intval($request->jjg_validate_total)+0 - $request->jumlah_ebcc_validated;
+               $this->db_ebcc->table('T_HASILPANEN_KUALTAS')->where([
+                  'ID_BCC'=>$TRValidasiDetail->no_bcc,
+                  'ID_KUALITAS' => 3
+               ])->update(['QTY'=>DB::raw('QTY + '.$selisih)]);
+            }
+            else 
+            {
+               $selisih = $request->jumlah_ebcc_validated - intval($request->jjg_validate_total)+0;
+               $data = $this->db_ebcc->table('T_HASILPANEN_KUALTAS')->
+                                       where(['ID_BCC'=>$TRValidasiDetail->no_bcc])->
+                                       whereIn('ID_KUALITAS',[1,3,4,6,15])->
+                                       get()->pluck('qty','id_kualitas')->toArray();
+               // PENGURANGAN QUANTITY MENTAH
+               if(ISSET($data[1]) && $selisih>0)
+               {
+                  $pengurangan = $data[1] - $selisih;
+                  $selisih -= $data[1]>=$selisih?$selisih:$data[1];
+                  $data[1] = $pengurangan>=0?$pengurangan:0;
+                  $this->db_ebcc->table('T_HASILPANEN_KUALTAS')->where([
+                     'ID_BCC'=>$TRValidasiDetail->no_bcc,
+                     'ID_KUALITAS' => 1
+                  ])->update(['QTY'=>$data[1]]);
+               }
+               // PENGURANGAN QUANTITY BUSUK
+               if(ISSET($data[6]) && $selisih>0)
+               {
+                  $pengurangan = $data[6] - $selisih;
+                  $selisih -= $data[6]>=$selisih?$selisih:$data[6];
+                  $data[6] = $pengurangan>=0?$pengurangan:0;
+                  $this->db_ebcc->table('T_HASILPANEN_KUALTAS')->where([
+                     'ID_BCC'=>$TRValidasiDetail->no_bcc,
+                     'ID_KUALITAS' => 6
+                  ])->update(['QTY'=>$data[6]]);
+               }
+               // PENGURANGAN QUANTITY JAJANG KOSONG
+               if(ISSET($data[15]) && $selisih>0)
+               {
+                  $pengurangan = $data[15] - $selisih;
+                  $selisih -= $data[15]>=$selisih?$selisih:$data[6];
+                  $data[15] = $pengurangan>=0?$pengurangan:0;
+                  $this->db_ebcc->table('T_HASILPANEN_KUALTAS')->where([
+                     'ID_BCC'=>$TRValidasiDetail->no_bcc,
+                     'ID_KUALITAS' => 15
+                  ])->update(['QTY'=>$data[15]]);
+               }
+               // PENGURANGAN QUANTITY OVERRIPE
+               if(ISSET($data[4]) && $selisih>0)
+               {
+                  $pengurangan = $data[4] - $selisih;
+                  $selisih -= $data[4]>=$selisih?$selisih:$data[6];
+                  $data[4] = $pengurangan>=0?$pengurangan:0;
+                  $this->db_ebcc->table('T_HASILPANEN_KUALTAS')->where([
+                     'ID_BCC'=>$TRValidasiDetail->no_bcc,
+                     'ID_KUALITAS' => 4
+                  ])->update(['QTY'=>$data[4]]);
+               }
+               // PENGURANGAN QUANTITY MASAK
+               if(ISSET($data[3]) && $selisih>0)
+               {
+                  $data[3] = $data[3] - $selisih;
+                  $this->db_ebcc->table('T_HASILPANEN_KUALTAS')->where([
+                     'ID_BCC'=>$TRValidasiDetail->no_bcc,
+                     'ID_KUALITAS' => 3
+                  ])->update(['QTY'=>$data[3]]);
+               }
+            }
          }
-         else 
-         {
-            $data = $this->db_ebcc->table('T_HASILPANEN_KUALTAS')->
-                            where(['ID_BCC'=>$TRValidasiDetail->no_bc])->
-                            whereIn('ID_KUALITAS',[1,3,4,6,15])->
-                            select('ID_BCC','ID_KUALITAS','QTY')->get()->pluck('ID_KUALITAS')->toArray();
-         }
+         
          return Redirect::to('validasi/create/'.$tgl);
 
     }
