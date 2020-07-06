@@ -348,7 +348,7 @@ class ValidationController extends Controller {
                if(ISSET($data[15]) && $selisih>0)
                {
                   $pengurangan = $data[15] - $selisih;
-                  $selisih -= $data[15]>=$selisih?$selisih:$data[6];
+                  $selisih -= $data[15]>=$selisih?$selisih:$data[15];
                   $data[15] = $pengurangan>=0?$pengurangan:0;
                   $this->db_ebcc->table('T_HASILPANEN_KUALTAS')->where([
                      'ID_BCC'=>$TRValidasiDetail->no_bcc,
@@ -359,7 +359,7 @@ class ValidationController extends Controller {
                if(ISSET($data[4]) && $selisih>0)
                {
                   $pengurangan = $data[4] - $selisih;
-                  $selisih -= $data[4]>=$selisih?$selisih:$data[6];
+                  $selisih -= $data[4]>=$selisih?$selisih:$data[4];
                   $data[4] = $pengurangan>=0?$pengurangan:0;
                   $this->db_ebcc->table('T_HASILPANEN_KUALTAS')->where([
                      'ID_BCC'=>$TRValidasiDetail->no_bcc,
