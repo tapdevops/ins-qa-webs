@@ -294,6 +294,7 @@ class ValidationController extends Controller {
 
          // INSERT LOG TO EBCC
          $this->db_ebcc->table('T_VALIDASI')->insert([
+            'TANGGAL_EBCC'=>$TRValidasiDetail->tanggal_ebcc,
             'NO_BCC'=>$TRValidasiDetail->no_bcc,
             'TANGGAL_VALIDASI' => date('Y-m-d H:i:s'),
             'ROLES' => session('USER_ROLE'),
