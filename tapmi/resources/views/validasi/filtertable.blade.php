@@ -45,7 +45,7 @@
 				<td>{{ $q['nama_krani_buah'] }} - {{$q['nik_kerani_buah']}}</td>
 				<td>{{ $q['id_afd'] }}</td>
 				<td>{{ $q['nama_mandor'] }} - {{$q['nik_mandor']}}</td>
-				<td>0</td>
+				<td>{{ $q['aslap_validation'] }}</td>
 				<td>{{ $q['jumlah_ebcc_validated'] }} / {{ $q['target_validasi'] }}  </td>
 				<?php 
 					$id = str_replace("/",".",$q['id_validasi']);
@@ -61,78 +61,24 @@
 </table>
 </div>
 <script>
-	$("#cekaslap").click(function(){
+	$(document).on('click','#cekaslap',function(){
+		$('#cekaslap>span>i').addClass('fa-spin');
+		$('#cekaslap>span>span').html('Proses pengecekan');
 		cekaslap();
 	});
 	function cekaslap(){
-		var search = document.getElementById('generalSearch').value;
-		var datatable = {
-							init: function() {
-								var e;
-								e = $(".m-datatable").mDatatable({
-									data: {
-										saveState: {
-											cookie: !1
-										},
-										
-										autoColumns: true
-									},
-									search: {
-										input: $( "#generalSearch" )
-									},
-
-
-									columns: [
-										{
-											field: "Tanggal",
-											filterable: true,
-											sortable: false,
-											width: 0,
-											visibility: false,
-										},{
-											field: "Krani Buah",
-											filterable: true,
-											sortable: false,
-											width: 300
-										}, {
-											field: "Afdeling",
-											width: '90px',
-											sortable: false,
-										},{
-											field: "Mandor Panen",
-											width: 300,
-											sortable: false,
-										}, {
-											field: "BCC berhasil Divalidasi Aslap",
-											width: 100,
-											sortable: false,
-										}, {
-											field: "Jumlah BCC yang Divalidasi",
-											width: 100,
-											sortable: false,
-										}, {
-											field: "Keterangan",
-											width: 100,
-											sortable: false,
-										}
-									]
-
-								})
-							}
-						};
-		// event.preventDefault();
 		const CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+		var search = document.getElementById('generalSearch').value;
 		$.ajax({
-			url:'/getNewdata2',
+			url:'validasi/cek_aslap/',
 			type:'get',
 			data:{
 				CSRF_TOKEN,
 				'tanggal' : search
 			},
 			success:function(data){
-				$("div#table").html(data);
-				datatable.init();
-				$("#generalSearch").val(search);
+				console.log(data);
+				// $("#tampilkan").trigger('click');
 			}
 		})
 	}

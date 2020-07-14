@@ -80,6 +80,13 @@ class ValidationController extends Controller {
       return view( 'validasi.listheader', $data );
    }
 
+   public function cek_aslap(Request $request){
+      $result = ( new ValidasiHeader() )->validasi_cek_aslap($request->tanggal);
+      $res = json_encode($result);
+      $data['data_header'] = json_decode($res,true);
+      return $data;
+   }
+
 
    public function getEbccValHeader(request $request){
       $data['active_menu'] = $this->active_menu;
