@@ -12,12 +12,21 @@
 						<span>Cek Validasi Aslap</span>
 					</span>
 				</div>
-				<a href="{{ URL::to('/validasi/create/'.$tgl_validasi) }}" class="btn btn-focus m-btn m-btn--custom m-btn--icon m-btn--air m-btn--pill">
-					<span>
-						<i class="fa fa-clipboard"></i>
-						<span>Validasi</span>
-					</span>
-				</a>
+					@if($status_validasi_aslap==1)
+					<a href="{{ URL::to('/validasi/create/'.$tgl_validasi) }}" class="btn btn-focus m-btn m-btn--custom m-btn--icon m-btn--air m-btn--pill">
+						<span>
+							<i class="fa fa-clipboard"></i>
+							<span>Validasi</span>
+						</span>
+					</a>
+					@else
+					<div class="btn btn-focus m-btn m-btn--custom m-btn--icon m-btn--air m-btn--pil disabled" style="border-radius: 60px;">
+						<span>
+							<i class="fa fa-clipboard"></i>
+							<span>Validasi</span>
+						</span>
+					</div>
+					@endif
 				@endif
 				<div class="m-separator m-separator--dashed d-xl-none"></div>
 			</div>
@@ -77,8 +86,26 @@
 				'tanggal' : search
 			},
 			success:function(data){
-				console.log(data);
-				// $("#tampilkan").trigger('click');
+				// console.log(data);
+				$("#tampilkan").trigger('click');
+				toastr.options = {
+					"closeButton": false,
+					"debug": false,
+					"newestOnTop": false,
+					"progressBar": false,
+					"positionClass": "toast-top-right",
+					"preventDuplicates": false,
+					"onclick": null,
+					"showDuration": "300",
+					"hideDuration": "1000",
+					"timeOut": "5000",
+					"extendedTimeOut": "1000",
+					"showEasing": "swing",
+					"hideEasing": "linear",
+					"showMethod": "fadeIn",
+					"hideMethod": "fadeOut"
+				};
+				toastr.success( 'Pengecekan validasi Aslap selesai' , "Sukses");
 			}
 		})
 	}

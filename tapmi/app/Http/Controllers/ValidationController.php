@@ -41,7 +41,7 @@ class ValidationController extends Controller {
 
 	public function __construct() {
       $this->active_menu = '_'.str_replace( '.', '', '02.04.00.00.00' ).'_';
-		$this->db_mobile_ins = DB::connection('mobile_ins');
+		  $this->db_mobile_ins = DB::connection('mobile_ins');
       $this->db_ebcc = DB::connection('ebcc');
 	}
 
@@ -83,8 +83,146 @@ class ValidationController extends Controller {
    public function cek_aslap(Request $request){
       $result = ( new ValidasiHeader() )->validasi_cek_aslap($request->tanggal);
       $res = json_encode($result);
-      $data['data_header'] = json_decode($res,true);
-      return $data;
+      $data = json_decode($res,true);
+      dd($data);
+      $day =  date("Y-m-d", strtotime($request->tanggal));
+      foreach ($data as $key => $value) 
+      {
+          $id_validasi = $value['ebcc_nik_kerani_buah'].'-'.$value['ebcc_nik_mandor'].'-'.$day;
+          $check = TRValidasiDetail::where(['id_validasi'=>$id_validasi,'no_bcc'=>$value['ebcc_no_bcc']])->first();
+          if(!$check)
+          {
+            $emp = Employee::where('EMPLOYEE_NIK',session('NIK'))->first();
+            $fullname = $emp['employee_fullname'];
+            TRValidasiDetail::insert([
+              'uuid' => Uuid::uuid1()->toString(),
+              'id_validasi' => $id_validasi,
+              'tanggal_ebcc' => $value['val_date_time'],
+              'nik_krani_buah' => $value['ebcc_nik_kerani_buah'],
+              'nama_krani_buah' => $value['ebcc_nama_kerani_buah'],
+              'nik_mandor' => $value['ebcc_nik_mandor'],
+              'nama_mandor' => $value['ebcc_nama_mandor'],
+              'ba_code' => $value['val_werks'],
+              'ba_name' => $value['val_est_name'],
+              'afd_code' => $value['val_afd_code'],
+              'block_code' => $value['val_block_code'],
+              'block_name' => $value['val_block_name'],
+              'no_tph' => $value['val_tph_code'],
+              'no_bcc' => $value['ebcc_no_bcc'],
+              'jjg_ebcc_bm' => $value['ebcc_jml_bm'],
+              'jjg_ebcc_bk' => $value['ebcc_jml_bk'],
+              'jjg_ebcc_ms' => $value['ebcc_jml_ms'],
+              'jjg_ebcc_or' => $value['ebcc_jml_or'],
+              'jjg_ebcc_bb' => $value['ebcc_jml_bb'],
+              'jjg_ebcc_jk' => $value['ebcc_jml_jk'],
+              'jjg_ebcc_ba' => $value['ebcc_jml_ba'],
+              'jjg_ebcc_total' => $value['ebcc_jjg_panen'],
+              'jjg_ebcc_1' => NULL,
+              'jjg_ebcc_2' => NULL,
+              'jjg_validate_bm' => $value['val_jml_1'],
+              'jjg_validate_bk' => $value['val_jml_2'],
+              'jjg_validate_ms' => $value['val_jml_3'],
+              'jjg_validate_or' => $value['val_jml_4'],
+              'jjg_validate_bb' => $value['val_jml_6'],
+              'jjg_validate_jk' => $value['val_jml_15'],
+              'jjg_validate_ba' => $value['val_jml_16'],
+              'jjg_validate_total' => $value['val_total_jjg'],
+              'jjg_validate_1' => NULL,
+              'jjg_validate_2' => NULL,
+              'kondisi_foto' => NULL,
+              'insert_time' => date('Y-M-d H.i.s'),
+              'insert_user' => $value['val_nik_validator'],
+              'insert_user_fullname' => $value['val_nama_validator'],
+              'insert_user_userrole' => $value['val_jabatan_validator']
+            ]);
+
+            // INSERT LOG TO EBCC
+            $this->db_ebcc->table('T_VALIDASI')->insert([
+               'TANGGAL_EBCC'=>$value['val_date_time'],
+               'NO_BCC'=>$value['ebcc_no_bcc'],
+               'TANGGAL_VALIDASI' => date('Y-m-d H:i:s'),
+               'ROLES' => $value['val_jabatan_validator'],
+               'NIK' => $value['val_nik_validator'],
+               'NAMA' => $value['val_nama_validator'],
+               'NIK_KRANI_BUAH' => $value['ebcc_nama_kerani_buah'],
+               'NIK_MANDOR' => $value['ebcc_nama_kerani_buah']
+            ]);
+   
+            // UPDATE BCC HASIL PANEN KUALITAS 
+            if(intval($value['val_total_jjg'])+0 != $value['ebcc_jjg_panen'])
+            {
+               if(intval($value['val_total_jjg'])+0 >= $value['ebcc_jjg_panen'])
+               {
+                  $selisih = intval($value['val_total_jjg'])+0 - $value['ebcc_jjg_panen'];
+                  $this->db_ebcc->table('T_HASILPANEN_KUALTAS')->where([
+                     'ID_BCC'=>$value['ebcc_no_bcc'],
+                     'ID_KUALITAS' => 3
+                  ])->update(['QTY'=>DB::raw('QTY + '.$selisih)]);
+               }
+               else 
+               {
+                  $selisih = $value['ebcc_jjg_panen'] - intval($value['val_total_jjg'])+0;
+                  $data = $this->db_ebcc->table('T_HASILPANEN_KUALTAS')->
+                                          where(['ID_BCC'=>$value['ebcc_no_bcc']])->
+                                          whereIn('ID_KUALITAS',[1,3,4,6,15])->
+                                          get()->pluck('qty','id_kualitas')->toArray();
+                  // PENGURANGAN QUANTITY MENTAH
+                  if(ISSET($data[1]) && $selisih>0)
+                  {
+                     $pengurangan = $data[1] - $selisih;
+                     $selisih -= $data[1]>=$selisih?$selisih:$data[1];
+                     $data[1] = $pengurangan>=0?$pengurangan:0;
+                     $this->db_ebcc->table('T_HASILPANEN_KUALTAS')->where([
+                        'ID_BCC'=>$value['ebcc_no_bcc'],
+                        'ID_KUALITAS' => 1
+                     ])->update(['QTY'=>$data[1]]);
+                  }
+                  // PENGURANGAN QUANTITY BUSUK
+                  if(ISSET($data[6]) && $selisih>0)
+                  {
+                     $pengurangan = $data[6] - $selisih;
+                     $selisih -= $data[6]>=$selisih?$selisih:$data[6];
+                     $data[6] = $pengurangan>=0?$pengurangan:0;
+                     $this->db_ebcc->table('T_HASILPANEN_KUALTAS')->where([
+                        'ID_BCC'=>$value['ebcc_no_bcc'],
+                        'ID_KUALITAS' => 6
+                     ])->update(['QTY'=>$data[6]]);
+                  }
+                  // PENGURANGAN QUANTITY JAJANG KOSONG
+                  if(ISSET($data[15]) && $selisih>0)
+                  {
+                     $pengurangan = $data[15] - $selisih;
+                     $selisih -= $data[15]>=$selisih?$selisih:$data[15];
+                     $data[15] = $pengurangan>=0?$pengurangan:0;
+                     $this->db_ebcc->table('T_HASILPANEN_KUALTAS')->where([
+                        'ID_BCC'=>$value['ebcc_no_bcc'],
+                        'ID_KUALITAS' => 15
+                     ])->update(['QTY'=>$data[15]]);
+                  }
+                  // PENGURANGAN QUANTITY OVERRIPE
+                  if(ISSET($data[4]) && $selisih>0)
+                  {
+                     $pengurangan = $data[4] - $selisih;
+                     $selisih -= $data[4]>=$selisih?$selisih:$data[4];
+                     $data[4] = $pengurangan>=0?$pengurangan:0;
+                     $this->db_ebcc->table('T_HASILPANEN_KUALTAS')->where([
+                        'ID_BCC'=>$value['ebcc_no_bcc'],
+                        'ID_KUALITAS' => 4
+                     ])->update(['QTY'=>$data[4]]);
+                  }
+                  // PENGURANGAN QUANTITY MASAK
+                  if(ISSET($data[3]) && $selisih>0)
+                  {
+                     $data[3] = $data[3] - $selisih;
+                     $this->db_ebcc->table('T_HASILPANEN_KUALTAS')->where([
+                        'ID_BCC'=>$value['ebcc_no_bcc'],
+                        'ID_KUALITAS' => 3
+                     ])->update(['QTY'=>$data[3]]);
+                  }
+               }
+            }
+          }
+      }
    }
 
 
@@ -104,6 +242,14 @@ class ValidationController extends Controller {
       $res = json_encode( $result);
       $data['tgl_validasi'] = $day;
       $data['data_header'] = json_decode($res,true);
+      $status_validasi_aslap = 1;
+      foreach ( $data['data_header'] as $key => $q ){
+        if($q['aslap_validation']==0)
+        {
+          $status_validasi_aslap = 0;
+        }
+      }
+      $data['status_validasi_aslap'] = $status_validasi_aslap;
       $data['records'] = $result;
       $valid = ( new ValidasiHeader() )->count_valid($day);
       $count_valid = count($valid);
