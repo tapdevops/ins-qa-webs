@@ -4,37 +4,42 @@
 		<div class="row">
 			<div class="col-md-4"></div>
 			<div class="col-md-4"></div>
-				@if(!empty($records) && $status == 1)
-			<div class="col-md-4 m--align-right" style="white-space:nowrap;">
+			@if(!empty($records) && $status == 1)
+			<div class="col-md-4 m--align-right" style="white-space:nowrap;margin-bottom:20px;">
 				<div id="cekaslap" class="btn btn-danger m-btn m-btn--custom m-btn--icon m-btn--air m-btn--pill">
 					<span>
 						<i class="fa fa-refresh"></i>
 						<span>Cek Validasi Aslap</span>
 					</span>
 				</div>
-					@if($status_validasi_aslap==1)
-					<a href="{{ URL::to('/validasi/create/'.$tgl_validasi) }}" class="btn btn-focus m-btn m-btn--custom m-btn--icon m-btn--air m-btn--pill">
-						<span>
-							<i class="fa fa-clipboard"></i>
-							<span>Validasi</span>
-						</span>
-					</a>
-					@else
-					<div class="btn btn-focus m-btn m-btn--custom m-btn--icon m-btn--air m-btn--pil disabled" style="border-radius: 60px;">
-						<span>
-							<i class="fa fa-clipboard"></i>
-							<span>Validasi</span>
-						</span>
-					</div>
-					@endif
+				@if($status_validasi_aslap==1)
+				<a href="{{ URL::to('/validasi/create/'.$tgl_validasi) }}" class="btn btn-focus m-btn m-btn--custom m-btn--icon m-btn--air m-btn--pill">
+					<span>
+						<i class="fa fa-clipboard"></i>
+						<span>Validasi</span>
+					</span>
+				</a>
+				@else
+				<div class="btn btn-focus m-btn m-btn--custom m-btn--icon m-btn--air m-btn--pil disabled" style="border-radius: 60px;">
+					<span>
+						<i class="fa fa-clipboard"></i>
+						<span>Validasi</span>
+					</span>
+				</div>
 				@endif
 				<div class="m-separator m-separator--dashed d-xl-none"></div>
 			</div>
+			@endif
+			@if($status_validasi_aslap==0)
+			<div class="col-md-12 m--align-center" style="white-space:nowrap;">
+				<h5 class="m-subheader__title m-subheader__title--separator text-danger">Anda harus melakukan "Cek Validasi Aslap" terlebih dulu</h5>
+			</div>
+			@endif
 		</div>
 	</div>
 	
 </div>
-<table class="m-datatable" id="html_table" width="100%" style="margin-top:20px;">
+<table class="m-datatable" id="html_table" width="100%">
 	<thead>
 	<!-- <thead bgcolor="#f0f0f0"> -->
 		<tr>
