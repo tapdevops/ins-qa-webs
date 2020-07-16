@@ -168,7 +168,21 @@ class ValidasiHeader extends Model{
 		return $get;
    }
 
-   public function validasi_askep($ba_code,$afd,$nik_kerani,$nik_mandor,$tgl_rencana){
+   public function validasi_askep($ba_code,$afd,$nik_kerani,$nik_mandor,$tgl_rencana,$no_val){
+   	  $get_max = $this->db_mobile_ins->select("SELECT PARAMETER_DESC
+                              FROM mobile_inspection.tm_parameter 
+                              WHERE PARAMETER_GROUP = 'VALIDASI_ASKEP'
+                              AND PARAMETER_NAME = 'TARGET_VALIDASI'");
+   	  if($get_max[0]->parameter_desc==$no_val)
+   	  {
+   	  	$in_query = "HP.NO_BCC IN (SELECT NO_BCC FROM TR_VALIDASI_DETAIL WHERE ID_VALIDASI = 
+               HDP.NIK_KERANI_BUAH || '-' || HDP.NIK_MANDOR || '-'  || to_char(HDP.TANGGAL_RENCANA,'YYYYMMDD') AND INSERT_USER_USERROLE <> 'KEPALA_KEBUN')";
+   	  }
+   	  else 
+   	  {
+   	  	$in_query = "HP.NO_BCC NOT IN (SELECT NO_BCC FROM TR_VALIDASI_DETAIL WHERE ID_VALIDASI = 
+               HDP.NIK_KERANI_BUAH || '-' || HDP.NIK_MANDOR || '-'  || to_char(HDP.TANGGAL_RENCANA,'YYYYMMDD'))";
+   	  }
       $get = $this->db_mobile_ins->select(" SELECT 
                                              HDP.TANGGAL_RENCANA,
                                              HDP.NIK_MANDOR,
@@ -183,15 +197,17 @@ class ValidasiHeader extends Model{
                                              TB.BLOK_NAME,
                                              TBA.NAMA_BA,
                                              TA.ID_AFD,
-                                             NVL( EBCC.F_GET_HASIL_PANEN_BUNCH ( TBA.ID_BA, HP.NO_REKAP_BCC, HP.NO_BCC, 'BUNCH_HARVEST' ), 0 ) as JJG_PANEN,
-                                             NVL( EBCC.F_GET_HASIL_PANEN_NUMBERX( HDP.ID_RENCANA, HP.NO_REKAP_BCC, HP.NO_BCC, 1 ), 0 ) AS EBCC_JML_BM,
-                                             NVL( EBCC.F_GET_HASIL_PANEN_NUMBERX( HDP.ID_RENCANA, HP.NO_REKAP_BCC, HP.NO_BCC, 2 ), 0 ) AS EBCC_JML_BK,
-                                             NVL( EBCC.F_GET_HASIL_PANEN_NUMBERX( HDP.ID_RENCANA, HP.NO_REKAP_BCC, HP.NO_BCC, 3 ), 0 ) AS EBCC_JML_MS,
-                                             NVL( EBCC.F_GET_HASIL_PANEN_NUMBERX( HDP.ID_RENCANA, HP.NO_REKAP_BCC, HP.NO_BCC, 4 ), 0 ) AS EBCC_JML_OR,
-                                             NVL( EBCC.F_GET_HASIL_PANEN_NUMBERX( HDP.ID_RENCANA, HP.NO_REKAP_BCC, HP.NO_BCC, 6 ), 0 ) AS EBCC_JML_BB,
-                                             NVL( EBCC.F_GET_HASIL_PANEN_NUMBERX( HDP.ID_RENCANA, HP.NO_REKAP_BCC, HP.NO_BCC, 15 ), 0 ) AS EBCC_JML_JK,
-                                             NVL( EBCC.F_GET_HASIL_PANEN_NUMBERX( HDP.ID_RENCANA, HP.NO_REKAP_BCC, HP.NO_BCC, 16 ), 0 ) AS EBCC_JML_BA,   
-                                             NVL( EBCC.F_GET_HASIL_PANEN_BRDX ( HDP.ID_RENCANA, HP.NO_REKAP_BCC, HP.NO_BCC ), 0 ) AS EBCC_JML_BRD
+                                             NVL(V_DETAIL.JJG_EBCC_TOTAL,NVL( EBCC.F_GET_HASIL_PANEN_BUNCH ( TBA.ID_BA, HP.NO_REKAP_BCC, HP.NO_BCC, 'BUNCH_HARVEST' ), 0 )) as JJG_PANEN,
+                                             NVL(V_DETAIL.JJG_EBCC_BM,NVL( EBCC.F_GET_HASIL_PANEN_NUMBERX( HDP.ID_RENCANA, HP.NO_REKAP_BCC, HP.NO_BCC, 1 ), 0 )) AS EBCC_JML_BM,
+                                             NVL(V_DETAIL.JJG_EBCC_BK,NVL( EBCC.F_GET_HASIL_PANEN_NUMBERX( HDP.ID_RENCANA, HP.NO_REKAP_BCC, HP.NO_BCC, 2 ), 0 )) AS EBCC_JML_BK,
+                                             NVL(V_DETAIL.JJG_EBCC_MS,NVL( EBCC.F_GET_HASIL_PANEN_NUMBERX( HDP.ID_RENCANA, HP.NO_REKAP_BCC, HP.NO_BCC, 3 ), 0 )) AS EBCC_JML_MS,
+                                             NVL(V_DETAIL.JJG_EBCC_OR,NVL( EBCC.F_GET_HASIL_PANEN_NUMBERX( HDP.ID_RENCANA, HP.NO_REKAP_BCC, HP.NO_BCC, 4 ), 0 )) AS EBCC_JML_OR,
+                                             NVL(V_DETAIL.JJG_EBCC_BB,NVL( EBCC.F_GET_HASIL_PANEN_NUMBERX( HDP.ID_RENCANA, HP.NO_REKAP_BCC, HP.NO_BCC, 6 ), 0 )) AS EBCC_JML_BB,
+                                             NVL(V_DETAIL.JJG_EBCC_JK,NVL( EBCC.F_GET_HASIL_PANEN_NUMBERX( HDP.ID_RENCANA, HP.NO_REKAP_BCC, HP.NO_BCC, 15 ), 0 )) AS EBCC_JML_JK,
+                                             NVL(V_DETAIL.JJG_EBCC_BA,NVL( EBCC.F_GET_HASIL_PANEN_NUMBERX( HDP.ID_RENCANA, HP.NO_REKAP_BCC, HP.NO_BCC, 16 ), 0 )) AS EBCC_JML_BA,   
+                                             NVL( EBCC.F_GET_HASIL_PANEN_BRDX ( HDP.ID_RENCANA, HP.NO_REKAP_BCC, HP.NO_BCC ), 0 ) AS EBCC_JML_BRD,
+                                             DATA_SOURCE,
+                                             VAL_EBCC_CODE
                                        FROM (
                                                 SELECT
                                                    HRP.ID_RENCANA AS ID_RENCANA,
@@ -211,6 +227,7 @@ class ValidasiHeader extends Model{
                                              LEFT JOIN EBCC.T_AFDELING TA ON TA.ID_BA_AFD = TB.ID_BA_AFD
                                              LEFT JOIN EBCC.T_BUSSINESSAREA TBA ON TBA.ID_BA = TA.ID_BA
                                              LEFT JOIN EBCC.T_EMPLOYEE EMP_EBCC ON EMP_EBCC.NIK = HDP.NIK_KERANI_BUAH
+                                             LEFT JOIN TR_VALIDASI_DETAIL V_DETAIL ON HP.NO_BCC = V_DETAIL.NO_BCC
                                              -- JOIN EBCC.T_STATUS_TO_SAP_EBCC STAT_EBCC ON STAT_EBCC.NO_BCC = HP.NO_BCC
          WHERE
                HDP.NIK_KERANI_BUAH = '$nik_kerani' AND
@@ -219,8 +236,7 @@ class ValidasiHeader extends Model{
                SUBSTR (HDP.ID_BA_AFD_BLOK, 1, 4) = '$ba_code' AND --id_ba
                SUBSTR (HDP.ID_BA_AFD_BLOK, 5, 1) = '$afd'  -- id_afd
                AND
-               HP.NO_BCC NOT IN (SELECT NO_BCC FROM TR_VALIDASI_DETAIL WHERE ID_VALIDASI = 
-               HDP.NIK_KERANI_BUAH || '-' || HDP.NIK_MANDOR || '-'  || to_char(HDP.TANGGAL_RENCANA,'YYYYMMDD'))
+               $in_query
                -- AND POST_STATUS is null
          ORDER BY DBMS_RANDOM.VALUE FETCH NEXT 1 ROWS ONLY ");
          

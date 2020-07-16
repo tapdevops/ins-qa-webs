@@ -41,7 +41,6 @@
 </div>
 <table class="m-datatable" id="html_table" width="100%">
 	<thead>
-	<!-- <thead bgcolor="#f0f0f0"> -->
 		<tr>
 			<th>Tanggal</th>
 			<th>Krani Buah</th>
@@ -77,6 +76,7 @@
 <script>
 	$(document).on('click','#cekaslap',function(){
 		$('#cekaslap>span>i').addClass('fa-spin');
+		$('#cekaslap').addClass('disabled');
 		$('#cekaslap>span>span').html('Proses pengecekan');
 		cekaslap();
 	});
@@ -84,7 +84,7 @@
 		const CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
 		var search = document.getElementById('generalSearch').value;
 		$.ajax({
-			url:'validasi/cek_aslap/',
+			url:"{{ URL::to('/validasi/cek_aslap/') }}",
 			type:'get',
 			data:{
 				CSRF_TOKEN,

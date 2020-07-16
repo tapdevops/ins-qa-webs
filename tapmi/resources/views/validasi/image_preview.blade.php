@@ -127,13 +127,22 @@ tr
 						}else{
 							$img_backup = 'app\public\notfound.jpg';
 						}
+						if(strlen($q['val_ebcc_code'])>0)
+						{
+							$data = json_decode(file_get_contents('http://image.tap-agri.com:3012/api/v2.0/foto-transaksi/M024120200714142629026004?status_image=JANJANG'),true);
+							$img = $data['data']['http'][0];
+						}
+						else 
+						{
+							$img = 'http://tap-motion.tap-agri.com/ebcc/array/uploads/'.$img;
+						}
 				?>
 					<div style="position:absolute;z-index: 1000">
 					<input id="button" type="image" src="http://inspectiondev.tap-agri.com/storage/rotate_45.png" >
 					</div>
 					<!-- <img onerror="this.onerror=null;this.src='https://webhostingmedia.net/wp-content/uploads/2018/01/http-error-404-not-found.png'"  src="http://10.20.1.59/ebcc/array/uploads/{{$img}}" style="display:block;" width="80%" height="80%" > -->
 					<div id="container"  style="background-position: center center; background-repeat: no-repeat;overflow: hidden;">
-					<img onerror="this.onerror=null;this.src='http://inspectiondev.tap-agri.com/storage/notfound.jpg'"  src="http://tap-motion.tap-agri.com/ebcc/array/uploads/{{$img}}" style="display:block;" width="80%" height="80%" id="image" >
+					<img onerror="this.onerror=null;this.src='http://inspectiondev.tap-agri.com/storage/notfound.jpg'"  src="{{$img}}" style="display:block;" width="80%" height="80%" id="image" >
 					</div> 
 					
 				</div>
@@ -233,10 +242,6 @@ tr
 		</tr>
 		</form>
 	<table>
-	<?php 
-	// print_r($data_validasi);
-
-	?>
 	@endsection
 
 @endforeach
@@ -245,7 +250,6 @@ tr
 	
 	$(document).ready(function() {
 		MobileInspection.set_active_menu( '{{ $active_menu }}' );
-	
 	});
 
 // 	function sum() {
