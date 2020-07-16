@@ -175,8 +175,8 @@ class ValidasiHeader extends Model{
                               AND PARAMETER_NAME = 'TARGET_VALIDASI'");
    	  if($get_max[0]->parameter_desc==$no_val)
    	  {
-   	  	$in_query = "HP.NO_BCC IN (SELECT NO_BCC FROM TR_VALIDASI_DETAIL WHERE ID_VALIDASI = 
-               HDP.NIK_KERANI_BUAH || '-' || HDP.NIK_MANDOR || '-'  || to_char(HDP.TANGGAL_RENCANA,'YYYYMMDD') AND INSERT_USER_USERROLE <> 'KEPALA_KEBUN')";
+   	  	$in_query = "HP.NO_BCC IN (SELECT NO_BCC FROM TR_VALIDASI_DETAIL WHERE ID_VALIDASI = HDP.NIK_KERANI_BUAH || '-' || HDP.NIK_MANDOR || '-'  || to_char(HDP.TANGGAL_RENCANA,'YYYYMMDD') AND 
+               				 INSERT_USER_USERROLE <> 'KEPALA_KEBUN' AND NO_BCC NOT IN ( SELECT NO_BCC FROM TR_VALIDASI_DETAIL WHERE INSERT_USER_USERROLE = 'KEPALA_KEBUN'))";
    	  }
    	  else 
    	  {

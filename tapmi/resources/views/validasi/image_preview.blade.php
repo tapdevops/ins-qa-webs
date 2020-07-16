@@ -129,7 +129,7 @@ tr
 						}
 						if(strlen($q['val_ebcc_code'])>0)
 						{
-							$data = json_decode(file_get_contents('http://image.tap-agri.com:3012/api/v2.0/foto-transaksi/M024120200714142629026004?status_image=JANJANG'),true);
+							$data = json_decode(file_get_contents("http://image.tap-agri.com:3012/api/v2.0/foto-transaksi/".$q['val_ebcc_code']."?status_image=JANJANG"),true);
 							$img = $data['data']['http'][0];
 						}
 						else 
