@@ -340,26 +340,26 @@ class ValidasiHeader extends Model{
 										                   NVL (detail.jml_16, 0) AS val_jml_16,
 										                   (NVL (detail.jml_1, 0) + NVL (detail.jml_2, 0) + NVL (detail.jml_3, 0) + NVL (detail.jml_4, 0) + NVL (detail.jml_6, 0) + NVL (detail.jml_15, 0) + NVL (detail.jml_16, 0))
 										                      AS val_total_jjg,
-										                   ebcc.jlh_ebcc ebcc_count,
-										                   CASE WHEN ebcc.jlh_ebcc = 1 THEN ebcc.nik_kerani_buah END ebcc_nik_kerani_buah,
-										                   CASE WHEN ebcc.jlh_ebcc = 1 THEN ebcc.nama_kerani_buah END ebcc_nama_kerani_buah,
-										                   CASE WHEN ebcc.jlh_ebcc = 1 THEN ebcc.nik_mandor END ebcc_nik_mandor,
-										                   CASE WHEN ebcc.jlh_ebcc = 1 THEN ebcc.nama_mandor END ebcc_nama_mandor,
-										                   CASE WHEN ebcc.jlh_ebcc = 1 THEN ebcc.no_bcc END ebcc_no_bcc,
-										                   CASE WHEN ebcc.jlh_ebcc = 1 THEN ebcc.status_tph END ebcc_status_tph,
-										                   CASE WHEN ebcc.jlh_ebcc = 1 THEN ebcc.ebcc_jml_bm END ebcc_jml_bm,
-										                   CASE WHEN ebcc.jlh_ebcc = 1 THEN ebcc.ebcc_jml_bk END ebcc_jml_bk,
-										                   CASE WHEN ebcc.jlh_ebcc = 1 THEN ebcc.ebcc_jml_ms END ebcc_jml_ms,
-										                   CASE WHEN ebcc.jlh_ebcc = 1 THEN ebcc.ebcc_jml_or END ebcc_jml_or,
-										                   CASE WHEN ebcc.jlh_ebcc = 1 THEN ebcc.ebcc_jml_bb END ebcc_jml_bb,
-										                   CASE WHEN ebcc.jlh_ebcc = 1 THEN ebcc.ebcc_jml_jk END ebcc_jml_jk,
-										                   CASE WHEN ebcc.jlh_ebcc = 1 THEN ebcc.ebcc_jml_ba END ebcc_jml_ba,
-										                   CASE WHEN ebcc.jlh_ebcc = 1 THEN ebcc.jjg_panen END ebcc_jjg_panen,
-										                   DECODE (ebcc.jlh_ebcc, 1, 'MATCH', 'NOT MATCH') akurasi_sampling_ebcc,
+										                   NVL (ebcc.jlh_ebcc, ebcc_me.jlh_ebcc) ebcc_count,
+										                   CASE WHEN NVL (ebcc.jlh_ebcc, ebcc_me.jlh_ebcc) = 1 THEN NVL (ebcc.nik_kerani_buah, ebcc_me.nik_kerani_buah) END ebcc_nik_kerani_buah,
+										                   CASE WHEN NVL (ebcc.jlh_ebcc, ebcc_me.jlh_ebcc) = 1 THEN NVL (ebcc.nama_kerani_buah, ebcc_me.nama_kerani_buah) END ebcc_nama_kerani_buah,
+										                   CASE WHEN NVL (ebcc.jlh_ebcc, ebcc_me.jlh_ebcc) = 1 THEN NVL (ebcc.nik_mandor, ebcc_me.nik_mandor) END ebcc_nik_mandor,
+										                   CASE WHEN NVL (ebcc.jlh_ebcc, ebcc_me.jlh_ebcc) = 1 THEN NVL (ebcc.nama_mandor, ebcc_me.nama_mandor) END ebcc_nama_mandor,
+										                   CASE WHEN NVL (ebcc.jlh_ebcc, ebcc_me.jlh_ebcc) = 1 THEN NVL (ebcc.no_bcc, ebcc_me.no_bcc) END ebcc_no_bcc,
+										                   CASE WHEN NVL (ebcc.jlh_ebcc, ebcc_me.jlh_ebcc) = 1 THEN NVL (ebcc.status_tph, ebcc_me.status_tph) END ebcc_status_tph,
+										                   CASE WHEN NVL (ebcc.jlh_ebcc, ebcc_me.jlh_ebcc) = 1 THEN NVL (ebcc.ebcc_jml_bm, ebcc_me.ebcc_jml_bm) END ebcc_jml_bm,
+										                   CASE WHEN NVL (ebcc.jlh_ebcc, ebcc_me.jlh_ebcc) = 1 THEN NVL (ebcc.ebcc_jml_bk, ebcc_me.ebcc_jml_bk) END ebcc_jml_bk,
+										                   CASE WHEN NVL (ebcc.jlh_ebcc, ebcc_me.jlh_ebcc) = 1 THEN NVL (ebcc.ebcc_jml_ms, ebcc_me.ebcc_jml_ms) END ebcc_jml_ms,
+										                   CASE WHEN NVL (ebcc.jlh_ebcc, ebcc_me.jlh_ebcc) = 1 THEN NVL (ebcc.ebcc_jml_or, ebcc_me.ebcc_jml_or) END ebcc_jml_or,
+										                   CASE WHEN NVL (ebcc.jlh_ebcc, ebcc_me.jlh_ebcc) = 1 THEN NVL (ebcc.ebcc_jml_bb, ebcc_me.ebcc_jml_bb) END ebcc_jml_bb,
+										                   CASE WHEN NVL (ebcc.jlh_ebcc, ebcc_me.jlh_ebcc) = 1 THEN NVL (ebcc.ebcc_jml_jk, ebcc_me.ebcc_jml_jk) END ebcc_jml_jk,
+										                   CASE WHEN NVL (ebcc.jlh_ebcc, ebcc_me.jlh_ebcc) = 1 THEN NVL (ebcc.ebcc_jml_ba, ebcc_me.ebcc_jml_ba) END ebcc_jml_ba,
+										                   CASE WHEN NVL (ebcc.jlh_ebcc, ebcc_me.jlh_ebcc) = 1 THEN NVL (ebcc.jjg_panen, ebcc_me.jjg_panen) END ebcc_jjg_panen,
+										                   DECODE (NVL (ebcc.jlh_ebcc, ebcc_me.jlh_ebcc), 1, 'MATCH', 'NOT MATCH') akurasi_sampling_ebcc,
 										                   CASE
-										                      WHEN ebcc.jlh_ebcc = 1
+										                      WHEN NVL (ebcc.jlh_ebcc, ebcc_me.jlh_ebcc) = 1
 										                           AND (NVL (detail.jml_1, 0) + NVL (detail.jml_2, 0) + NVL (detail.jml_3, 0) + NVL (detail.jml_4, 0) + NVL (detail.jml_6, 0) + NVL (detail.jml_15, 0) + NVL (detail.jml_16, 0)) =
-										                                 ebcc.jjg_panen
+										                                 NVL (ebcc.jjg_panen, ebcc_me.jjg_panen)
 										                      THEN
 										                         'MATCH'
 										                      ELSE
@@ -367,11 +367,14 @@ class ValidasiHeader extends Model{
 										                   END
 										                      akurasi_kuantitas,
 										                   CASE
-										                      WHEN ebcc.jlh_ebcc = 1
+										                      WHEN NVL (ebcc.jlh_ebcc, ebcc_me.jlh_ebcc) = 1
 										                           AND (NVL (detail.jml_1, 0) + NVL (detail.jml_2, 0) + NVL (detail.jml_3, 0) + NVL (detail.jml_4, 0) + NVL (detail.jml_6, 0) + NVL (detail.jml_15, 0) + NVL (detail.jml_16, 0)) =
-										                                 ebcc.jjg_panen
+										                                 NVL (ebcc.jjg_panen, ebcc_me.jjg_panen)
 										                      THEN
-										                         CASE WHEN NVL (detail.jml_3, 0) = NVL (ebcc.ebcc_jml_ms, 0) THEN 0 ELSE ABS (NVL (detail.jml_3, 0) - NVL (ebcc.ebcc_jml_ms, 0)) END
+										                         CASE
+										                            WHEN NVL (detail.jml_3, 0) = NVL (NVL (ebcc.ebcc_jml_ms, ebcc_me.ebcc_jml_ms), 0) THEN 0
+										                            ELSE ABS (NVL (detail.jml_3, 0) - NVL (NVL (ebcc.ebcc_jml_ms, ebcc_me.ebcc_jml_ms), 0))
+										                         END
 										                   END
 										                      akurasi_kualitas_ms
 										              FROM (  SELECT ebcc_val.val_ebcc_code,
@@ -442,7 +445,8 @@ class ValidasiHeader extends Model{
 										                                             'MI' sumber
 										                                        FROM mobile_inspection.tr_ebcc_validation_h ebcc_header LEFT JOIN mobile_inspection.tm_user_auth user_auth
 										                                                ON user_auth.user_auth_code = (CASE WHEN LENGTH (ebcc_header.insert_user) = 3 THEN '0' || ebcc_header.insert_user ELSE ebcc_header.insert_user END)
-										                                       WHERE TRUNC (ebcc_header.insert_time) BETWEEN TRUNC (TO_DATE ('$day', 'RRRR-MM-DD')) AND TRUNC (TO_DATE ('$day', 'RRRR-MM-DD'))
+										                                       WHERE SUBSTR (ebcc_header.ebcc_validation_code, 0, 1) = 'V'
+										                                             AND TRUNC (ebcc_header.insert_time) BETWEEN TRUNC (TO_DATE ('$day', 'RRRR-MM-DD')) AND TRUNC (TO_DATE ('$day', 'RRRR-MM-DD'))
 										                                      UNION
 										                                      SELECT ebcc_code ebcc_validation_code,
 										                                             werks,
@@ -504,6 +508,7 @@ class ValidasiHeader extends Model{
 										                                     --                                        ON land_use.werks = ebcc_header.werks AND land_use.afd_code = ebcc_header.afd_code AND land_use.block_code = ebcc_header.block_code
 										                                     LEFT JOIN tap_dw.tm_sub_block@dwh_link subblock
 										                                        ON subblock.werks = ebcc_header.werks AND subblock.sub_block_code = ebcc_header.block_code
+										                                        and ebcc_header.insert_time between subblock.start_valid and subblock.end_valid
 										                               WHERE TRUNC (ebcc_header.insert_time) BETWEEN TRUNC (TO_DATE ('$day', 'RRRR-MM-DD')) AND TRUNC (TO_DATE ('$day', 'RRRR-MM-DD')) -- AND ebcc_header.werks = '4122'
 										                                                                                                                                                                          ) ebcc_val
 										                    GROUP BY ebcc_val.val_ebcc_code,
@@ -555,6 +560,69 @@ class ValidasiHeader extends Model{
 										                                                                             '16' AS jml_16))
 										                               WHERE ebcc_validation_code IS NOT NULL) detail
 										                      ON header.val_ebcc_code = detail.ebcc_validation_code
+										                   LEFT JOIN (SELECT tanggal_rencana,
+										                                     id_ba,
+										                                     id_afd,
+										                                     id_blok,
+										                                     no_tph,
+										                                     jlh_ebcc,
+										                                     nik_kerani_buah,
+										                                     nama_kerani_buah,
+										                                     nik_mandor,
+										                                     nama_mandor,
+										                                     no_bcc,
+										                                     status_tph,
+										                                     NVL (ebcc.f_get_hasil_panen_bunch (id_ba,
+										                                                                        no_rekap_bcc,
+										                                                                        no_bcc,
+										                                                                        'BUNCH_HARVEST'), 0)
+										                                        AS jjg_panen,
+										                                     ebcc_jml_bm,
+										                                     ebcc_jml_bk,
+										                                     ebcc_jml_ms,
+										                                     ebcc_jml_or,
+										                                     ebcc_jml_bb,
+										                                     ebcc_jml_jk,
+										                                     ebcc_jml_ba
+										                                FROM (  SELECT hrp.tanggal_rencana,
+										                                               SUBSTR (id_ba_afd_blok, 1, 4) id_ba,
+										                                               SUBSTR (id_ba_afd_blok, 5, 1) id_afd,
+										                                               SUBSTR (id_ba_afd_blok, 6, 3) id_blok,
+										                                               /*SUBSTR (no_bcc, 12, 3) no_tph,*/
+										                                               hp.no_tph no_tph,
+										                                               COUNT (DISTINCT hp.no_bcc) jlh_ebcc,
+										                                               MAX (hrp.nik_kerani_buah) nik_kerani_buah,
+										                                               MAX (emp_ebcc.emp_name) nama_kerani_buah,
+										                                               MAX (hrp.nik_mandor) nik_mandor,
+										                                               MAX (emp_ebcc1.emp_name) nama_mandor,
+										                                               MAX (no_bcc) no_bcc,
+										                                               MAX (hp.status_tph) status_tph,
+										                                               MAX (hp.no_rekap_bcc) no_rekap_bcc,
+										                                               SUM (CASE WHEN thk.id_kualitas = 1 THEN thk.qty END) ebcc_jml_bm,
+										                                               SUM (CASE WHEN thk.id_kualitas = 2 THEN thk.qty END) ebcc_jml_bk,
+										                                               SUM (CASE WHEN thk.id_kualitas = 3 THEN thk.qty END) ebcc_jml_ms,
+										                                               SUM (CASE WHEN thk.id_kualitas = 4 THEN thk.qty END) ebcc_jml_or,
+										                                               SUM (CASE WHEN thk.id_kualitas = 6 THEN thk.qty END) ebcc_jml_bb,
+										                                               SUM (CASE WHEN thk.id_kualitas = 15 THEN thk.qty END) ebcc_jml_jk,
+										                                               SUM (CASE WHEN thk.id_kualitas = 16 THEN thk.qty END) ebcc_jml_ba
+										                                          FROM ebcc.t_header_rencana_panen hrp
+										                                               LEFT JOIN ebcc.t_detail_rencana_panen drp
+										                                                  ON hrp.id_rencana = drp.id_rencana
+										                                               LEFT JOIN ebcc.t_hasil_panen hp
+										                                                  ON hp.id_rencana = drp.id_rencana AND hp.no_rekap_bcc = drp.no_rekap_bcc
+										                                               LEFT JOIN ebcc.t_employee emp_ebcc
+										                                                  ON emp_ebcc.nik = hrp.nik_kerani_buah
+										                                               LEFT JOIN ebcc.t_employee emp_ebcc1
+										                                                  ON emp_ebcc1.nik = hrp.nik_mandor
+										                                               LEFT JOIN ebcc.t_hasilpanen_kualtas thk
+										                                                  ON hp.no_bcc = thk.id_bcc AND hp.id_rencana = thk.id_rencana
+										                                         WHERE hrp.tanggal_rencana BETWEEN TO_DATE ('$day', 'YYYY-MM-DD') AND TO_DATE ('$day', 'YYYY-MM-DD')
+										                                      GROUP BY hrp.tanggal_rencana, id_ba_afd_blok, hp.no_tph)) ebcc
+										                      ON     TRUNC (ebcc.tanggal_rencana) = TRUNC (val_date_time)
+										                         AND ebcc.id_ba = CASE WHEN val_sumber = 'MI' THEN val_werks ELSE '9999' END
+										                         AND ebcc.id_afd = val_afd_code
+										                         AND ebcc.id_blok = val_block_code
+										                         AND ebcc.no_tph = val_tph_code
 										                   LEFT JOIN (SELECT tanggal_rencana,
 										                                     id_ba,
 										                                     id_afd,
@@ -618,16 +686,17 @@ class ValidasiHeader extends Model{
 										                                      GROUP BY hrp.tanggal_rencana,
 										                                               id_ba_afd_blok,
 										                                               hp.no_tph,
-										                                               NVL (hp.kode_delivery_ticket, '-'))) ebcc
-										                      ON     TRUNC (ebcc.tanggal_rencana) = TRUNC (val_date_time)
-										                         AND ebcc.id_ba = val_werks
-										                         AND ebcc.id_afd = val_afd_code
-										                         AND ebcc.id_blok = val_block_code
-										                         AND ebcc.no_tph = val_tph_code
-										                         AND ebcc.kode_delivery_ticket = CASE WHEN val_sumber = 'ME' THEN val_delivery_ticket ELSE ebcc.kode_delivery_ticket END)
+										                                               NVL (hp.kode_delivery_ticket, '-'))) ebcc_me
+										                      ON     TRUNC (ebcc_me.tanggal_rencana) = TRUNC (val_date_time)
+										                         AND ebcc_me.id_ba = CASE WHEN val_sumber = 'ME' THEN val_werks ELSE '9999' END
+										                         AND ebcc_me.id_afd = val_afd_code
+										                         AND ebcc_me.id_blok = val_block_code
+										                         AND ebcc_me.no_tph = val_tph_code
+										                         AND ebcc_me.kode_delivery_ticket = val_delivery_ticket)
 										SELECT *
 										  FROM tbl
-										 WHERE tbl.akurasi_sampling_ebcc = 'MATCH'
+										 WHERE 1 = 1 
+										 AND tbl.akurasi_sampling_ebcc = 'MATCH'
       ");
 		return $get;
    }
