@@ -31,8 +31,7 @@ class ValidasiHeader extends Model{
                         ebcc.id_validasi,
                         case when valid.jumlah_ebcc_validated is null then 0 else valid.jumlah_ebcc_validated end as jumlah_ebcc_validated,
                         param.parameter_desc AS target_validasi,
-                        count(valid_detail.id_validasi) AS aslap_validation,
-                        count(valid_detail2.id_validasi) AS aslap_validated
+                        count(valid_detail.id_validasi) AS aslap_validation
                      FROM (SELECT SUBSTR (drp.id_ba_afd_blok, 1, 4) AS id_ba,
                                  SUBSTR (drp.id_ba_afd_blok, 5, 1) AS id_afd, 
                                  hrp.tanggal_rencana,
@@ -78,9 +77,6 @@ class ValidasiHeader extends Model{
                         LEFT JOIN mobile_inspection.tr_validasi_detail valid_detail
                            ON valid_detail.id_validasi = ebcc.id_validasi
                            AND valid_detail.insert_user_userrole <> 'KEPALA_KEBUN'
-                        LEFT JOIN mobile_inspection.tr_validasi_detail valid_detail2
-                           ON valid_detail2.id_validasi = valid_detail.id_validasi
-                           AND valid_detail2.insert_user_userrole = 'KEPALA_KEBUN'
                            -- SID - ubah
                         JOIN (
                               SELECT PARAMETER_DESC
