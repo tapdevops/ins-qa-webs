@@ -53,7 +53,7 @@
 					</span>
 				</a>
 				@else
-				<div class="btn btn-focus m-btn m-btn--custom m-btn--icon m-btn--air m-btn--pil disabled" style="border-radius: 60px;">
+				<div class="btn btn-dark m-btn m-btn--custom m-btn--icon m-btn--air m-btn--pil disabled" style="border-radius: 60px;">
 					<span>
 						<i class="fa fa-clipboard"></i>
 						<span>Validasi</span>
