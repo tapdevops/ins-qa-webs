@@ -107,7 +107,7 @@ class ValidationController extends Controller {
             TRValidasiDetail::insert([
               'uuid' => Uuid::uuid1()->toString(),
               'id_validasi' => $id_validasi,
-              'data_source' => $value['data_source'],
+              'data_source' => $value['val_sumber'],
               'val_ebcc_code' => $value['val_ebcc_code'],
               'tanggal_ebcc' => $value['val_date_time'],
               'nik_krani_buah' => $value['ebcc_nik_kerani_buah'],

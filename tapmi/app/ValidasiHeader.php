@@ -324,7 +324,7 @@ class ValidasiHeader extends Model{
       $day =  date("Y-m-d", strtotime($date));
       $ba_afd_code = explode(",",session('LOCATION_CODE'));
       $code = implode("','", $ba_afd_code);
-      $get = $this->db_mobile_ins->select("  WITH tbl
+      $get = $this->db_mobile_ins->select(" WITH tbl
 										        AS (SELECT header.*,
 										                   NVL (detail.jml_1, 0) AS val_jml_1,
 										                   NVL (detail.jml_2, 0) AS val_jml_2,
@@ -533,6 +533,11 @@ class ValidasiHeader extends Model{
 										                   LEFT JOIN (SELECT *
 										                                FROM (SELECT kualitas.id_kualitas AS idk, ebcc_detail.ebcc_validation_code, ebcc_detail.jumlah
 										                                        FROM tap_dw.t_kualitas_panen@dwh_link kualitas LEFT JOIN mobile_inspection.tr_ebcc_validation_d ebcc_detail
+										                                                ON ebcc_detail.id_kualitas = kualitas.id_kualitas
+										                                       WHERE kualitas.active_status = 'YES'
+										                                      UNION
+										                                      SELECT kualitas.id_kualitas AS idk, ebcc_detail.ebcc_code ebcc_validation_code, ebcc_detail.qty jumlah
+										                                        FROM tap_dw.t_kualitas_panen@dwh_link kualitas LEFT JOIN mobile_estate.tr_ebcc_kualitas ebcc_detail
 										                                                ON ebcc_detail.id_kualitas = kualitas.id_kualitas
 										                                       WHERE kualitas.active_status = 'YES') PIVOT (SUM (jumlah)
 										                                                                             FOR idk
