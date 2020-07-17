@@ -331,6 +331,8 @@ class ValidationController extends Controller {
          {
             $jml[] =  $dt['jumlah_ebcc_validated'];
             $target_id[] =  $dt['target_validasi'];
+            $aslap_validation[] =  $dt['aslap_validation'];
+            $aslap_validated[] =  $dt['aslap_validated'];
             $nik_kerani[] = $dt['nik_kerani_buah'];
             $nik_mandor[] = $dt['nik_mandor'];
             $tgl_rencana[] = date("Y-m-d",strtotime($dt['tanggal_rencana']));
@@ -347,38 +349,47 @@ class ValidationController extends Controller {
             }
             else
             {
-               $nik_kerani_val = $nik_kerani[$i];
-               $nik_mandor_val  = $nik_mandor[$i];
-               $tgl_rencana_val  = $tgl_rencana[$i];
-               $ba_code_val  = $ba_code[$i];
-               $afd_val  = $afd[$i];
-               $id_validasi_val  = $id_validasi[$i];
-               $trg = $target_id[$i];
-                           
-               $i = 1; //start jumlah validasi
-               $no_val = TRValidasiHeader::select('JUMLAH_EBCC_VALIDATED')->where('ID_VALIDASI',$id_validasi_val)->first();
-               if($no_val == null){
-                     $val = 1;
-               }else{
-                     $val = $i + $no_val['jumlah_ebcc_validated'];
-               }
+                // jika kurang dari target validasi
+                if ($aslap_validation[$i]-$aslap_validated[$i]<1)
+                {
+                   continue;
+                }
+                else 
+                {
+                   $nik_kerani_val = $nik_kerani[$i];
+                   $nik_mandor_val  = $nik_mandor[$i];
+                   $tgl_rencana_val  = $tgl_rencana[$i];
+                   $ba_code_val  = $ba_code[$i];
+                   $afd_val  = $afd[$i];
+                   $id_validasi_val  = $id_validasi[$i];
+                   $trg = $target_id[$i];
+                               
+                   $i = 1; //start jumlah validasi
+                   $no_val = TRValidasiHeader::select('JUMLAH_EBCC_VALIDATED')->where('ID_VALIDASI',$id_validasi_val)->first();
+                   if($no_val == null){
+                         $val = 1;
+                   }else{
+                         $val = $i + $no_val['jumlah_ebcc_validated'];
+                   }
 
-               $valid_data = json_encode(( new ValidasiHeader() )->validasi_askep($ba_code_val,$afd_val,$nik_kerani_val,$nik_mandor_val,$tgl_rencana_val,$val));
-               $data_validasi = json_decode( $valid_data,true);
+                   $valid_data = json_encode(( new ValidasiHeader() )->validasi_askep($ba_code_val,$afd_val,$nik_kerani_val,$nik_mandor_val,$tgl_rencana_val,$val));
+                   $data_validasi = json_decode( $valid_data,true);
 
-               $data['data_validasi'] = $data_validasi;
-               $data['no_validasi'] = $val;
-               $data['target'] = $trg;
-               if($val!=$target_validasi || ($val==$target_validasi && count($data_validasi)!=0))
-               {
-                  return view('validasi.image_preview',$data);
-               }
-               else 
-               {
-                  return Redirect::to('listvalidasi/'.$tgl);
-               }
+                   $data['data_validasi'] = $data_validasi;
+                   $data['no_validasi'] = $val;
+                   $data['target'] = $trg;
+                   if($val!=$target_validasi || ($val==$target_validasi && count($data_validasi)!=0))
+                   {
+                      return view('validasi.image_preview',$data);
+                   }
+                   else 
+                   {
+                      return Redirect::to('listvalidasi/'.$tgl);
+                   }
+                }
             }        
-          }
+         }
+            return Redirect::to('listvalidasi/'.$tgl);
       }
       else
       {
