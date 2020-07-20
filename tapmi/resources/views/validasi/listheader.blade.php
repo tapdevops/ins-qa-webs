@@ -63,7 +63,7 @@
 				<div class="m-separator m-separator--dashed d-xl-none"></div>
 			</div>
 			@endif
-			@if($status_validasi_aslap==0)
+			@if($status_validasi_aslap==0 && !empty($records))
 			<div class="col-md-12 m--align-center" style="white-space:nowrap;">
 				<h5 class="m-subheader__title m-subheader__title--separator text-danger">Anda harus melakukan "Cek Validasi Aslap" terlebih dulu</h5>
 			</div>
@@ -107,6 +107,12 @@
 	@endforeach
 	</tbody>
 </table>
+	@if($nodata==1)
+	<div class="col-md-12 m--align-center" style="white-space:nowrap; padding-top:20px;">
+		<h5 class="m-subheader__title m-subheader__title--separator text-danger">Tidak bisa melanjutkan validasi karena ada validasi aslap yang tidak melakukan validasi / tidak "MATCH"</h5>
+		<h5 class="m-subheader__title m-subheader__title--separator text-danger">Lakukan proses validasi manual terlebih dulu di TAP MOTION EBCC</h5>
+	</div>
+	@endif
 </div>
 @endsection
 

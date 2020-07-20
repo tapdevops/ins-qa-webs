@@ -48,7 +48,8 @@ class ValidationController extends Controller {
 	#   		 									  		            ▁ ▂ ▄ ▅ ▆ ▇ █ Index
     # -------------------------------------------------------------------------------------
    
-   public function index($tgl = null){
+   public function index(Request $request,$tgl = null){
+      $data['nodata'] = $request->nodata?1:0;
       if(empty($tgl)){
          $day =  date("Y-m-d", strtotime("yesterday"));
       }else{
@@ -355,14 +356,13 @@ class ValidationController extends Controller {
                $id_validasi_val  = $id_validasi[$i];
                $trg = $target_id[$i];
                            
-               $i = 1; //start jumlah validasi
+               $increment = 1; //start jumlah validasi
                $no_val = TRValidasiHeader::select('JUMLAH_EBCC_VALIDATED')->where('ID_VALIDASI',$id_validasi_val)->first();
                if($no_val == null){
                      $val = 1;
                }else{
-                     $val = $i + $no_val['jumlah_ebcc_validated'];
+                     $val = $increment + $no_val['jumlah_ebcc_validated'];
                }
-
                $valid_data = json_encode(( new ValidasiHeader() )->validasi_askep($ba_code_val,$afd_val,$nik_kerani_val,$nik_mandor_val,$tgl_rencana_val,$val));
                $data_validasi = json_decode( $valid_data,true);
 
@@ -379,7 +379,7 @@ class ValidationController extends Controller {
                }
             }        
          }
-            return Redirect::to('listvalidasi/'.$tgl);
+            return Redirect::to('listvalidasi/'.$tgl.'?nodata=1');
       }
       else
       {
