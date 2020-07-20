@@ -167,7 +167,7 @@ class ValidationController extends Controller {
                                                       first();
 
             // UPDATE BCC HASIL PANEN KUALITAS IF KABUN NEVER VALIDATE
-            if(!$$check_kabun_validation)
+            if(!$check_kabun_validation)
             {                                        
               // UPDATE QUANTITY MENTAH
                $this->db_ebcc->table('T_HASILPANEN_KUALTAS')->where([
