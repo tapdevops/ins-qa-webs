@@ -161,7 +161,14 @@ class ValidationController extends Controller {
                'NIK_MANDOR' => $value['ebcc_nama_kerani_buah']
             ]);
    
-            // UPDATE BCC HASIL PANEN KUALITAS 
+            $check_kabun_validation = $this->db_ebcc->table('T_VALIDASI')->
+                                                      where(['NO_BCC'=>$value['ebcc_no_bcc']])->
+                                                      whereIn('ROLES',['KEPALA KEBUN','KEBAPA_KEBUN','ASISTEN KEPALA','ASISTEN_KEPALA'])->
+                                                      first();
+
+            // UPDATE BCC HASIL PANEN KUALITAS IF KABUN NEVER VALIDATE
+            if(!$$check_kabun_validation)
+            {                                        
               // UPDATE QUANTITY MENTAH
                $this->db_ebcc->table('T_HASILPANEN_KUALTAS')->where([
                   'ID_BCC'=>$value['ebcc_no_bcc'],
@@ -187,6 +194,7 @@ class ValidationController extends Controller {
                   'ID_BCC'=>$value['ebcc_no_bcc'],
                   'ID_KUALITAS' => 3
                ])->update(['QTY'=>$value['val_jml_3']]);
+            }   
           }
       }
    }
