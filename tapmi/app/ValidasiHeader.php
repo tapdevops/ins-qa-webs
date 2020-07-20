@@ -96,6 +96,7 @@ class ValidasiHeader extends Model{
                         ebcc.id_validasi,
                         jumlah_ebcc_validated,
                         param.parameter_desc
+                     order by ebcc.id_afd,ebcc.nama_krani_buah
       ");
 		return $get;
    }
