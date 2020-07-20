@@ -697,6 +697,7 @@ class ValidasiHeader extends Model{
 										  FROM tbl
 										 WHERE 1 = 1 
 										 AND tbl.akurasi_sampling_ebcc = 'MATCH'
+										 AND tbl.val_jabatan_validator NOT IN ('KEPALA KEBUN','KEBAPA_KEBUN','ASISTEN KEPALA','ASISTEN_KEPALA')
       ");
 		return $get;
    }
