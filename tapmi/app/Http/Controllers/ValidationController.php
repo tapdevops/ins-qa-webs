@@ -377,7 +377,7 @@ class ValidationController extends Controller {
                $data['data_validasi'] = $data_validasi;
                $data['no_validasi'] = $val;
                $data['target'] = $trg;
-               if($val!=$target_validasi || ($val==$target_validasi && count($data_validasi)!=0))
+               if(count($data_validasi)!=0)
                {
                   return view('validasi.image_preview',$data);
                }
