@@ -117,7 +117,6 @@ tr
 	<input type="hidden" name="jumlah_ebcc_validated" value="{{$no_validasi}}">
 	<input type="hidden" name="last_update" value="{{ date('Y-M-d') }}">
 	<input type="hidden" name="target" value="{{$target}}">
-	<input type="hidden" name="val_ebcc_code" value="{{$q['val_ebcc_code']}}">
 		<tr>
 			<td  rowspan="7" width="45%"  style="vertical-align: top;">
 				<div style="position:absolute;z-index: 1000">
@@ -130,6 +129,10 @@ tr
 						}
 						if(strlen($q['val_ebcc_code'])>0)
 						{
+							if(isset($_GET['image']))
+							{
+								dd("http://image.tap-agri.com:3012/api/v2.0/foto-transaksi/".$q['val_ebcc_code']."?status_image=JANJANG",json_decode(file_get_contents("http://image.tap-agri.com:3012/api/v2.0/foto-transaksi/".$q['val_ebcc_code']."?status_image=JANJANG"),true));
+							}
 							$data = json_decode(file_get_contents("http://image.tap-agri.com:3012/api/v2.0/foto-transaksi/".$q['val_ebcc_code']."?status_image=JANJANG"),true);
 							$img = isset($data['data']['http'][0])?:'http://inspectiondev.tap-agri.com/storage/notfound.jpg';
 						}
