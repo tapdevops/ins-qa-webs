@@ -157,8 +157,8 @@ class ValidationController extends Controller {
                'ROLES' => $value['val_jabatan_validator'],
                'NIK' => $value['val_nik_validator'],
                'NAMA' => $value['val_nama_validator'],
-               'NIK_KRANI_BUAH' => $value['ebcc_nama_kerani_buah'],
-               'NIK_MANDOR' => $value['ebcc_nama_kerani_buah']
+               'NIK_KRANI_BUAH' => $value['ebcc_nik_kerani_buah'],
+               'NIK_MANDOR' => $value['ebcc_nik_mandor']
             ]);
    
             $check_kabun_validation = $this->db_ebcc->table('T_VALIDASI')->
