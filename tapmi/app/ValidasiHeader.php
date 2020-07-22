@@ -208,7 +208,8 @@ class ValidasiHeader extends Model{
                                              NVL( EBCC.F_GET_HASIL_PANEN_NUMBERX( HDP.ID_RENCANA, HP.NO_REKAP_BCC, HP.NO_BCC, 16 ), 0 ) AS EBCC_JML_BA,   
                                              NVL( EBCC.F_GET_HASIL_PANEN_BRDX ( HDP.ID_RENCANA, HP.NO_REKAP_BCC, HP.NO_BCC ), 0 ) AS EBCC_JML_BRD,
                                              DATA_SOURCE,
-                                             VAL_EBCC_CODE
+                                             VAL_EBCC_CODE,
+                                             ME_IMAGE.IMAGE_NAME
                                        FROM (
                                                 SELECT
                                                    HRP.ID_RENCANA AS ID_RENCANA,
@@ -229,6 +230,7 @@ class ValidasiHeader extends Model{
                                              LEFT JOIN EBCC.T_BUSSINESSAREA TBA ON TBA.ID_BA = TA.ID_BA
                                              LEFT JOIN EBCC.T_EMPLOYEE EMP_EBCC ON EMP_EBCC.NIK = HDP.NIK_KERANI_BUAH
                                              LEFT JOIN TR_VALIDASI_DETAIL V_DETAIL ON HP.NO_BCC = V_DETAIL.NO_BCC
+                                             LEFT JOIN mobile_estate.TR_IMAGE ME_IMAGE ON ME_IMAGE.TR_CODE = V_DETAIL.VAL_EBCC_CODE
                                              -- JOIN EBCC.T_STATUS_TO_SAP_EBCC STAT_EBCC ON STAT_EBCC.NO_BCC = HP.NO_BCC
          WHERE
                HDP.NIK_KERANI_BUAH = '$nik_kerani' AND

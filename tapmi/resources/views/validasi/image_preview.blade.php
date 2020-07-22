@@ -129,17 +129,24 @@ tr
 						}
 						if(strlen($q['val_ebcc_code'])>0)
 						{
-							if(isset($_GET['image']))
+							if($q['data_source']=='MI')
 							{
-								dd("http://image.tap-agri.com:3012/api/v2.0/foto-transaksi/".$q['val_ebcc_code']."?status_image=JANJANG",json_decode(file_get_contents("http://image.tap-agri.com:3012/api/v2.0/foto-transaksi/".$q['val_ebcc_code']."?status_image=JANJANG"),true));
+								$data = json_decode(file_get_contents("http://image.tap-agri.com:3012/api/v2.0/foto-transaksi/".$q['val_ebcc_code']."?status_image=JANJANG"),true);
+								$img = isset($data['data']['http'][0])?:'http://inspectiondev.tap-agri.com/storage/notfound.jpg';
 							}
-							$data = json_decode(file_get_contents("http://image.tap-agri.com:3012/api/v2.0/foto-transaksi/".$q['val_ebcc_code']."?status_image=JANJANG"),true);
-							$img = isset($data['data']['http'][0])?:'http://inspectiondev.tap-agri.com/storage/notfound.jpg';
+							else 
+							{
+								$img = "http://tap-motion.tap-agri.com/mobile_estate/upload_image/".$q['image_name'].".jpg";
+							}
 						}
 						else 
 						{
 							$img = 'http://tap-motion.tap-agri.com/ebcc/array/uploads/'.$img;
 						}
+							if(isset($_GET['image']))
+							{
+								dd($img);
+							}
 				?>
 					<div style="position:absolute;z-index: 1000">
 					<input id="button" type="image" src="http://inspectiondev.tap-agri.com/storage/rotate_45.png" >
