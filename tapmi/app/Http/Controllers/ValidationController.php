@@ -100,15 +100,14 @@ class ValidationController extends Controller {
       foreach ($data as $key => $value) 
       {
           $id_validasi = $value['ebcc_nik_kerani_buah'].'-'.$value['ebcc_nik_mandor'].'-'.str_replace('-','',$day);
-          $check = TRValidasiDetail::where(['id_validasi'=>$id_validasi,'no_bcc'=>$value['ebcc_no_bcc']])->first();
-          if(!$check)
-          {
+          // $check = TRValidasiDetail::where(['id_validasi'=>$id_validasi,'no_bcc'=>$value['ebcc_no_bcc']])->first();
+          // if(!$check)
+          // {
             $emp = Employee::where('EMPLOYEE_NIK',session('NIK'))->first();
             $fullname = $emp['employee_fullname'];
             TRValidasiDetail::insert([
               'uuid' => Uuid::uuid1()->toString(),
               'id_validasi' => $id_validasi,
-              'akurasi_sampling_ebcc' => $value['akurasi_sampling_ebcc'],
               'data_source' => $value['val_sumber'],
               'val_ebcc_code' => $value['val_ebcc_code'],
               'tanggal_ebcc' => $value['val_date_time'],
@@ -151,55 +150,52 @@ class ValidationController extends Controller {
             ]);
 
             // INSERT LOG TO EBCC
-            if($value['akurasi_sampling_ebcc']=='MATCH')
-            {
-              $this->db_ebcc->table('T_VALIDASI')->insert([
-                 'TANGGAL_EBCC'=>$value['val_date_time'],
-                 'NO_BCC'=>$value['ebcc_no_bcc'],
-                 'TANGGAL_VALIDASI' => date('Y-m-d H:i:s'),
-                 'ROLES' => $value['val_jabatan_validator'],
-                 'NIK' => $value['val_nik_validator'],
-                 'NAMA' => $value['val_nama_validator'],
-                 'NIK_KRANI_BUAH' => $value['ebcc_nik_kerani_buah'],
-                 'NIK_MANDOR' => $value['ebcc_nik_mandor']
-              ]);
-     
-              $check_kabun_validation = $this->db_ebcc->table('T_VALIDASI')->
-                                                        where(['NO_BCC'=>$value['ebcc_no_bcc']])->
-                                                        whereIn('ROLES',['KEPALA KEBUN','KEBAPA_KEBUN','ASISTEN KEPALA','ASISTEN_KEPALA'])->
-                                                        first();
+            $this->db_ebcc->table('T_VALIDASI')->insert([
+               'TANGGAL_EBCC'=>$value['val_date_time'],
+               'NO_BCC'=>$value['ebcc_no_bcc'],
+               'TANGGAL_VALIDASI' => date('Y-m-d H:i:s'),
+               'ROLES' => $value['val_jabatan_validator'],
+               'NIK' => $value['val_nik_validator'],
+               'NAMA' => $value['val_nama_validator'],
+               'NIK_KRANI_BUAH' => $value['ebcc_nik_kerani_buah'],
+               'NIK_MANDOR' => $value['ebcc_nik_mandor']
+            ]);
+   
+            $check_kabun_validation = $this->db_ebcc->table('T_VALIDASI')->
+                                                      where(['NO_BCC'=>$value['ebcc_no_bcc']])->
+                                                      whereIn('ROLES',['KEPALA KEBUN','KEBAPA_KEBUN','ASISTEN KEPALA','ASISTEN_KEPALA'])->
+                                                      first();
 
-              // UPDATE BCC HASIL PANEN KUALITAS IF KABUN NEVER VALIDATE
-              if(!$check_kabun_validation)
-              {                                        
-                // UPDATE QUANTITY MENTAH
-                 $this->db_ebcc->table('T_HASILPANEN_KUALTAS')->where([
-                    'ID_BCC'=>$value['ebcc_no_bcc'],
-                    'ID_KUALITAS' => 1
-                 ])->update(['QTY'=>$value['val_jml_1']]);
-                // UPDATE QUANTITY BUSUK
-                 $this->db_ebcc->table('T_HASILPANEN_KUALTAS')->where([
-                    'ID_BCC'=>$value['ebcc_no_bcc'],
-                    'ID_KUALITAS' => 6
-                 ])->update(['QTY'=>$value['val_jml_6']]);
-                // UPDATE QUANTITY JAJANG KOSONG
-                 $this->db_ebcc->table('T_HASILPANEN_KUALTAS')->where([
-                    'ID_BCC'=>$value['ebcc_no_bcc'],
-                    'ID_KUALITAS' => 15
-                 ])->update(['QTY'=>$value['val_jml_15']]);
-                // UPDATE QUANTITY OVERRIPE
-                 $this->db_ebcc->table('T_HASILPANEN_KUALTAS')->where([
-                    'ID_BCC'=>$value['ebcc_no_bcc'],
-                    'ID_KUALITAS' => 4
-                 ])->update(['QTY'=>$value['val_jml_4']]);
-                // UPDATE QUANTITY MASAK
-                 $this->db_ebcc->table('T_HASILPANEN_KUALTAS')->where([
-                    'ID_BCC'=>$value['ebcc_no_bcc'],
-                    'ID_KUALITAS' => 3
-                 ])->update(['QTY'=>$value['val_jml_3']]);
-              }   
-            }
-          }
+            // UPDATE BCC HASIL PANEN KUALITAS IF KABUN NEVER VALIDATE
+            if(!$check_kabun_validation)
+            {                                        
+              // UPDATE QUANTITY MENTAH
+               $this->db_ebcc->table('T_HASILPANEN_KUALTAS')->where([
+                  'ID_BCC'=>$value['ebcc_no_bcc'],
+                  'ID_KUALITAS' => 1
+               ])->update(['QTY'=>$value['val_jml_1']]);
+              // UPDATE QUANTITY BUSUK
+               $this->db_ebcc->table('T_HASILPANEN_KUALTAS')->where([
+                  'ID_BCC'=>$value['ebcc_no_bcc'],
+                  'ID_KUALITAS' => 6
+               ])->update(['QTY'=>$value['val_jml_6']]);
+              // UPDATE QUANTITY JAJANG KOSONG
+               $this->db_ebcc->table('T_HASILPANEN_KUALTAS')->where([
+                  'ID_BCC'=>$value['ebcc_no_bcc'],
+                  'ID_KUALITAS' => 15
+               ])->update(['QTY'=>$value['val_jml_15']]);
+              // UPDATE QUANTITY OVERRIPE
+               $this->db_ebcc->table('T_HASILPANEN_KUALTAS')->where([
+                  'ID_BCC'=>$value['ebcc_no_bcc'],
+                  'ID_KUALITAS' => 4
+               ])->update(['QTY'=>$value['val_jml_4']]);
+              // UPDATE QUANTITY MASAK
+               $this->db_ebcc->table('T_HASILPANEN_KUALTAS')->where([
+                  'ID_BCC'=>$value['ebcc_no_bcc'],
+                  'ID_KUALITAS' => 3
+               ])->update(['QTY'=>$value['val_jml_3']]);
+            }   
+          // }
       }
    }
 
