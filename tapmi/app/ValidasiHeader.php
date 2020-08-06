@@ -177,7 +177,11 @@ class ValidasiHeader extends Model{
    	  if($get_max[0]->parameter_desc==$no_val)
    	  {
    	  	$in_query = "HP.NO_BCC IN (SELECT NO_BCC FROM TR_VALIDASI_DETAIL WHERE ID_VALIDASI = HDP.NIK_KERANI_BUAH || '-' || HDP.NIK_MANDOR || '-'  || to_char(HDP.TANGGAL_RENCANA,'YYYYMMDD') AND 
-               				 INSERT_USER_USERROLE <> 'KEPALA_KEBUN' AND NO_BCC NOT IN ( SELECT NO_BCC FROM TR_VALIDASI_DETAIL WHERE INSERT_USER_USERROLE = 'KEPALA_KEBUN'))";
+               				 INSERT_USER_USERROLE <> 'KEPALA_KEBUN' AND NO_BCC NOT IN ( 
+                                                                                       SELECT NO_BCC FROM TR_VALIDASI_DETAIL 
+                                                                                       WHERE INSERT_USER_USERROLE = 'KEPALA_KEBUN'
+                                                                                       AND AKURASI_SAMPLING_EBCC = 'MATCH' 
+                                                                                     ))";
    	  }
    	  else 
    	  {
@@ -699,7 +703,6 @@ class ValidasiHeader extends Model{
 										SELECT *
 										  FROM tbl
 										 WHERE 1 = 1 
-										 AND tbl.akurasi_sampling_ebcc = 'MATCH'
 										 AND tbl.val_jabatan_validator NOT IN ('KEPALA KEBUN','KEBAPA_KEBUN','ASISTEN KEPALA','ASISTEN_KEPALA')
       ");
 		return $get;
