@@ -42,6 +42,7 @@
 					<option value="INSPEKSI">INSPEKSI</option>
 					<option value="INSPEKSI_GENBA">INSPEKSI GENBA</option>
 					<option value="CLASS_BLOCK_AFD_ESTATE">CLASS, BLOCK, AFD, &amp; ESTATE</option>
+					<option value="POINT_BULANAN">POIN BULANAN</option>
 				</select>
 			</div>
 		</div>
@@ -263,6 +264,10 @@
 				$("#report-date-month").show();
 				$("#report-date-full").hide();
 				break;
+			case 'POINT_BULANAN':
+				$("#report-date-month").show();
+				$("#report-date-full").hide();
+				break;		
 		}
 	}
 

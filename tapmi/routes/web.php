@@ -52,6 +52,11 @@ Route::group( [ 'middleware' => 'web' ], function() {
 		Route::get( '/report/search-block', 'ReportController@search_block' );
 		Route::get( '/data/user-search', 'DataController@user_search_find' );
 
+		# Upload
+		Route::get( '/upload', 'UploadController@import_data' );
+		Route::post( '/upload', 'UploadController@import_data_process' );
+		Route::get( '/upload/photo', 'UploadController@import_photo' );
+		Route::post( '/upload/photo', 'UploadController@import_photo_process' );
 		
 		#ora report
 		Route::group( [ 'prefix' => 'report-oracle' ], function () {
@@ -87,6 +92,8 @@ Route::get( '/repair', 'ReportOracleController@testing' );
 Route::get( '/nohup', 'ReportOracleController@nohup' );
 Route::get( '/phpinfo', 'ReportOracleController@phpinfo' );
 Route::get( '/testings', 'KafkaProducerController@test' );
+
+Route::get( '/kafka/tm_user_auth', 'KafkaController@RUN_INS_MSA_AUTH_TM_USER_AUTH' );
 
 
 // Route::get( '/getGuzzleRequest', 'ValidationController@getGuzzleRequest' );
