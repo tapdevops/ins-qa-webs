@@ -92,6 +92,8 @@ class ValidationController extends Controller {
 
    public function cek_aslap(Request $request){
       date_default_timezone_set('Asia/Jakarta');
+      set_time_limit(0);
+
       $result = ( new ValidasiHeader() )->validasi_cek_aslap($request->tanggal);
       $res = json_encode($result);
       $data = json_decode($res,true);
