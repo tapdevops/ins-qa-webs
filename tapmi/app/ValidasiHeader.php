@@ -326,7 +326,8 @@ class ValidasiHeader extends Model{
             										  WHERE  to_char(val_date_time,'YYYY-MM-DD') =  '$day'
             										  AND akurasi_sampling_ebcc = 'MATCH'
             										  AND val_jabatan_validator NOT IN ('KEPALA KEBUN','KEPALA_KEBUN','ASISTEN KEPALA','ASISTEN_KEPALA')
-                                            AND NVL (val_ebcc_code, 'x') NOT IN (SELECT NVL (val_ebcc_code, 'x') FROM tr_validasi_detail)
+                                            AND NVL (val_ebcc_code, 'x') NOT IN (SELECT NVL (val_ebcc_code, 'x') FROM tr_validasi_detail) 
+                                            AND ( val_sumber = 'MI' AND val_ebcc_code NOT LIKE 'M%' )
       ");
 		return $get;
    }
