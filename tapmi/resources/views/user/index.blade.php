@@ -39,12 +39,6 @@
 					<span>Tambah</span>
 				</span>
 			</a>
-			<a href="{{ url( '/user/create' ) }}" class="btn btn-focus m-btn m-btn--custom m-btn--icon m-btn--air m-btn--pill">
-				<span>
-					<i class="fa fa-plus"></i>
-					<span>Export</span>
-				</span>
-			</a>
 			<div class="m-separator m-separator--dashed d-xl-none"></div>
 		</div>
 	</div>
