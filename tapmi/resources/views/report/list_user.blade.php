@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Report List Asset</title>
+    <title>Data User</title>
 </head>
 <body>
 <div class="container">
     <div xclass="xtable-scroll ex1" xstyle="background-color: #FFF;overflow: auto;">
 
-    <center><h1><u>REPORT ASSET</u></h1><h3>Per tanggal : <?php echo date('d/m/Y'); ?></h3></center>
+    <center><h1><u>Data User</u></h1><h3>Per tanggal : <?php echo date('d/m/Y'); ?></h3></center>
 
     <?php 
         $l = "";
         $no = 1;
 
-        if(!empty($report))
+        if(!empty($master_user))
         {
             $l .= "<table border=1 cellspacing=0 cellpadding=5 class='table tabel-responsive table-bordered'>";
             $l .= "<tr>
