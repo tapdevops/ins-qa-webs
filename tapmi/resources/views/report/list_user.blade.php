@@ -1,6 +1,5 @@
 <table>
 	<tr>
-		<th style="text-align:center;">Kode Finding</th>
 		<th style="text-align:center;">Auth Code</th>
         <th style="text-align:center;">NIK</th>
         <th style="text-align:center;">Nama</th>
@@ -15,7 +14,6 @@
 	@if ( count( $master_user ) > 0 )
 		@foreach ( $master_user as $q )
 			<tr>
-				<td style="text-align:left;">{{ $finding['finding_code'] }}</td>
 				<td style="text-align:left;">{{  $q['USER_AUTH_CODE'] }}</td>
                 <td style="text-align:left;">{{  $q['EMPLOYEE_NIK'] }}</td>
                 <td style="text-align:left;">{{  $q['FULLNAME'] }}</td>
