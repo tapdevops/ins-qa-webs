@@ -1,73 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data User</title>
-</head>
-<body>
-<div class="container">
-    <div xclass="xtable-scroll ex1" xstyle="background-color: #FFF;overflow: auto;">
-
-    <center><h1><u>Data User</u></h1><h3>Per tanggal : <?php echo date('d/m/Y'); ?></h3></center>
-
-    <?php 
-        $l = "";
-        $no = 1;
-
-        if(!empty($master_user))
-        {
-            $l .= "<table border=1 cellspacing=0 cellpadding=5 class='table tabel-responsive table-bordered'>";
-            $l .= "<tr>
-                        <th>Auth Code</th>
-                        <th>NIK</th>
-                        <th>Nama</th>
-                        <th>Job Desc</th>
-                        <th>User Role</th>
-                        <th>Location</th>
-                        <th>Ref Role</th>
-                        <th>APK Version</th>
-                        <th>APK Date</th>
-                        <th>Status</th>
-                    </tr>";
-            
-
-            foreach( $master_user as $q )
-            {
+<table>
+	<tr>
+		<th style="text-align:center;">Kode Finding</th>
+		<th style="text-align:center;">Auth Code</th>
+        <th style="text-align:center;">NIK</th>
+        <th style="text-align:center;">Nama</th>
+        <th style="text-align:center;">Job Desc</th>
+        <th style="text-align:center;">User Role</th>
+        <th style="text-align:center;">Location</th>
+        <th style="text-align:center;">Ref Role</th>
+        <th style="text-align:center;">APK Version</th>
+        <th style="text-align:center;">APK Date</th>
+        <th style="text-align:center;">Status</th>
+	</tr>
+	@if ( count( $master_user ) > 0 )
+		@foreach ( $master_user as $q )
+			<tr>
+				<td style="text-align:left;">{{ $finding['finding_code'] }}</td>
+				<td style="text-align:left;">{{  $q['USER_AUTH_CODE'] }}</td>
+                <td style="text-align:left;">{{  $q['EMPLOYEE_NIK'] }}</td>
+                <td style="text-align:left;">{{  $q['FULLNAME'] }}</td>
+                <td style="text-align:left;">{{  $q['JOB'] }}</td>
+                <td style="text-align:left;">{{  $q['USER_ROLE'] }}</td>
+                <td style="text-align:left;">{{  $q['LOCATION_CODE'] }}</td>
+                <td style="text-align:left;">{{  $q['REF_ROLE'] }}</td>
+                <td style="text-align:left;">{{  $q['APK_VERSION'] }}</td>
+                <td style="text-align:left;">{{  $q['APK_DATE'] }}</td>
+			</tr>
+		@endforeach
+	@endif
+</table>
 
 
-                $l .= "<tr> 
-                        <td>". $q['USER_AUTH_CODE']."</td>
-                        <td>". $q['EMPLOYEE_NIK']."</td>
-                        <td>". $q['FULLNAME']."</td>
-                        <td>". $q['JOB']."</td>
-                        <td>". $q['USER_ROLE']."</td>
-                        <td>". $q['LOCATION_CODE']."</td>
-                        <td>". $q['REF_ROLE']."</td>
-                        <td>". $q['APK_VERSION']."</td>
-                        <td>". $q['APK_DATE']."</td>
-                        <td></td>
-                </tr>
-                ";
-                
-
-                $i++;
-                $no++;
-            }
-            
-            $l .= "</table>";
-        }
-        else
-        {
-            $l .= "Data not found!";
-        }
-
-        echo $l;
-
-    ?>
-
-    </div>
-</div>
-    
-</body>
-</html>
