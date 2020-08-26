@@ -182,7 +182,7 @@ class UserController extends Controller {
 
 	function user_download()
     {
-
+			$data = array();
 			$data['master_user'] = array();
 			if ( !empty( Data::user_find() ) ) {
 				$i = 0;
