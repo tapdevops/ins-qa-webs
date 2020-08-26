@@ -215,8 +215,19 @@ class UserController extends Controller {
 					
 				}
 			}
+
+		
+		return	Excel::create('Data_user.xlsx', function($excel) {
+
+				$excel->sheet('Data User', function($sheet) {
+			
+					$sheet->loadView('report.list_user', $data);
+			
+				});
+			
+			});
         
-        return Excel::download(new ReportExport($data), 'Data_user.xlsx');
+        // return Excel::download(new ReportExport($data), 'Data_user.xlsx');
     }
 
 
