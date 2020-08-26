@@ -182,8 +182,6 @@ class UserController extends Controller {
 
 	function user_download()
     {
-        if (empty(Session::get('authenticated')))
-            return redirect('/login');
 
 			$data['master_user'] = array();
 			if ( !empty( Data::user_find() ) ) {
