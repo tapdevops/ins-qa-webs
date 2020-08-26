@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\ReportExport;
 use View;
 use Validator;
 use Redirect;
@@ -177,4 +179,49 @@ class UserController extends Controller {
 		return response()->json( $data );
 	}
 
+
+	function user_download()
+    {
+        if (empty(Session::get('authenticated')))
+            return redirect('/login');
+
+			$data['master_user'] = array();
+			if ( !empty( Data::user_find() ) ) {
+				$i = 0;
+				foreach ( Data::user_find() as $q ) {
+					if ( isset( $q['JOB'] ) && isset( $q['FULLNAME'] ) ) {
+						$data['master_user'][$i]['USER_AUTH_CODE'] = $q['USER_AUTH_CODE'];
+						$data['master_user'][$i]['EMPLOYEE_NIK'] = $q['EMPLOYEE_NIK'];
+						$data['master_user'][$i]['USER_ROLE'] = $q['USER_ROLE'];
+						$data['master_user'][$i]['LOCATION_CODE'] = $q['LOCATION_CODE'];
+						$data['master_user'][$i]['REF_ROLE'] = $q['REF_ROLE'];
+						$data['master_user'][$i]['JOB'] = $q['JOB'];
+						$data['master_user'][$i]['FULLNAME'] = $q['FULLNAME'];
+						$data['master_user'][$i]['APK_VERSION'] = '';
+						$data['master_user'][$i]['APK_DATE'] = '';
+
+						$client = new \GuzzleHttp\Client();
+						$res = $client->request( 'GET', $this->url_api_ins_msa_auth.'/api/v2.0/server/apk-version/'.$q['USER_AUTH_CODE'], 
+							[
+								'headers' => [
+								'Authorization' => 'Bearer '.session( 'ACCESS_TOKEN' )
+							]
+						]);
+						$x = json_decode( $res->getBody(), true );
+
+						if ( $x['status'] == true ) {
+							$data['master_user'][$i]['APK_VERSION'] = $x['apk_version'];
+						}
+						$i++;
+					}
+					
+				}
+			}
+        
+        return Excel::download(new ReportExport($data), 'Data_user.xlsx');
+    }
+
+
+
+	
 }
