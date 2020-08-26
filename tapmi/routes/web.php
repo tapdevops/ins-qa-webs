@@ -39,7 +39,7 @@ Route::group( [ 'middleware' => 'web' ], function() {
 		Route::get( '/user/edit/{id}', 'UserController@edit' );
 		Route::post( '/user/edit/{id}', 'UserController@edit_proses' );
 		Route::get( '/user/search-user', 'UserController@search_user' );
-		Route::post('/user/export', 'UserController@user_download');
+		Route::get('/user/export', 'UserController@user_download');
 		
 		# Report
 		Route::get( '/report', 'ReportController@index' );
