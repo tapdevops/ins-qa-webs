@@ -14,7 +14,7 @@ class ReportExport implements FromView
     * @return \Illuminate\Support\Collection
     */
 	
-	use Exportable;
+	// use Exportable;
 	
 	public function __construct(string $datauser)
 	{
