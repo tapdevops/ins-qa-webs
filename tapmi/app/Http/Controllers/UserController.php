@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\ReportExport;
+use App\ReportOracle;
 use View;
 use Validator;
 use Redirect;
@@ -227,20 +228,20 @@ class UserController extends Controller {
 	}
 
 	public function user_download() {
-        $sql = " SELECT employee_nik,
-		employee_fullname,
-		employee_position,
-		employee_joindate AS start_date,
-		CASE WHEN employee_resigndate IS NULL THEN TO_DATE ('99991231', 'RRRRMMDD') ELSE employee_resigndate END AS end_date
-		FROM tap_dw.tm_employee_hris@dwh_link
-			UNION ALL
-			SELECT nik,
-					employee_name,
-					job_code,
-					start_valid,
-					CASE WHEN res_date IS NOT NULL THEN res_date ELSE end_valid END end_valid
-		FROM tap_dw.tm_employee_sap@dwh_link";
-		$data = json_encode($this->db_mobile_ins->select($sql));
+        // $sql = " SELECT employee_nik,
+		// employee_fullname,
+		// employee_position,
+		// employee_joindate AS start_date,
+		// CASE WHEN employee_resigndate IS NULL THEN TO_DATE ('99991231', 'RRRRMMDD') ELSE employee_resigndate END AS end_date
+		// FROM tap_dw.tm_employee_hris@dwh_link
+		// 	UNION ALL
+		// 	SELECT nik,
+		// 			employee_name,
+		// 			job_code,
+		// 			start_valid,
+		// 			CASE WHEN res_date IS NOT NULL THEN res_date ELSE end_valid END end_valid
+		// FROM tap_dw.tm_employee_sap@dwh_link";
+		// $data = json_encode($this->db_mobile_ins->select($sql));
 		// foreach(array_chunk($data, 200) as $dt){
 		// 		$results['master_user'] =  json_decode($dt,true);
 		// 		// dd($result['data']== null);
@@ -250,8 +251,8 @@ class UserController extends Controller {
 		// 					} );
 		// 				} )->export( 'xlsx' );
 		// }
-
-
+		$RO = new ReportOracle;
+		$data = $RO->Data_User();	
 		Excel::create('Data User', function($excel) use ($data) {
 			$excel->sheet('user', function($sheet) use($data) {
 				$sheet->appendRow(array(
