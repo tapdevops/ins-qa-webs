@@ -244,17 +244,17 @@ class UserController extends Controller {
 		$data = $this->db_mobile_ins->select($sql);
 		// $data = json_encode($this->db_mobile_ins->select($sql));
 		// dd($data);
-		foreach(array_chunk($data, 200) as $dt){
+		foreach(array_chunk($data, 2000) as $dt){
 				// $results['master_user'] =  json_decode($dt,true);
 				$results['master_user'] =  json_decode(json_encode($dt), true);
 				// dd($result['data']== null);
+				Excel::create('Data User', function ($excel) use ($results) {
+					$excel->sheet( 'Data User', function( $sheet ) use ( $results ) {
+					$sheet->loadView( 'report.list_user_export', $results );
+						} );
+					} )->export( 'xlsx' );
 		}
 
-		Excel::create('Data User', function ($excel) use ($results) {
-			$excel->sheet( 'Data User', function( $sheet ) use ( $results ) {
-			$sheet->loadView( 'report.list_user_export', $results );
-				} );
-			} )->export( 'xlsx' );
 		// $RO = new ReportOracle;
 		// $data = $RO->Data_User();	
 		// Excel::create('Data User', function($excel) use ($data) {
