@@ -7,14 +7,14 @@
         <th style="text-align:center;">End date</th>
 	</tr>
 	@if ( count( $master_user ) > 0 )
-                <?PHP dd($master_user);?>
+                <?php //dd($master_user);?>
 		@foreach ($master_user as $key => $q)
 			<tr>
-                <td style="text-align:left;">{{  $q['EMPLOYEE_NIK'] }}</td>
-                <td style="text-align:left;">{{  $q['EMPLOYEE_FULLNAME'] }}</td>
-                <td style="text-align:left;">{{  $q['EMPLOYEE_POSITION'] }}</td>
-                <td style="text-align:left;">{{  $q['START_DATE'] }}</td>
-                <td style="text-align:left;">{{  $q['END_DATE'] }}</td>
+                <td style="text-align:left;">{{  $q['employee_nik'] }}</td>
+                <td style="text-align:left;">{{  $q['employee_fullname'] }}</td>
+                <td style="text-align:left;">{{  $q['employee_position'] }}</td>
+                <td style="text-align:left;">{{  $q['start_date'] }}</td>
+                <td style="text-align:left;">{{  $q['end_date'] }}</td>
 			</tr>
 		@endforeach
 	@endif
