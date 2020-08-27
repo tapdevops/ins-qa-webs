@@ -8,8 +8,8 @@ tr > th {
 </style>
 <table>
 	<tr class="mythead">
-		<th style="background-color: #ff9933;" colspan="20">Sampling EBCC</th>
-		<th style="background-color: #33cc33;" colspan="13">EBCC</th>
+		<th style="background-color: #ff9933;" colspan="19">Sampling EBCC</th>
+		<th style="background-color: #33cc33;" colspan="11">EBCC</th>
 
 		<!-- Etc -->
 		<th rowspan="2">Lihat Foto</th>
@@ -29,15 +29,14 @@ tr > th {
 		<th style="background-color: #ff9933;">Kode Block</th>
 		<th style="background-color: #ff9933;">Block Deskripsi</th>
 		<th style="background-color: #ff9933;">Tph</th>
+		<th style="background-color: #ff9933;">Ticket</th>
 		<th style="background-color: #ff9933;">Kode Sampling EBCC</th>
 		<th style="background-color: #ff9933;">Status QR Code Tph</th>
 		<th style="background-color: #ff9933;">BM (jjg)</th>
-		<th style="background-color: #ff9933;">BK (jjg)</th>
 		<th style="background-color: #ff9933;">MS (jjg)</th>
 		<th style="background-color: #ff9933;">OR (jjg)</th>
 		<th style="background-color: #ff9933;">BB (jjg)</th>
 		<th style="background-color: #ff9933;">JK (jjg)</th>
-		<th style="background-color: #ff9933;">BA (jjg)</th>
 		<th style="background-color: #ff9933;">Total Janjang Panen</th>
 
 		<!-- EBCC -->
@@ -47,12 +46,10 @@ tr > th {
 		<th style="background-color: #33cc33;">No BCC</th>
 		<th style="background-color: #33cc33;">Status QR Code TPH</th>
 		<th style="background-color: #33cc33;">BM (jjg)</th>
-		<th style="background-color: #33cc33;">BK (jjg)</th>
 		<th style="background-color: #33cc33;">MS (jjg)</th>
 		<th style="background-color: #33cc33;">OR (jjg)</th>
 		<th style="background-color: #33cc33;">BB (jjg)</th>
 		<th style="background-color: #33cc33;">JK (jjg)</th>
-		<th style="background-color: #33cc33;">BA (jjg)</th>
 		<th style="background-color: #33cc33;">Total Janjang Panen</th>
 	</tr>
 
@@ -72,15 +69,14 @@ tr > th {
 				<td>{{ $dt['val_block_code'] }}</td>
 				<td>{{ $dt['val_block_name'] }}</td>
 				<td>{{ $dt['val_tph_code'] }}</td>
+				<td>{{ $dt['val_delivery_ticket'] }}</td>
 				<td>{{ $dt['val_ebcc_code'] }}</td>
 				<td>{{ $dt['val_status_tph_scan'].' '.$dt['val_alasan_manual'] }}</td>
 				<td>{{ $dt['val_jml_bm'] }}</td>
-				<td>{{ $dt['val_jml_bk'] }}</td>
 				<td>{{ $dt['val_jml_ms'] }}</td>
 				<td>{{ $dt['val_jml_or'] }}</td>
 				<td>{{ $dt['val_jml_bb'] }}</td>
 				<td>{{ $dt['val_jml_jk'] }}</td>
-				<td>{{ $dt['val_jml_ba'] }}</td>
 				<td>{{ $dt['val_jjg_panen'] }}</td>
 
 				<!-- EBCC -->
@@ -90,12 +86,10 @@ tr > th {
 				<td>{{ $dt['ebcc_no_bcc'] }}</td>
 				<td>{{ $dt['ebcc_status_tph'].' '.$dt['ebcc_keterangan_qrcode'] }}</td>
 				<td>{{ $dt['ebcc_jml_bm'] }}</td>
-				<td>{{ $dt['ebcc_jml_bk'] }}</td>
 				<td>{{ $dt['ebcc_jml_ms'] }}</td>
 				<td>{{ $dt['ebcc_jml_or'] }}</td>
 				<td>{{ $dt['ebcc_jml_bb'] }}</td>
 				<td>{{ $dt['ebcc_jml_jk'] }}</td>
-				<td>{{ $dt['ebcc_jml_ba'] }}</td>
 				<td>{{ $dt['ebcc_jjg_panen'] }}</td>
 
 				<!-- Etc -->
@@ -192,12 +186,10 @@ tr > th {
 		<td colspan="2">Keterangan :</td>
 	</tr>
 	<tr><td>BM</td><td>a. Mentah</td></tr></tr>
-	<tr><td>BK</td><td>b. Mengkal/Kurang Masak</td></tr>
-	<tr><td>MS</td><td>c. Masak</td></tr>
-	<tr><td>OR</td><td>d. Overripe/Terlalu Masak</td></tr>
-	<tr><td>BB</td><td>e. Busuk</td></tr>
-	<tr><td>JK</td><td>f. Janjang Kosong</td></tr>
-	<tr><td>BA</td><td>g. Buah Aborsi</td></tr>
+	<tr><td>MS</td><td>b. Masak</td></tr>
+	<tr><td>OR</td><td>c. Overripe/Terlalu Masak</td></tr>
+	<tr><td>BB</td><td>d. Busuk</td></tr>
+	<tr><td>JK</td><td>e. Janjang Kosong</td></tr>
 </table>
 
 

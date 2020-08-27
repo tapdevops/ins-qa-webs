@@ -234,7 +234,6 @@ class ReportOracleController extends Controller {
 		$results['data'] = array();
 		$results['summary'] = array();
 		$results['periode'] = date( 'Ym', strtotime( $START_DATE ) );
-		
 
 		# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 		# REPORT EBCC VALIDATION ESTATE/MILL
@@ -419,7 +418,7 @@ class ReportOracleController extends Controller {
 									$AFD_CODE, 
 									$BLOCK_CODE,
 									$DATE_MONTH
-								);
+								);					
 			$results['data'] = json_decode( json_encode( $results['data'] ), true );
 			$results['date_month'] = $DATE_MONTH.'-01';
 			$file_name = 'Report Class Block - '.$BA_CODE.' - '.date( 'M Y', strtotime( $request->DATE_MONTH.'-01' ) );
@@ -427,6 +426,34 @@ class ReportOracleController extends Controller {
 			$results['view'] = 'orareport.excel-inspection-class-block';
 
 			// return view( 'orareport.excel-inspection-class-block', $results );
+			// dd();
+		}
+		
+		# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+		# REPORT POINT BULANAN
+		# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+		else if ( $REPORT_TYPE == 'POINT_BULANAN' ) {
+			$results['data'] = $RO->POINT_BULANAN(
+									$REPORT_TYPE, 
+									$START_DATE, 
+									$END_DATE, 
+									$REGION_CODE, 
+									$COMP_CODE, 
+									$BA_CODE, 
+									$AFD_CODE, 
+									$BLOCK_CODE,
+									$DATE_MONTH
+								);
+			$results['data'] = json_decode( json_encode( $results['data'] ),true );
+			// echo '<pre>';
+			// print_r( $results['data']);
+			// die;
+			$results['date_month'] = date( 'M Y',strtotime( $DATE_MONTH.'-01' ) );
+			$file_name = 'Report Point Bulanan - '.$results['date_month'];
+			$results['sheet_name'] = 'Point Bulanan';
+			$results['view'] = 'orareport.excel-point-bulanan';
+
+			// return view( 'orareport.excel-point-bulanan', $results );
 			// dd();
 		}
 

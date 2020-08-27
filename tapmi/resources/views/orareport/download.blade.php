@@ -3,7 +3,7 @@
 
 @section( 'subheader' )
 <ul class="m-subheader__breadcrumbs m-nav m-nav--inline">
-	<li class="m-nav__item">
+	<li class="m-nav__item"> 
 		<a href="{{ url( 'report' ) }}" class="m-nav__link">
 			<span class="m-nav__link-text">
 				Report
@@ -42,7 +42,7 @@
 					<option value="INSPEKSI">INSPEKSI</option>
 					<option value="INSPEKSI_GENBA">INSPEKSI GENBA</option>
 					<option value="CLASS_BLOCK_AFD_ESTATE">CLASS, BLOCK, AFD, &amp; ESTATE</option>
-					<option value="POINT_BULANAN">POIN BULANAN</option>
+					<option value="POINT_BULANAN">POINT BULANAN</option>
 				</select>
 			</div>
 		</div>
@@ -246,28 +246,61 @@
 	}
 
 	function reportGroup(value) {
-
 		switch (value) {
-			case 'TEMUAN':
+			/*case 'TEMUAN':
 				$("#report-date-month").hide();
 				$("#report-date-full").show();
+				$("#report-hs-region").show();
+				$("#report-hs-comp").show();
+				$("#report-hs-est").show();
+				$("#report-hs-afd").show();
+				$("#report-hs-block").show();
 				break;
 			case 'INSPEKSI':
 				$("#report-date-month").hide();
 				$("#report-date-full").show();
+				$("#report-hs-region").show();
+				$("#report-hs-comp").show();
+				$("#report-hs-est").show();
+				$("#report-hs-afd").show();
+				$("#report-hs-block").show();
 				break;
 			case 'EBCC_VALIDATION':
 				$("#report-date-month").hide();
 				$("#report-date-full").show();
-				break;
+				$("#report-hs-region").show();
+				$("#report-hs-comp").show();
+				$("#report-hs-est").show();
+				$("#report-hs-afd").show();
+				$("#report-hs-block").show();
+				break;*/
 			case 'CLASS_BLOCK_AFD_ESTATE':
 				$("#report-date-month").show();
 				$("#report-date-full").hide();
+				$("#report-hs-region").show();
+				$("#report-hs-comp").show();
+				$("#report-hs-est").show();
+				$("#report-hs-afd").show();
+				$("#report-hs-block").show();
 				break;
 			case 'POINT_BULANAN':
 				$("#report-date-month").show();
 				$("#report-date-full").hide();
-				break;		
+				$("#report-hs-region").hide();
+				$("#report-hs-comp").hide();
+				$("#report-hs-est").hide();
+				$("#report-hs-afd").hide();
+				$("#report-hs-block").hide();
+				break;	
+			default:	
+				$("#report-date-month").hide();
+				$("#report-date-full").show();
+				$("#report-hs-region").show();
+				$("#report-hs-comp").show();
+				$("#report-hs-est").show();
+				$("#report-hs-afd").show();
+				$("#report-hs-block").show();
+				break;
 		}
 	}
 
@@ -299,7 +332,7 @@
 			autoclose: true,
 			minViewMode: 1,
 			format: 'yyyy-mm',
-			endDate: "-1M"
+			endDate: "0M"
 		})
 
 		$('#form').waitMe({
@@ -356,9 +389,8 @@
 			if( $("#report-select").val() == '' ){
 				toastr.error("Field jenis report harus dipilih.", "Validasi Gagal!");
 			}
-
 			
-			if ($("#report-select").val() != 'CLASS_BLOCK_AFD_ESTATE') {
+			if ($("#report-select").val() != 'CLASS_BLOCK_AFD_ESTATE' && $("#report-select").val() != 'POINT_BULANAN') {
 				if ($("#report-start-date").val() != '' && $("#report-end-date").val() != '') {
 					next = true;
 				} else {
@@ -371,6 +403,8 @@
 				} else {
 					toastr.error("Report Class Block hanya bisa diambil dari BA Code.", "Validasi Gagal!");
 				}
+			} else if ($("#report-select").val() == 'POINT_BULANAN') {
+				next = true;
 			}
 
 			if ( next == true ) {
@@ -385,7 +419,7 @@
 				toastr.success( "Mendownload report...", "Info" );
 				window.setTimeout(function() {
 					form.waitMe('hide');
-				}, 3000);
+				}, 6000);
 				
 			}
 			else {
