@@ -217,13 +217,23 @@ class UserController extends Controller {
 			}
 
 		Excel::create('Data User', function ($excel) use ($data) {
-			$excel->sheet('Sampling EBCC', function ($sheet) use ($data) {
-				$sheet->loadView('report.list_user', $data);
-			});
-		})->export('xls');
-    }
+		// 	$excel->sheet('Data User', function ($sheet) use ($data) {
+		// 		$sheet->loadView('report.list_user', $data);
+				
+		// 		$query->chunk(1000, function ($rows) use ($sheet) {
+		// 			foreach ($rows as $row) {
+		// 				$sheet->appendRow($this->rows($row));
+		// 			}
+		// 		});
+		// 	});
+		// })->export('xlsx');
+			
+			$excel->sheet( 'Data User', function( $sheet ) use ( $results ) {
+			$sheet->loadView( 'report.list_user', $results );
+				} );
+			} )->export( 'xlsx' );
 
-
+		}
 
 	
 }
