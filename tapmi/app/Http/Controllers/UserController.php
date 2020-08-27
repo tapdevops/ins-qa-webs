@@ -33,6 +33,7 @@ class UserController extends Controller {
 	public function __construct() {
 		$this->url_api_ins_msa_auth = APISetup::url()['msa']['ins']['auth'];
 		$this->active_menu = '_'.str_replace( '.', '', '02.05.00.00.00' ).'_';
+		$this->db_mobile_ins = DB::connection('mobile_ins');
 	}
 
 	#   		 								  				        ▁ ▂ ▄ ▅ ▆ ▇ █ INDEX
