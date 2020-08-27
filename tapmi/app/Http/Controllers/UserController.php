@@ -246,7 +246,7 @@ class UserController extends Controller {
 		// dd($data);
 		foreach(array_chunk($data, 200) as $dt){
 				// $results['master_user'] =  json_decode($dt,true);
-				$results['master_user'] =  $dt;
+				$results['master_user'] =  json_decode(json_encode($dt), true);
 				// dd($result['data']== null);
 				Excel::create('Data User', function ($excel) use ($results) {
 						$excel->sheet( 'Data User', function( $sheet ) use ( $results ) {
