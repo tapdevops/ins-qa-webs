@@ -225,7 +225,7 @@ class UserController extends Controller {
 
 	}
 
-	public function user_download($id) {
+	public function user_download() {
         $sql = " SELECT employee_nik,
 		employee_fullname,
 		employee_position,
@@ -242,9 +242,9 @@ class UserController extends Controller {
         $data = json_encode($this->db_mobile_ins->select($sql));
         $results['master_user'] =  json_decode($data,true);
         // dd($result['data']== null);
-		Excel::create('Data User', function ($excel) use ($data) {
-				$excel->sheet( 'Data User', function( $sheet ) use ( $data ) {
-				$sheet->loadView( 'report.list_user_export', $data );
+		Excel::create('Data User', function ($excel) use ($results) {
+				$excel->sheet( 'Data User', function( $sheet ) use ( $results ) {
+				$sheet->loadView( 'report.list_user_export', $results );
 					} );
 				} )->export( 'xlsx' );
 	}
