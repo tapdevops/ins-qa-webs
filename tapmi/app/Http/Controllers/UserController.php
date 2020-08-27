@@ -180,7 +180,7 @@ class UserController extends Controller {
 	}
 
 
-	function user_download()
+	function user_download1()
     {
 			$data = array();
 			$data['master_user'] = array();
@@ -225,7 +225,7 @@ class UserController extends Controller {
 
 	}
 
-	public function compare_ebcc($id) {
+	public function user_download($id) {
         $sql = " SELECT employee_nik,
 		employee_fullname,
 		employee_position,
