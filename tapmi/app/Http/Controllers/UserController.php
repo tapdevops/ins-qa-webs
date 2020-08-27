@@ -227,11 +227,11 @@ class UserController extends Controller {
 	}
 
 	public function user_download() {
-        $sql = " SELECT employee_nik,
-		employee_fullname,
-		employee_position,
-		employee_joindate AS start_date,
-		CASE WHEN employee_resigndate IS NULL THEN TO_DATE ('99991231', 'RRRRMMDD') ELSE employee_resigndate END AS end_date
+        $sql = " SELECT employee_nik as EMPLOYEE_NIK,
+		employee_fullname AS EMPLOYEE_FULL_NAME,
+		employee_position AS EMPLOYEE_POSITION,
+		employee_joindate AS START_DATE,
+		CASE WHEN employee_resigndate IS NULL THEN TO_DATE ('99991231', 'RRRRMMDD') ELSE employee_resigndate END AS END_DATE
 		FROM tap_dw.tm_employee_hris@dwh_link
 			UNION ALL
 			SELECT nik,
