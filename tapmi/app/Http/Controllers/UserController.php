@@ -228,8 +228,8 @@ class UserController extends Controller {
 		// 	});
 		// })->export('xlsx');
 			
-			$excel->sheet( 'Data User', function( $sheet ) use ( $results ) {
-			$sheet->loadView( 'report.list_user', $results );
+			$excel->sheet( 'Data User', function( $sheet ) use ( $data ) {
+			$sheet->loadView( 'report.list_user', $data );
 				} );
 			} )->export( 'xlsx' );
 
