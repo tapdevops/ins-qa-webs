@@ -247,7 +247,7 @@ class UserController extends Controller {
 		foreach(array_chunk($data, count($data)/50) as $dt){
 				// $results['master_user'] =  json_decode($dt,true);
 				// dd($result['data']== null);
-				foreach($dt as $dl)
+				foreach($dt as $k=>$dl)
   				{
 					$results['master_user'] =  json_decode(json_encode($dl), true);
 					Excel::create('Data User', function ($excel) use ($results) {
