@@ -7,8 +7,8 @@
         <th style="text-align:center;">End date</th>
 	</tr>
 	@if ( count( $master_user ) > 0 )
+                <?PHP dd($master_user);?>
 		@foreach ($master_user as $key => $q)
-                <?PHP var_dump($master_user);?>
 			<tr>
                 <td style="text-align:left;">{{  $q['EMPLOYEE_NIK'] }}</td>
                 <td style="text-align:left;">{{  $q['EMPLOYEE_FULLNAME'] }}</td>
