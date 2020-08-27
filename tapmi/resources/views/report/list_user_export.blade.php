@@ -9,7 +9,7 @@
 	@if ( count( $master_user ) > 0 )
                 <?php //dd($master_user);
                 foreach(array_chunk($master_user, 200) as $chunk){
-                        foreach($chunk as $q){?>
+                        foreach($chunk as $key => $q){?>
 			<tr>
                 <td style="text-align:left;">{{  $q['employee_nik'] }}</td>
                 <td style="text-align:left;">{{  $q['employee_fullname'] }}</td>
