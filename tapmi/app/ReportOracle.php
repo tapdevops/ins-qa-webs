@@ -3510,23 +3510,4 @@ class ReportOracle extends Model{
 		return $get['data'];
 	}
 
-
-	// public function Data_User() {
-	// 	$get = $this->db_mobile_ins->select("
-	// 					SELECT employee_nik,
-	// 					employee_fullname,
-	// 					employee_position,
-	// 					employee_joindate AS start_date,
-	// 					CASE WHEN employee_resigndate IS NULL THEN TO_DATE ('99991231', 'RRRRMMDD') ELSE employee_resigndate END AS end_date
-	// 					FROM tap_dw.tm_employee_hris@dwh_link
-	// 						UNION ALL
-	// 						SELECT nik,
-	// 								employee_name,
-	// 								job_code,
-	// 								start_valid,
-	// 								CASE WHEN res_date IS NOT NULL THEN res_date ELSE end_valid END end_valid
-	// 					FROM tap_dw.tm_employee_sap@dwh_link");
-	// 	return $get;
-	// }
-
 }

@@ -244,7 +244,7 @@ class UserController extends Controller {
 		$data = $this->db_mobile_ins->select($sql);
 		// $data = json_encode($this->db_mobile_ins->select($sql));
 		// dd($data);
-		foreach(array_chunk($data, 2000) as $dt){
+		foreach(array_chunk($data, count($data)/100) as $dt){
 				// $results['master_user'] =  json_decode($dt,true);
 				$results['master_user'] =  json_decode(json_encode($dt), true);
 				// dd($result['data']== null);
@@ -254,25 +254,6 @@ class UserController extends Controller {
 						} );
 					} )->export( 'xlsx' );
 		}
-
-		// $RO = new ReportOracle;
-		// $data = $RO->Data_User();	
-		// Excel::create('Data User', function($excel) use ($data) {
-		// 	$excel->sheet('user', function($sheet) use($data) {
-		// 		$sheet->appendRow(array(
-		// 			'employee_nik', 'employee_fullname', 'employee_position', 'start_date', 'end_date'
-		// 		));
-		// 		$data->chunk(100, function($rows) use ($sheet)
-		// 		{
-		// 			foreach ($rows as $row)
-		// 			{
-		// 				$sheet->appendRow(array(
-		// 					$row->iemployee_nik, $row->employee_fullname, $row->employee_position, $row->start_date , $row->end_date
-		// 				));
-		// 			}
-		// 		});
-		// 	});
-		// })->download('xlsx');
 	
 	}
 
