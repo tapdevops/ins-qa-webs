@@ -7,7 +7,7 @@
         <th style="text-align:center;">End date</th>
 	</tr>
 	@if ( count( $master_user ) > 0 )
-		@foreach ( $master_user as $q )
+		@foreach ($master_user as $key => $q)
 			<tr>
                 <td style="text-align:left;">{{  $q['EMPLOYEE_NIK'] }}</td>
                 <td style="text-align:left;">{{  $q['EMPLOYEE_FULLNAME'] }}</td>
