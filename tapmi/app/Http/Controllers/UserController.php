@@ -240,14 +240,35 @@ class UserController extends Controller {
 					start_valid,
 					CASE WHEN res_date IS NOT NULL THEN res_date ELSE end_valid END end_valid
 		FROM tap_dw.tm_employee_sap@dwh_link";
-        $data = json_encode($this->db_mobile_ins->select($sql));
-        $results['master_user'] =  json_decode($data,true);
-        // dd($result['data']== null);
-		Excel::create('Data User', function ($excel) use ($results) {
-				$excel->sheet( 'Data User', function( $sheet ) use ( $results ) {
-				$sheet->loadView( 'report.list_user_export', $results );
-					} );
-				} )->export( 'xlsx' );
+		$data = json_encode($this->db_mobile_ins->select($sql));
+		// foreach(array_chunk($data, 200) as $dt){
+		// 		$results['master_user'] =  json_decode($dt,true);
+		// 		// dd($result['data']== null);
+		// 		Excel::create('Data User', function ($excel) use ($results) {
+		// 				$excel->sheet( 'Data User', function( $sheet ) use ( $results ) {
+		// 				$sheet->loadView( 'report.list_user_export', $results );
+		// 					} );
+		// 				} )->export( 'xlsx' );
+		// }
+
+
+		Excel::create('Data User', function($excel) use ($data) {
+			$excel->sheet('user', function($sheet) use($data) {
+				$sheet->appendRow(array(
+					'employee_nik', 'employee_fullname', 'employee_position', 'start_date', 'end_date'
+				));
+				$data->chunk(100, function($rows) use ($sheet)
+				{
+					foreach ($rows as $row)
+					{
+						$sheet->appendRow(array(
+							$row->iemployee_nikd, $row->employee_fullname, $row->employee_position, $row->start_date , $row->end_date
+						));
+					}
+				});
+			});
+		})->download('xlsx');
+	
 	}
 
 
