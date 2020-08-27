@@ -39,6 +39,12 @@
 					<span>Tambah</span>
 				</span>
 			</a>
+			<a href="{{ url( '/user/export' ) }}" class="btn btn-focus m-btn m-btn--custom m-btn--icon m-btn--air m-btn--pill">
+				<span>
+					<i class="fa fa-file-excel-o"></i>
+					<span>Export</span>
+				</span>
+			</a>
 			<div class="m-separator m-separator--dashed d-xl-none"></div>
 		</div>
 	</div>

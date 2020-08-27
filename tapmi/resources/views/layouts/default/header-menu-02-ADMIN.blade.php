@@ -42,10 +42,6 @@
                         href={{ URL::to('/user/create') }} class="m-menu__link "><i
                             class="m-menu__link-icon fa fa-plus"></i><span class="m-menu__link-text">Tambah
                             User</span></a></li>
-                <li class="m-menu__item " m-menu-link-redirect="1" aria-haspopup="true"><a
-                        href={{ URL::to('/user/export') }} class="m-menu__link "><i
-                            class="m-menu__link-icon fa fa-file-excel-o"></i><span class="m-menu__link-text">Export
-                            User</span></a></li>
             </ul>
         </div>
     </li>
