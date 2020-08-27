@@ -9,7 +9,6 @@
         <th style="text-align:center;">Ref Role</th>
         <th style="text-align:center;">APK Version</th>
         <th style="text-align:center;">APK Date</th>
-        <th style="text-align:center;">Status</th>
 	</tr>
 	@if ( count( $master_user ) > 0 )
 		@foreach ( $master_user as $q )

@@ -197,6 +197,7 @@ class UserController extends Controller {
 						$data['master_user'][$i]['FULLNAME'] = $q['FULLNAME'];
 						$data['master_user'][$i]['APK_VERSION'] = '';
 						$data['master_user'][$i]['APK_DATE'] = '';
+						$data['master_user'][$i]['EMPLOYEE_RESIGNDATE '] =  $q['EMPLOYEE_RESIGNDATE '];
 
 						$client = new \GuzzleHttp\Client();
 						$res = $client->request( 'GET', $this->url_api_ins_msa_auth.'/api/v2.0/server/apk-version/'.$q['USER_AUTH_CODE'], 
@@ -217,23 +218,39 @@ class UserController extends Controller {
 			}
 
 		Excel::create('Data User', function ($excel) use ($data) {
-		// 	$excel->sheet('Data User', function ($sheet) use ($data) {
-		// 		$sheet->loadView('report.list_user', $data);
-				
-		// 		$query->chunk(1000, function ($rows) use ($sheet) {
-		// 			foreach ($rows as $row) {
-		// 				$sheet->appendRow($this->rows($row));
-		// 			}
-		// 		});
-		// 	});
-		// })->export('xlsx');
-			
 			$excel->sheet( 'Data User', function( $sheet ) use ( $data ) {
 			$sheet->loadView( 'report.list_user', $data );
 				} );
 			} )->export( 'xlsx' );
 
-		}
+	}
+
+	public function compare_ebcc($id) {
+        $sql = " SELECT employee_nik,
+		employee_fullname,
+		employee_position,
+		employee_joindate AS start_date,
+		CASE WHEN employee_resigndate IS NULL THEN TO_DATE ('99991231', 'RRRRMMDD') ELSE employee_resigndate END AS end_date
+		FROM tap_dw.tm_employee_hris@dwh_link
+			UNION ALL
+			SELECT nik,
+					employee_name,
+					job_code,
+					start_valid,
+					CASE WHEN res_date IS NOT NULL THEN res_date ELSE end_valid END end_valid
+		FROM tap_dw.tm_employee_sap@dwh_link";
+        $data = json_encode($this->db_mobile_ins->select($sql));
+        $results['master_user'] =  json_decode($data,true);
+        // dd($result['data']== null);
+		Excel::create('Data User', function ($excel) use ($data) {
+				$excel->sheet( 'Data User', function( $sheet ) use ( $data ) {
+				$sheet->loadView( 'report.list_user_export', $data );
+					} );
+				} )->export( 'xlsx' );
+	}
+
+
+		
 
 	
 }
