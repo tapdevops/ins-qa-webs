@@ -249,7 +249,8 @@ class UserController extends Controller {
 				// dd($result['data']== null);
 				foreach($dt as $dl)
   				{
-					$results['master_user'] =  json_decode(json_encode($dl), true);
+					$dtx =  json_decode(json_encode($dl), true);
+					$results['master_user'] = $dtx;
 					Excel::create('Data User', function ($excel) use ($results) {
 						$excel->sheet( 'Data User', function( $sheet ) use ( $results ) {
 						$sheet->loadView( 'report.list_user_export', $results );
