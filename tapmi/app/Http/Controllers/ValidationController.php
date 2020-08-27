@@ -165,7 +165,7 @@ class ValidationController extends Controller {
    
             $check_kabun_validation = $this->db_ebcc->table('T_VALIDASI')->
                                                       where(['NO_BCC'=>$value['ebcc_no_bcc']])->
-                                                      whereIn('ROLES',['KEPALA KEBUN','KEBAPA_KEBUN','ASISTEN KEPALA','ASISTEN_KEPALA'])->
+                                                      // whereIn('ROLES',['KEPALA KEBUN','KEPALA_KEBUN','ASISTEN KEPALA','ASISTEN_KEPALA'])->
                                                       first();
 
             // UPDATE BCC HASIL PANEN KUALITAS IF KABUN NEVER VALIDATE

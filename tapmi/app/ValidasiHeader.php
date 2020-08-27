@@ -321,11 +321,26 @@ class ValidasiHeader extends Model{
 
    public function validasi_cek_aslap($date){
       $day =  date("Y-m-d", strtotime($date));
-      $procedure = "begin mobile_inspection.prc_tr_ebcc_compare (sysdate-1, 'ERWIN_S'); end;";
+      $user = session('USERNAME');
+      $user_pt = substr(session('LOCATION_CODE'),0,2).'%';
+      $procedure = $this->db_mobile_ins->statement(" BEGIN 
+                                          mobile_inspection.prc_tr_ebcc_compare (
+                                             trunc(TO_DATE('$day','yyyy-mm-dd')),
+                                             trunc(TO_DATE('$day','yyyy-mm-dd')+1),
+                                             '$user_pt',
+                                             'MI Web : $user'
+                                          ) ;
+                                    END;");
       $get = $this->db_mobile_ins->select(" SELECT * FROM tr_ebcc_compare
-            										  WHERE  to_char(val_date_time,'YYYY-MM-DD') =  '$day'
+            										  WHERE  
+            										     ( 
+                                                 val_jabatan_validator IN ('KEPALA KEBUN','KEPALA_KEBUN','ASISTEN KEPALA','ASISTEN_KEPALA','EM','SEM GM','SENIOR ESTATE MANAGER') 
+                                                   OR 
+                                                 val_jabatan_validator LIKE 'ASISTEN%' 
+                                               )
+                                            AND to_char(val_date_time,'YYYY-MM-DD') =  '$day'
             										  AND akurasi_sampling_ebcc = 'MATCH'
-            										  AND val_jabatan_validator NOT IN ('KEPALA KEBUN','KEPALA_KEBUN','ASISTEN KEPALA','ASISTEN_KEPALA')
+                                            AND status_tph = 'ACTIVE'
                                             AND NVL (val_ebcc_code, 'x') NOT IN (SELECT NVL (val_ebcc_code, 'x') FROM tr_validasi_detail) 
                                             AND ( val_sumber = 'MI' AND val_ebcc_code NOT LIKE 'M%' )
       ");
