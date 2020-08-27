@@ -243,7 +243,7 @@ class UserController extends Controller {
 		FROM tap_dw.tm_employee_sap@dwh_link";
 		$data = json_encode($this->db_mobile_ins->select($sql));
 		// $data = json_decode($this->db_mobile_ins->select($sql));
-		foreach(array_chunk($data, 200) as $dt){
+		foreach(array_chunk($data->getArray(), 200) as $dt){
 				$results['master_user'] =  json_decode($dt,true);
 				// dd($result['data']== null);
 				Excel::create('Data User', function ($excel) use ($results) {
