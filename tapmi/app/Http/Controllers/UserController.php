@@ -63,11 +63,13 @@ class UserController extends Controller {
 									FROM tap_dw.tm_employee_sap@dwh_link
 									) a
 									WHERE a.EMPLOYEE_NIK = '$nik'";
-					$data = $this->db_mobile_ins->select($sql);
-					if($data[0]->end_date == "9999-12-31 00:00:00"){
-						$status = "Active";
-					}else{
-						$status = "Inactive";
+					$dt = json_decode(json_encode($this->db_mobile_ins->select($sql)),true);
+					foreach($dt as $k){
+						if($k['end_date'] == "9999-12-31 00:00:00"){
+							$status = "Active";
+						}else{
+							$status = "Inactive";
+						}
 					}
 					if ( isset( $q['JOB'] ) && isset( $q['FULLNAME'] ) ) {
 						$data['master_user'][$i]['USER_AUTH_CODE'] = $q['USER_AUTH_CODE'];
@@ -79,8 +81,6 @@ class UserController extends Controller {
 						$data['master_user'][$i]['FULLNAME'] = $q['FULLNAME'];
 						$data['master_user'][$i]['APK_VERSION'] = '';
 						$data['master_user'][$i]['APK_DATE'] = '';
-						$data['master_user'][$i]['START_DATE'] = $data[0]->start_date;
-						$data['master_user'][$i]['END_DATE'] = $data[0]->end_date;
 						$data['master_user'][$i]['STATUS'] = $status;
 
 
@@ -207,13 +207,38 @@ class UserController extends Controller {
 	}
 
 
-	function user_download1()
-    {
-			$data = array();
+	public function user_download() {
+		$allowed_role = array( "ADMIN" );
+		$data['active_menu'] = $this->active_menu;
+		$nik = "";
+		$status = "";
+
+		if ( in_array( session('USER_ROLE'), $allowed_role ) ) {
 			$data['master_user'] = array();
 			if ( !empty( Data::user_find() ) ) {
 				$i = 0;
 				foreach ( Data::user_find() as $q ) {
+					$nik = $q['EMPLOYEE_NIK'];
+					$sql = "SELECT a.start_date,a.end_date FROM (
+							SELECT employee_nik,
+									employee_joindate AS start_date,
+									CASE WHEN employee_resigndate IS NULL THEN TO_DATE ('99991231', 'RRRRMMDD') ELSE employee_resigndate END AS end_date
+									FROM tap_dw.tm_employee_hris@dwh_link
+										UNION ALL
+										SELECT nik,
+												start_valid,
+												CASE WHEN res_date IS NOT NULL THEN res_date ELSE end_valid END end_valid
+									FROM tap_dw.tm_employee_sap@dwh_link
+									) a
+									WHERE a.EMPLOYEE_NIK = '$nik'";
+					$dt = json_decode(json_encode($this->db_mobile_ins->select($sql)),true);
+					foreach($dt as $k){
+						if($k['end_date'] == "9999-12-31 00:00:00"){
+							$status = "Active";
+						}else{
+							$status = "Inactive";
+						}
+					}
 					if ( isset( $q['JOB'] ) && isset( $q['FULLNAME'] ) ) {
 						$data['master_user'][$i]['USER_AUTH_CODE'] = $q['USER_AUTH_CODE'];
 						$data['master_user'][$i]['EMPLOYEE_NIK'] = $q['EMPLOYEE_NIK'];
@@ -224,7 +249,8 @@ class UserController extends Controller {
 						$data['master_user'][$i]['FULLNAME'] = $q['FULLNAME'];
 						$data['master_user'][$i]['APK_VERSION'] = '';
 						$data['master_user'][$i]['APK_DATE'] = '';
-						$data['master_user'][$i]['EMPLOYEE_RESIGNDATE '] =  $q['EMPLOYEE_RESIGNDATE '];
+						$data['master_user'][$i]['STATUS'] = $status;
+
 
 						$client = new \GuzzleHttp\Client();
 						$res = $client->request( 'GET', $this->url_api_ins_msa_auth.'/api/v2.0/server/apk-version/'.$q['USER_AUTH_CODE'], 
@@ -243,6 +269,8 @@ class UserController extends Controller {
 					
 				}
 			}
+			
+		}
 
 		Excel::create('Data User', function ($excel) use ($data) {
 			$excel->sheet( 'Data User', function( $sheet ) use ( $data ) {
@@ -252,7 +280,7 @@ class UserController extends Controller {
 
 	}
 
-	public function user_download() {
+	public function user_download1() {
         $sql = " SELECT employee_nik,
 		employee_fullname,
 		employee_position,
