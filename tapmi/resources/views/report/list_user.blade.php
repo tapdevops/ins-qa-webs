@@ -9,6 +9,7 @@
         <th style="text-align:center;">Ref Role</th>
         <th style="text-align:center;">APK Version</th>
         <th style="text-align:center;">APK Date</th>
+        <th style="text-align:center;">Employee Status</th>
 	</tr>
 	@if ( count( $master_user ) > 0 )
 		@foreach ( $master_user as $q )
@@ -22,6 +23,7 @@
                 <td style="text-align:left;">{{  $q['REF_ROLE'] }}</td>
                 <td style="text-align:left;">{{  $q['APK_VERSION'] }}</td>
                 <td style="text-align:left;">{{  $q['APK_DATE'] }}</td>
+                <td style="text-align:left;">{{  $q['STATUS'] }}</td>
 			</tr>
 		@endforeach
 	@endif
