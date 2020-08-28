@@ -242,11 +242,7 @@ class UserController extends Controller {
 					CASE WHEN res_date IS NOT NULL THEN res_date ELSE end_valid END end_valid
 		FROM tap_dw.tm_employee_sap@dwh_link";
 		$data = $this->db_mobile_ins->select($sql);
-		// $data = json_encode($this->db_mobile_ins->select($sql));
-		// dd($data);
 		foreach(array_chunk($data, count($data)/50) as $dt){
-				// $results['master_user'] =  json_decode($dt,true);
-				// dd($result['data']== null);
 					$results['master_user'] =  json_decode(json_encode($dt), true);
 					Excel::create('Data User', function ($excel) use ($results) {
 						$excel->sheet( 'Data User', function( $sheet ) use ( $results ) {
