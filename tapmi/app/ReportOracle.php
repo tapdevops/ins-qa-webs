@@ -573,8 +573,8 @@ class ReportOracle extends Model{
 		$where .= ( $REGION_CODE != "" && $COMP_CODE == "" ) ? " AND EST.REGION_CODE = '$REGION_CODE'  ": "";
 		$where .= ( $COMP_CODE != "" && $BA_CODE == "" ) ? " AND EST.COMP_CODE = '$COMP_CODE'  ": "";
 		$where .= ( $BA_CODE != "" && $AFD_CODE == "" ) ? " AND EST.WERKS = '$BA_CODE'  ": "";
-		$where .= ( $AFD_CODE != "" && $BLOCK_CODE == "" ) ? " AND EBCC_HEADER.val_WERKS||EBCC_HEADER.val_AFD_CODE = '$AFD_CODE'  ": "";
-		$where .= ( $AFD_CODE != "" && $BLOCK_CODE != "" ) ? " AND EBCC_HEADER.val_WERKS||EBCC_HEADER.val_AFD_CODE||EBCC_HEADER.val_BLOCK_CODE = '$BLOCK_CODE'  ": "";
+		$where .= ( $AFD_CODE != "" && $BLOCK_CODE == "" ) ? " AND EBCC_HEADER.WERKS||EBCC_HEADER.AFD_CODE = '$AFD_CODE'  ": "";
+		$where .= ( $AFD_CODE != "" && $BLOCK_CODE != "" ) ? " AND EBCC_HEADER.WERKS||EBCC_HEADER.AFD_CODE||EBCC_HEADER.BLOCK_CODE = '$BLOCK_CODE'  ": "";
 		
 		$where2 = "";
 		$where2 .= ( $REGION_CODE != "" && $COMP_CODE == "" ) ? " AND SUBSTR (id_ba_afd_blok, 1, 2) in 
@@ -991,7 +991,7 @@ class ReportOracle extends Model{
                                                      TO_NUMBER (ebcc_header.alasan_manual) alasan_manual,
                                                      user_auth.user_role,
                                                      'MI' sumber
-                                                FROM mobile_inspection.tr_ebcc_validation_h@proddb_link ebcc_header LEFT JOIN mobile_inspection.tm_user_auth@proddb_link user_auth
+                                                FROM mobile_inspection.tr_ebcc_validation_h/*@proddb_link*/ ebcc_header LEFT JOIN mobile_inspection.tm_user_auth/*@proddb_link*/ user_auth
                                                         ON user_auth.user_auth_code = (CASE WHEN LENGTH (ebcc_header.insert_user) = 3 THEN '0' || ebcc_header.insert_user ELSE ebcc_header.insert_user END)
                                                WHERE TRUNC (ebcc_header.insert_time) BETWEEN TRUNC (TO_DATE ('$START_DATE', 'RRRR-MM-DD')) AND TRUNC (TO_DATE ('$END_DATE', 'RRRR-MM-DD'))
                                                      AND SUBSTR (ebcc_header.ebcc_validation_code, 0, 1) = '$REPORT_TYPE'                                                     --                                      UNION
@@ -1012,7 +1012,7 @@ class ReportOracle extends Model{
                                                                                                               --                                             alasan_manual,
                                                                                                               --                                             NULL user_role,
                                                                                                               --                                             'ME' sumber
-                                                                                                              --                                        FROM mobile_estate.tr_ebcc@proddb_link
+                                                                                                              --                                        FROM mobile_estate.tr_ebcc/*@proddb_link*/
                                                                                                               --                                       WHERE TRUNC (insert_time) BETWEEN TRUNC (TO_DATE (TO_CHAR ('$START_DATE', 'yyyy-mm-dd'), 'RRRR-MM-DD'))
                                                                                                               --                                                                     AND  TRUNC (TO_DATE (TO_CHAR ('$END_DATE', 'yyyy-mm-dd'), 'RRRR-MM-DD'))
                                              ) ebcc_header
@@ -1084,11 +1084,11 @@ class ReportOracle extends Model{
                                      ebcc_val.val_sumber) header
                            LEFT JOIN (SELECT *
                                         FROM (SELECT kualitas.id_kualitas AS idk, ebcc_detail.ebcc_validation_code, ebcc_detail.jumlah
-                                                FROM tap_dw.t_kualitas_panen@dwh_link kualitas LEFT JOIN mobile_inspection.tr_ebcc_validation_d@proddb_link ebcc_detail
+                                                FROM tap_dw.t_kualitas_panen@dwh_link kualitas LEFT JOIN mobile_inspection.tr_ebcc_validation_d/*@proddb_link*/ ebcc_detail
                                                         ON ebcc_detail.id_kualitas = kualitas.id_kualitas
                                                WHERE kualitas.active_status = 'YES'                                                                                --                                      UNION
                                                                                    --                                      SELECT kualitas.id_kualitas AS idk, ebcc_detail.ebcc_code ebcc_validation_code, ebcc_detail.qty jumlah
-                                                                                   --                                        FROM tap_dw.t_kualitas_panen@dwh_link kualitas LEFT JOIN mobile_estate.tr_ebcc_kualitas@proddb_link ebcc_detail
+                                                                                   --                                        FROM tap_dw.t_kualitas_panen@dwh_link kualitas LEFT JOIN mobile_estate.tr_ebcc_kualitas/*@proddb_link*/ ebcc_detail
                                                                                    --                                                ON ebcc_detail.id_kualitas = kualitas.id_kualitas
                                                                                    --                                       WHERE kualitas.active_status = 'YES'
                                              ) PIVOT (SUM (jumlah)
@@ -1156,16 +1156,16 @@ class ReportOracle extends Model{
                            --                                               SUM (CASE WHEN thk.id_kualitas = 6 THEN thk.qty END) ebcc_jml_bb,
                            --                                               SUM (CASE WHEN thk.id_kualitas = 15 THEN thk.qty END) ebcc_jml_jk,
                            --                                               SUM (CASE WHEN thk.id_kualitas = 16 THEN thk.qty END) ebcc_jml_ba
-                           --                                          FROM ebcc.t_header_rencana_panen@proddb_link hrp
-                           --                                               LEFT JOIN ebcc.t_detail_rencana_panen@proddb_link drp
+                           --                                          FROM ebcc.t_header_rencana_panen/*@proddb_link*/ hrp
+                           --                                               LEFT JOIN ebcc.t_detail_rencana_panen/*@proddb_link*/ drp
                            --                                                  ON hrp.id_rencana = drp.id_rencana
-                           --                                               LEFT JOIN ebcc.t_hasil_panen@proddb_link hp
+                           --                                               LEFT JOIN ebcc.t_hasil_panen/*@proddb_link*/ hp
                            --                                                  ON hp.id_rencana = drp.id_rencana AND hp.no_rekap_bcc = drp.no_rekap_bcc
-                           --                                               LEFT JOIN ebcc.t_employee@proddb_link emp_ebcc
+                           --                                               LEFT JOIN ebcc.t_employee/*@proddb_link*/ emp_ebcc
                            --                                                  ON emp_ebcc.nik = hrp.nik_kerani_buah
-                           --                                               LEFT JOIN ebcc.t_employee@proddb_link emp_ebcc1
+                           --                                               LEFT JOIN ebcc.t_employee/*@proddb_link*/ emp_ebcc1
                            --                                                  ON emp_ebcc1.nik = hrp.nik_mandor
-                           --                                               LEFT JOIN ebcc.t_hasilpanen_kualtas@proddb_link thk
+                           --                                               LEFT JOIN ebcc.t_hasilpanen_kualtas/*@proddb_link*/ thk
                            --                                                  ON hp.no_bcc = thk.id_bcc AND hp.id_rencana = thk.id_rencana
                            --                                         WHERE hrp.tanggal_rencana BETWEEN TO_DATE (TO_CHAR ('$START_DATE', 'yyyy-mm-dd'), 'YYYY-MM-DD') AND TO_DATE (TO_CHAR ('$END_DATE', 'yyyy-mm-dd'), 'YYYY-MM-DD')
                            --                                      GROUP BY hrp.tanggal_rencana, id_ba_afd_blok, hp.no_tph)) ebcc
@@ -1187,7 +1187,7 @@ class ReportOracle extends Model{
                                              nama_mandor,
                                              no_bcc,
                                              status_tph,
-                                             NVL (ebcc.f_get_hasil_panen_bunch@proddb_link (id_ba,
+                                             NVL (ebcc.f_get_hasil_panen_bunch/*@proddb_link*/ (id_ba,
                                                                                             no_rekap_bcc,
                                                                                             no_bcc,
                                                                                             'BUNCH_HARVEST'), 0)
@@ -1223,16 +1223,16 @@ class ReportOracle extends Model{
                                                        SUM (CASE WHEN thk.id_kualitas = 15 THEN thk.qty END) ebcc_jml_jk,
                                                        SUM (CASE WHEN thk.id_kualitas = 16 THEN thk.qty END) ebcc_jml_ba,
                                                        MAX (param.cut_off_date) cut_off_date
-                                                  FROM ebcc.t_header_rencana_panen@proddb_link hrp
-                                                       LEFT JOIN ebcc.t_detail_rencana_panen@proddb_link drp
+                                                  FROM ebcc.t_header_rencana_panen/*@proddb_link*/ hrp
+                                                       LEFT JOIN ebcc.t_detail_rencana_panen/*@proddb_link*/ drp
                                                           ON hrp.id_rencana = drp.id_rencana
-                                                       LEFT JOIN ebcc.t_hasil_panen@proddb_link hp
+                                                       LEFT JOIN ebcc.t_hasil_panen/*@proddb_link*/ hp
                                                           ON hp.id_rencana = drp.id_rencana AND hp.no_rekap_bcc = drp.no_rekap_bcc
-                                                       LEFT JOIN ebcc.t_employee@proddb_link emp_ebcc
+                                                       LEFT JOIN ebcc.t_employee/*@proddb_link*/ emp_ebcc
                                                           ON emp_ebcc.nik = hrp.nik_kerani_buah
-                                                       LEFT JOIN ebcc.t_employee@proddb_link emp_ebcc1
+                                                       LEFT JOIN ebcc.t_employee/*@proddb_link*/ emp_ebcc1
                                                           ON emp_ebcc1.nik = hrp.nik_mandor
-                                                       LEFT JOIN ebcc.t_hasilpanen_kualtas@proddb_link thk
+                                                       LEFT JOIN ebcc.t_hasilpanen_kualtas/*@proddb_link*/ thk
                                                           ON hp.no_bcc = thk.id_bcc AND hp.id_rencana = thk.id_rencana
                                                        LEFT JOIN (SELECT TO_DATE (parameter_desc, 'dd-mon-yyyy') cut_off_date
                                                                     FROM tm_parameter
@@ -1313,7 +1313,6 @@ class ReportOracle extends Model{
                 AND hd.val_tph_code = tph.no_tph
                 AND hd.val_date_time BETWEEN tph.start_valid AND nvl(tph.end_valid,sysdate)";
 		$get = $this->db_mobile_ins->select( $sql );
-		
 		$joindata = array();
 		$summary_data = array();
 

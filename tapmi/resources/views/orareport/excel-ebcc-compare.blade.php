@@ -66,12 +66,12 @@ tr > th {
 				<td>{{ $dt['val_jabatan_validator'] }}</td>
 				<td>{{ $dt['val_werks'] }}</td>
 				<td>{{ $dt['val_est_name'] }}</td>
-				<td>{{ $dt['val_afd_code'] }}</td>
-				<td>{{ $dt['val_block_code'] }}</td>
-				<td>{{ $dt['val_block_name'] }}</td>
+				<td align="center">{{ $dt['val_afd_code'] }}</td>
+				<td align="center">{{ $dt['val_block_code'] }}</td>
+				<td align="center">{{ $dt['val_block_name'] }}</td>
 				<td>{{ $dt['val_tph_code'] }}</td>
 				<td>{{ $dt['status_tph'] }}</td>
-				<td>{{ $dt['val_delivery_ticket'] }}</td>
+				<td align="center">{{ $dt['val_delivery_ticket'] }}</td>
 				<td>{{ $dt['val_ebcc_code'] }}</td>
 				<td>{{ $dt['val_status_tph_scan'].' '.$dt['val_alasan_manual'] }}</td>
 				<td>{{ $dt['val_jml_bm'] }}</td>

@@ -47,9 +47,6 @@ class UserController extends Controller {
 
 		if ( in_array( session('USER_ROLE'), $allowed_role ) ) {
 			$data['master_user'] = array();
-			// echo '<pre>';
-			// print_r(Data::user_find());
-			// die;
 			if ( !empty( Data::user_find() ) ) {
 				$i = 0;
 				foreach ( Data::user_find() as $q ) {
@@ -66,11 +63,13 @@ class UserController extends Controller {
 									FROM tap_dw.tm_employee_sap@dwh_link
 									) a
 									WHERE a.EMPLOYEE_NIK = '$nik'";
-					$data = $this->db_mobile_ins->select($sql);
-					if($data[0]->end_date == "9999-12-31 00:00:00"){
-						$status = "Active";
-					}else{
-						$status = "Inactive";
+					$dt = json_decode(json_encode($this->db_mobile_ins->select($sql)),true);
+					foreach($dt as $k){
+						if($k['end_date'] == "9999-12-31 00:00:00"){
+							$status = "Active";
+						}else{
+							$status = "Inactive";
+						}
 					}
 					if ( isset( $q['JOB'] ) && isset( $q['FULLNAME'] ) ) {
 						$data['master_user'][$i]['USER_AUTH_CODE'] = $q['USER_AUTH_CODE'];
@@ -82,8 +81,6 @@ class UserController extends Controller {
 						$data['master_user'][$i]['FULLNAME'] = $q['FULLNAME'];
 						$data['master_user'][$i]['APK_VERSION'] = '';
 						$data['master_user'][$i]['APK_DATE'] = '';
-						$data['master_user'][$i]['START_DATE'] = $data[0]->start_date;
-						$data['master_user'][$i]['END_DATE'] = $data[0]->end_date;
 						$data['master_user'][$i]['STATUS'] = $status;
 
 
@@ -271,21 +268,12 @@ class UserController extends Controller {
 		FROM tap_dw.tm_employee_sap@dwh_link";
 		$data = $this->db_mobile_ins->select($sql);
 		foreach(array_chunk($data, count($data)/50) as $dt){
-<<<<<<< HEAD
-				// $results['master_user'] =  json_decode($dt,true);
-				// dd($result['data']== null);
-				foreach($dt as $dl)
-  				{
-					$results['master_user'] =  json_decode(json_encode($dl), true);
-=======
 					$results['master_user'] =  json_decode(json_encode($dt), true);
->>>>>>> 80de885f428d6416981a0eaed16286e924fd6e99
 					Excel::create('Data User', function ($excel) use ($results) {
 						$excel->sheet( 'Data User', function( $sheet ) use ( $results ) {
 						$sheet->loadView( 'report.list_user_export', $results );
 							} );
 						} )->export( 'xlsx' );
-				}
 		}
 	
 	}
