@@ -121,6 +121,7 @@ tr
 			<td  rowspan="7" width="45%"  style="vertical-align: top;">
 				<div style="position:absolute;z-index: 1000">
 				<?php	$img = str_replace("/","",$q['picture_name']);
+						$total_jgg_kabun = '';
 						$os = PHP_OS; 
 						if( $os != "WINNT" ){
 							$img_backup = 'app/public/notfound.jpg';
@@ -132,7 +133,7 @@ tr
 							if($q['data_source']=='MI')
 							{
 								$data = json_decode(file_get_contents("http://image.tap-agri.com:3012/api/v2.0/foto-transaksi/".$q['val_ebcc_code']."?status_image=JANJANG"),true);
-								$img = isset($data['data']['http'][0])?:'http://inspectiondev.tap-agri.com/storage/notfound.jpg';
+								$img = isset($data['data']['http'][0])?$data['data']['http'][0]:'http://inspectiondev.tap-agri.com/storage/notfound.jpg';
 							}
 							elseif($q['data_source']=='ME')
 							{
@@ -141,6 +142,13 @@ tr
 							else
 							{
 								$img = 'http://tap-motion.tap-agri.com/ebcc/array/uploads'.$q['val_ebcc_code'];
+							}
+							if($q['insert_user_userrole']!=null && $q['jjg_validate_total']!=null)
+							{
+								if(substr($q['insert_user_userrole'],0,7)!='ASISTEN')
+								{
+									$total_jgg_kabun = $q['jjg_validate_total'];
+								}
 							}
 						}
 						else 
@@ -198,7 +206,7 @@ tr
 						<tr><td>Nama Mandor </td><td>: </td><td colspan="2"><b>{{$q['nama_mandor']}}</b></tr>
 						<tr><td>Afdeling </td><td>: </td><td colspan="2"><b>{{$q['id_afd']}}</b></tr>
 						<tr><td>Total Janjang Panen<input type="hidden" name="jjg_ebcc_total" value="{{$q['jjg_panen']}}"></td><td>:</td>
-							<td> <div class="w-50"><input type="number" min=0 class="form-control fields" required autofocus name="jjg_validate_total" id="total_jjg"></div></td>
+							<td> <div class="w-50"><input type="number" min=0 value="<?=$total_jgg_kabun?>" class="form-control fields" required autofocus name="jjg_validate_total" id="total_jjg"></div></td>
 							<td align="right">
 								<button type="submit" class="btn btn-block btn-success pull-right btn-next">SIMPAN & LANJUT BERIKUTNYA</button>
 							</td>

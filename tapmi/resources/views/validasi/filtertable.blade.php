@@ -9,7 +9,7 @@
 				<div id="cekaslap" class="btn btn-danger m-btn m-btn--custom m-btn--icon m-btn--air m-btn--pill">
 					<span>
 						<i class="fa fa-refresh"></i>
-						<span>Cek Validasi Aslap</span>
+						<span>Cek Validasi</span>
 					</span>
 				</div>
 				@if($status_validasi_aslap==1)
