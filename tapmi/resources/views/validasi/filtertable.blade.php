@@ -9,7 +9,7 @@
 				<div id="cekaslap" class="btn btn-danger m-btn m-btn--custom m-btn--icon m-btn--air m-btn--pill">
 					<span>
 						<i class="fa fa-refresh"></i>
-						<span>Cek Validasi</span>
+						<span>Cek Validasi Krani Buah</span>
 					</span>
 				</div>
 				@if($status_validasi_aslap==1)
@@ -46,7 +46,7 @@
 			<th>Krani Buah</th>
 			<th>Afdeling</th>
 			<th>Mandor Panen</th>
-			<th>BCC berhasil Divalidasi Aslap</th>
+			<th>BCC berhasil Divalidasi</th>
 			<th>Jumlah BCC yang Divalidasi</th>
 			<th>Keterangan</th>
 		</tr>
