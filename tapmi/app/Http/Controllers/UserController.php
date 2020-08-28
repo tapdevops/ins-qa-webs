@@ -238,6 +238,8 @@ class UserController extends Controller {
 						}else{
 							$status = "Inactive";
 						}
+						$start_date = $k['start_date'];
+						$end_date = $k['end_date'];
 					}
 					if ( isset( $q['JOB'] ) && isset( $q['FULLNAME'] ) ) {
 						$data['master_user'][$i]['USER_AUTH_CODE'] = $q['USER_AUTH_CODE'];
@@ -249,6 +251,8 @@ class UserController extends Controller {
 						$data['master_user'][$i]['FULLNAME'] = $q['FULLNAME'];
 						$data['master_user'][$i]['APK_VERSION'] = '';
 						$data['master_user'][$i]['APK_DATE'] = '';
+						$data['master_user'][$i]['START_DATE'] = $start_date;
+						$data['master_user'][$i]['END_DATE'] = $end_date;
 						$data['master_user'][$i]['STATUS'] = $status;
 
 
