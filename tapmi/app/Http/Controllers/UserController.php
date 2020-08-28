@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <?php
 
 namespace App\Http\Controllers;
@@ -283,7 +282,6 @@ class UserController extends Controller {
 		
 
 	
-=======
 <?php
 
 namespace App\Http\Controllers;
@@ -600,5 +598,4 @@ class UserController extends Controller {
 		
 
 	
->>>>>>> d4ec538b2b4c466831189f94cc9c34ed4a35ebff
 }
