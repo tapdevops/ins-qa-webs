@@ -7,6 +7,7 @@
 		<th style="text-align: left;background-color: #ff9933;">Kode Block</th>
 		<th style="text-align: left;background-color: #ff9933;">Block Deskripsi</th>
 		<th style="text-align: left;background-color: #ff9933;">TPH</th>
+		<th style="text-align: left;background-color: #ff9933;">Status TPH</th>
 		<th style="text-align: left;background-color: #ff9933;">Ticket</th>
 		<th style="text-align: left;background-color: #ff9933;">Inputan TPH</th>
 		<th style="text-align: left;background-color: #ff9933;">Alasan Input Manual</th>
@@ -46,6 +47,7 @@
 		<td style="text-align: left;">{{ $dt['val_block_code'] }}</td>
 		<td style="text-align: left;">{{ $dt['val_block_name'] }}</td>
 		<td style="text-align: left;">{{ $dt['val_tph_code'] }}</td>
+		<td style="text-align: left;">{{ $dt['status_tph'] }}</td>
 		<td style="text-align: left;">{{ $dt['val_delivery_ticket'] }}</td>
 		<td style="text-align: left;">{{ $dt['val_status_tph_scan'] }}</td>
 		<td style="text-align: left;">{{ $dt['val_alasan_manual'] }}</td>

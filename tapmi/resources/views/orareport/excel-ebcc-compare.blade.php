@@ -8,7 +8,7 @@ tr > th {
 </style>
 <table>
 	<tr class="mythead">
-		<th style="background-color: #ff9933;" colspan="19">Sampling EBCC</th>
+		<th style="background-color: #ff9933;" colspan="20">Sampling EBCC</th>
 		<th style="background-color: #33cc33;" colspan="11">EBCC</th>
 
 		<!-- Etc -->
@@ -29,6 +29,7 @@ tr > th {
 		<th style="background-color: #ff9933;">Kode Block</th>
 		<th style="background-color: #ff9933;">Block Deskripsi</th>
 		<th style="background-color: #ff9933;">Tph</th>
+		<th style="background-color: #ff9933;">Status Tph</th>
 		<th style="background-color: #ff9933;">Ticket</th>
 		<th style="background-color: #ff9933;">Kode Sampling EBCC</th>
 		<th style="background-color: #ff9933;">Status QR Code Tph</th>
@@ -69,6 +70,7 @@ tr > th {
 				<td>{{ $dt['val_block_code'] }}</td>
 				<td>{{ $dt['val_block_name'] }}</td>
 				<td>{{ $dt['val_tph_code'] }}</td>
+				<td>{{ $dt['status_tph'] }}</td>
 				<td>{{ $dt['val_delivery_ticket'] }}</td>
 				<td>{{ $dt['val_ebcc_code'] }}</td>
 				<td>{{ $dt['val_status_tph_scan'].' '.$dt['val_alasan_manual'] }}</td>

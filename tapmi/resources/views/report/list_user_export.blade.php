@@ -8,7 +8,7 @@
         <th style="text-align:center;">Status</th>
 	</tr>
 	@if ( count( $master_user ) > 0 )
-                <?php //dd($master_user);?>
+                <?php //dd($master_user); ?>
 		@foreach ($master_user as $key => $q)
 			<tr>
                                 <td style="text-align:left;">{{  $q['employee_nik'] }}</td>
