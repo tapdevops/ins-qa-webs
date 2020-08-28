@@ -7,6 +7,8 @@
 		<th style="text-align: left;background-color: #ff9933;">Kode Block</th>
 		<th style="text-align: left;background-color: #ff9933;">Block Deskripsi</th>
 		<th style="text-align: left;background-color: #ff9933;">TPH</th>
+		<th style="text-align: left;background-color: #ff9933;">Status TPH</th>
+		<th style="text-align: left;background-color: #ff9933;">Ticket</th>
 		<th style="text-align: left;background-color: #ff9933;">Inputan TPH</th>
 		<th style="text-align: left;background-color: #ff9933;">Alasan Input Manual</th>
 		<th style="text-align: left;background-color: #ff9933;">Tanggal Validasi</th>
@@ -19,12 +21,10 @@
 		<th style="text-align: left;background-color: #ff9933;">Long
 
 		<th style="text-align: left;background-color: #ff9933;">a. Mentah</th>
-		<th style="text-align: left;background-color: #ff9933;">b. Mengkal/Kurang Masak</th>
-		<th style="text-align: left;background-color: #ff9933;">c. Masak</th>
-		<th style="text-align: left;background-color: #ff9933;">d. Overripe/Terlalu Masak</th>
-		<th style="text-align: left;background-color: #ff9933;">e. Busuk</th>
-		<th style="text-align: left;background-color: #ff9933;">f. Janjang Kosong</th>
-		<th style="text-align: left;background-color: #ff9933;">g. Buah Aborsi</th>
+		<th style="text-align: left;background-color: #ff9933;">b. Masak</th>
+		<th style="text-align: left;background-color: #ff9933;">c. Overripe/Terlalu Masak</th>
+		<th style="text-align: left;background-color: #ff9933;">d. Busuk</th>
+		<th style="text-align: left;background-color: #ff9933;">e. Janjang Kosong</th>
 		<th style="text-align: left;background-color: #ff9933;">Total Janjang Panen</th>
 		<th style="text-align: left;background-color: #ff9933;">h. Total Brondolan</th>
 		<th style="text-align: left;background-color: #ff9933;">a. Parthenocarpic/Abnormal</th>
@@ -47,6 +47,8 @@
 		<td style="text-align: left;">{{ $dt['val_block_code'] }}</td>
 		<td style="text-align: left;">{{ $dt['val_block_name'] }}</td>
 		<td style="text-align: left;">{{ $dt['val_tph_code'] }}</td>
+		<td style="text-align: left;">{{ $dt['status_tph'] }}</td>
+		<td style="text-align: left;">{{ $dt['val_delivery_ticket'] }}</td>
 		<td style="text-align: left;">{{ $dt['val_status_tph_scan'] }}</td>
 		<td style="text-align: left;">{{ $dt['val_alasan_manual'] }}</td>
 		<td style="text-align: left;">{{ $dt['val_date_time'] }}</td>
@@ -58,12 +60,10 @@
 		<td style="text-align: left;">{{ $dt['val_lat_tph'] }}</td>
 		<td style="text-align: left;">{{ $dt['val_lon_tph'] }}</td>
 		<td style="text-align: left;">{{ $dt['val_jml_1'] }}</td>
-		<td style="text-align: left;">{{ $dt['val_jml_2'] }}</td>
 		<td style="text-align: left;">{{ $dt['val_jml_3'] }}</td>
 		<td style="text-align: left;">{{ $dt['val_jml_4'] }}</td>
 		<td style="text-align: left;">{{ $dt['val_jml_6'] }}</td>
 		<td style="text-align: left;">{{ $dt['val_jml_15'] }}</td>
-		<td style="text-align: left;">{{ $dt['val_jml_16'] }}</td>
 		<td style="text-align: left;">{{ $dt['val_total_jjg'] }}</td>
 		<td style="text-align: left;">{{ $dt['val_jml_5'] }}</td>
 		<td style="text-align: left;">{{ $dt['val_jml_8'] }}</td>
