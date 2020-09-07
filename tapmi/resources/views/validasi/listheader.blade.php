@@ -109,7 +109,7 @@
 </table>
 	@if($nodata==1)
 	<div class="col-md-12 m--align-center" style="white-space:nowrap; padding-top:20px;">
-		<h5 class="m-subheader__title m-subheader__title--separator text-danger">Tidak bisa melanjutkan validasi karena ada validasi aslap yang tidak melakukan validasi / BCC tidak "MATCH"</h5>
+		<h5 class="m-subheader__title m-subheader__title--separator text-danger">Tidak bisa melanjutkan validasi karena ada aslap yang tidak melakukan validasi / validasi BCC tidak "MATCH"</h5>
 		<h5 class="m-subheader__title m-subheader__title--separator text-danger">Lakukan proses validasi manual terlebih dulu di TAP MOTION eBCC</h5>
 	</div>
 	@endif
