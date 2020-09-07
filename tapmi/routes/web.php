@@ -39,6 +39,7 @@ Route::group( [ 'middleware' => 'web' ], function() {
 		Route::get( '/user/edit/{id}', 'UserController@edit' );
 		Route::post( '/user/edit/{id}', 'UserController@edit_proses' );
 		Route::get( '/user/search-user', 'UserController@search_user' );
+		Route::get('/user/export', 'UserController@user_download');
 		
 		# Report
 		Route::get( '/report', 'ReportController@index' );
@@ -52,6 +53,11 @@ Route::group( [ 'middleware' => 'web' ], function() {
 		Route::get( '/report/search-block', 'ReportController@search_block' );
 		Route::get( '/data/user-search', 'DataController@user_search_find' );
 
+		# Upload
+		Route::get( '/upload', 'UploadController@import_data' );
+		Route::post( '/upload', 'UploadController@import_data_process' );
+		Route::get( '/upload/photo', 'UploadController@import_photo' );
+		Route::post( '/upload/photo', 'UploadController@import_photo_process' );
 		
 		#ora report
 		Route::group( [ 'prefix' => 'report-oracle' ], function () {
@@ -70,7 +76,6 @@ Route::group( [ 'middleware' => 'web' ], function() {
 
 		#validation_image_data
 		Route::get( '/listvalidasi/{tgl?}', 'ValidationController@index'); 
-		Route::get( '/validasi/cek_aslap', 'ValidationController@cek_aslap'); 
 		Route::get( '/validasi/create/{id}', 'ValidationController@create' );
 		Route::post( '/validasi/create_action', 'ValidationController@create_action')->name('create_validation');
 
@@ -88,6 +93,8 @@ Route::get( '/repair', 'ReportOracleController@testing' );
 Route::get( '/nohup', 'ReportOracleController@nohup' );
 Route::get( '/phpinfo', 'ReportOracleController@phpinfo' );
 Route::get( '/testings', 'KafkaProducerController@test' );
+
+Route::get( '/kafka/tm_user_auth', 'KafkaController@RUN_INS_MSA_AUTH_TM_USER_AUTH' );
 
 
 // Route::get( '/getGuzzleRequest', 'ValidationController@getGuzzleRequest' );
