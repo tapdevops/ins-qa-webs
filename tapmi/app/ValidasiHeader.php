@@ -6,22 +6,22 @@ use Illuminate\Database\Eloquent\Model;
 use DB;
 
 class ValidasiHeader extends Model{
-	
-	protected $env;
-	protected $db_mobile_ins;
-	
-	public function __construct() {
-		$this->db_mobile_ins = DB::connection( 'mobile_ins' );
-		$this->env = 'QA';
-	}
+   
+   protected $env;
+   protected $db_mobile_ins;
+   
+   public function __construct() {
+      $this->db_mobile_ins = DB::connection( 'mobile_ins' );
+      $this->env = 'QA';
+   }
 
    //filter H-1
-	public function validasi_header($date){
+   public function validasi_header($date){
       $day =  date("Y-m-d", strtotime($date));
       $ba_afd_code = explode(",",session('LOCATION_CODE'));
       $code = implode("','", $ba_afd_code);
-		$get = $this->db_mobile_ins->select("
-		SELECT ebcc.id_ba,
+      $get = $this->db_mobile_ins->select("
+      SELECT ebcc.id_ba,
                         ebcc.id_afd,
                         to_char(ebcc.tanggal_rencana,'DD-MON-YYYY') AS tanggal_rencana,
                         ebcc.nik_kerani_buah,
@@ -98,15 +98,15 @@ class ValidasiHeader extends Model{
                         param.parameter_desc
                      order by ebcc.id_afd,ebcc.nama_krani_buah
       ");
-		return $get;
+      return $get;
    }
    
    // All Data
    public function data(){
       $ba_afd_code = explode(",",session('LOCATION_CODE'));
       $code = implode("','", $ba_afd_code);
-		$get = $this->db_mobile_ins->select("
-		SELECT ebcc.id_ba,
+      $get = $this->db_mobile_ins->select("
+      SELECT ebcc.id_ba,
                         ebcc.id_afd,
                         to_char(ebcc.tanggal_rencana,'DD-MON-YYYY') AS tanggal_rencana,
                         ebcc.nik_kerani_buah,
@@ -165,26 +165,26 @@ class ValidasiHeader extends Model{
                               AND PARAMETER_NAME = 'TARGET_VALIDASI'
                         )param 
                            ON 1 = 1
-		");
-		return $get;
+      ");
+      return $get;
    }
 
    public function validasi_askep($ba_code,$afd,$nik_kerani,$nik_mandor,$tgl_rencana,$no_val){
-   	  $get_max = $this->db_mobile_ins->select("SELECT PARAMETER_DESC
+        $get_max = $this->db_mobile_ins->select("SELECT PARAMETER_DESC
                               FROM mobile_inspection.tm_parameter 
                               WHERE PARAMETER_GROUP = 'VALIDASI_ASKEP'
                               AND PARAMETER_NAME = 'TARGET_VALIDASI'");
 
-   	  if($get_max[0]->parameter_desc==$no_val) // GET DATA ASLAP
-   	  {
-   	  	$in_query = "HP.NO_BCC IN (SELECT NO_BCC FROM TR_VALIDASI_DETAIL WHERE ID_VALIDASI = HDP.NIK_KERANI_BUAH || '-' || HDP.NIK_MANDOR || '-'  || to_char(HDP.TANGGAL_RENCANA,'YYYYMMDD') AND 
+        if($get_max[0]->parameter_desc==$no_val) // GET DATA ASLAP
+        {
+         $in_query = "HP.NO_BCC IN (SELECT NO_BCC FROM TR_VALIDASI_DETAIL WHERE ID_VALIDASI = HDP.NIK_KERANI_BUAH || '-' || HDP.NIK_MANDOR || '-'  || to_char(HDP.TANGGAL_RENCANA,'YYYYMMDD') AND 
                                     NO_BCC IN ( SELECT NO_BCC FROM TR_VALIDASI_DETAIL WHERE VAL_EBCC_CODE IS NOT NULL AND INSERT_USER_USERROLE LIKE 'ASISTEN%'))";
-   	  }
-   	  else // GET DATA KRANI
-   	  {
-   	  	$in_query = "HP.NO_BCC NOT IN (SELECT NO_BCC FROM TR_VALIDASI_DETAIL WHERE ID_VALIDASI = 
+        }
+        else // GET DATA KRANI
+        {
+         $in_query = "HP.NO_BCC NOT IN (SELECT NO_BCC FROM TR_VALIDASI_DETAIL WHERE ID_VALIDASI = 
                HDP.NIK_KERANI_BUAH || '-' || HDP.NIK_MANDOR || '-'  || to_char(HDP.TANGGAL_RENCANA,'YYYYMMDD'))";
-   	  }
+        }
       $get = $this->db_mobile_ins->select(" SELECT 
                                              HDP.TANGGAL_RENCANA,
                                              HDP.NIK_MANDOR,
@@ -312,7 +312,7 @@ class ValidasiHeader extends Model{
                ORDER BY DBMS_RANDOM.VALUE FETCH NEXT 1 ROWS ONLY ");
          }
          
-		return $get;
+      return $get;
    }
 
    public function count_valid($date){
@@ -385,7 +385,7 @@ class ValidasiHeader extends Model{
                                        ON 1 = 1 ) hdp
                                     GROUP BY hdp.status_validasi
       ");
-		return $get;
+      return $get;
    }
 
    public function validasi_cek_aslap($date){
@@ -394,16 +394,16 @@ class ValidasiHeader extends Model{
       $user_pt = substr(session('LOCATION_CODE'),0,2).'%';
       $procedure = $this->db_mobile_ins->statement(" BEGIN 
                                           mobile_inspection.prc_tr_ebcc_compare (
-                                             trunc(TO_DATE('$day','yyyy-mm-dd')),
-                                             trunc(TO_DATE('$day','yyyy-mm-dd')+1),
+                                             '$day',
+                                             '$day',
                                              '$user_pt',
                                              'MI Web : $user'
                                           ) ;
                                     END;");
       $get = $this->db_mobile_ins->select(" SELECT tr_ebcc_compare.*,sap.export_status FROM tr_ebcc_compare
                                             LEFT JOIN ebcc.t_status_to_sap_ebcc sap ON sap.no_bcc = tr_ebcc_compare.ebcc_no_bcc
-            										  WHERE  
-            										     ( 
+                                            WHERE  
+                                               ( 
                                                  val_jabatan_validator IN ('KEPALA KEBUN',
                                                                            'KEPALA_KEBUN',
                                                                            'ASISTEN KEPALA',
@@ -415,12 +415,12 @@ class ValidasiHeader extends Model{
                                                  val_jabatan_validator LIKE 'ASISTEN%' 
                                                )
                                             AND to_char(val_date_time,'YYYY-MM-DD') =  '$day'
-            										  AND akurasi_sampling_ebcc = 'MATCH'
+                                            AND akurasi_sampling_ebcc = 'MATCH'
                                             AND status_tph = 'ACTIVE'
                                             AND NVL (val_ebcc_code, 'x') NOT IN (SELECT NVL (val_ebcc_code, 'x') FROM tr_validasi_detail) 
                                             AND ( val_sumber = 'MI' AND val_ebcc_code NOT LIKE 'M%' )
       ");
-		return $get;
+      return $get;
    }
   
 }
