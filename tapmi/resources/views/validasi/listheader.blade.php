@@ -65,7 +65,7 @@
 			@endif
 			@if($status_validasi_aslap==0 && !empty($records))
 			<div class="col-md-12 m--align-center" style="white-space:nowrap;">
-				<h5 class="m-subheader__title m-subheader__title--separator text-danger">Anda harus melakukan "Cek Validasi Aslap" terlebih dulu</h5>
+				<h5 class="m-subheader__title m-subheader__title--separator text-danger">Anda harus melakukan "Cek Validasi Krani Buah" terlebih dulu</h5>
 			</div>
 			@endif
 		</div>

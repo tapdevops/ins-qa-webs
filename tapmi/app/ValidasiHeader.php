@@ -418,7 +418,7 @@ class ValidasiHeader extends Model{
                                             AND akurasi_sampling_ebcc = 'MATCH'
                                             AND status_tph = 'ACTIVE'
                                             AND NVL (val_ebcc_code, 'x') NOT IN (SELECT NVL (val_ebcc_code, 'x') FROM tr_validasi_detail) 
-                                            AND ( val_sumber = 'MI' AND val_ebcc_code NOT LIKE 'M%' )
+                                            AND (( val_sumber = 'MI' AND val_ebcc_code NOT LIKE 'M%' ) OR ( val_sumber = 'ME' ))
       ");
       return $get;
    }
