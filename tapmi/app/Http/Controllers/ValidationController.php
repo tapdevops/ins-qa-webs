@@ -385,7 +385,7 @@ class ValidationController extends Controller {
                      $val = $increment + $no_val['jumlah_ebcc_validated'];
                }
                $valid_data = json_encode(( new ValidasiHeader() )->validasi_askep($ba_code_val,$afd_val,$nik_kerani_val,$nik_mandor_val,$tgl_rencana_val,$val));
-               $data_validasi = json_decode( $valid_data,true);
+               $data_validasi = json_decode( $valid_data,true );
 
                $data['data_validasi'] = $data_validasi;
                $data['no_validasi'] = $val;
