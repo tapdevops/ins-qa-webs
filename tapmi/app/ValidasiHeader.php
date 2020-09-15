@@ -392,14 +392,22 @@ class ValidasiHeader extends Model{
       $day =  date("Y-m-d", strtotime($date));
       $user = session('USERNAME');
       $user_pt = substr(session('LOCATION_CODE'),0,2).'%';
-      $procedure = $this->db_mobile_ins->statement(" BEGIN 
-                                          mobile_inspection.prc_tr_ebcc_compare (
-                                             '$day',
-                                             '$day',
-                                             '$user_pt',
-                                             'MI Web : $user'
-                                          ) ;
-                                    END;");
+      $user_pt = explode(',', session('LOCATION_CODE'));
+      $pt = [];
+      foreach ($user_pt as $key => $value) {
+         $pt[substr($value,0,2).'%'] = '';
+      }
+     foreach ($pt as $key => $val) 
+     {
+         $procedure = $this->db_mobile_ins->statement(" BEGIN 
+                                             mobile_inspection.prc_tr_ebcc_compare (
+                                                '$day',
+                                                '$day',
+                                                '$key',
+                                                'MI Web : $user'
+                                             ) ;
+                                       END;");
+     }
       $get = $this->db_mobile_ins->select(" SELECT tr_ebcc_compare.*,sap.export_status FROM tr_ebcc_compare
                                             LEFT JOIN ebcc.t_status_to_sap_ebcc sap ON sap.no_bcc = tr_ebcc_compare.ebcc_no_bcc
                                             WHERE  
