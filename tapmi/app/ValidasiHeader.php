@@ -401,8 +401,8 @@ class ValidasiHeader extends Model{
      {
          $procedure = $this->db_mobile_ins->statement(" BEGIN 
                                              mobile_inspection.prc_tr_ebcc_compare (
-                                                '$date',
-                                                '$date',
+                                                '$day',
+                                                '$day',
                                                 '$key',
                                                 'MI Web : $user'
                                              ) ;
