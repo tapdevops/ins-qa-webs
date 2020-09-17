@@ -248,8 +248,14 @@ class ValidasiHeader extends Model{
          
          if($get_max[0]->parameter_desc==$no_val && count($get)==0) // GET DATA KABUN WHEN DATA ASLAP IS NULL
          {
-            $in_query = "HP.NO_BCC IN (SELECT NO_BCC FROM TR_VALIDASI_DETAIL WHERE ID_VALIDASI = HDP.NIK_KERANI_BUAH || '-' || HDP.NIK_MANDOR || '-'  || to_char(HDP.TANGGAL_RENCANA,'YYYYMMDD') AND 
-                                       NO_BCC IN ( SELECT NO_BCC FROM TR_VALIDASI_DETAIL WHERE VAL_EBCC_CODE IS NOT NULL AND INSERT_USER_USERROLE NOT LIKE 'ASISTEN%'))";
+            $in_query = "HP.NO_BCC IN (
+                                       SELECT 
+                                          NO_BCC FROM TR_VALIDASI_DETAIL WHERE ID_VALIDASI = HDP.NIK_KERANI_BUAH || '-' || HDP.NIK_MANDOR || '-'  || to_char(HDP.TANGGAL_RENCANA,'YYYYMMDD') 
+                                       AND 
+                                          NO_BCC IN ( SELECT NO_BCC FROM TR_VALIDASI_DETAIL WHERE VAL_EBCC_CODE IS NOT NULL AND INSERT_USER_USERROLE NOT LIKE 'ASISTEN%') 
+                                       AND 
+                                          NO_BCC NOT IN ( SELECT NO_BCC FROM TR_VALIDASI_DETAIL WHERE VAL_EBCC_CODE IS NULL ) 
+                                      )";
             $get = $this->db_mobile_ins->select(" SELECT 
                                                    HDP.TANGGAL_RENCANA,
                                                    HDP.NIK_MANDOR,
