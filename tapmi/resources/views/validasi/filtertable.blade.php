@@ -83,12 +83,16 @@
 	function cekaslap(){
 		const CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
 		var search = document.getElementById('generalSearch').value;
+		var werks = document.getElementById('werks').value;
+		var afd = document.getElementById('afd').value;
 		$.ajax({
 			url:"{{ URL::to('/validasi/cek_aslap/') }}",
 			type:'get',
 			data:{
 				CSRF_TOKEN,
-				'tanggal' : search
+				'tanggal' : search,
+				'werks' : werks,
+				'afd' : afd
 			},
 			success:function(data){
 				// console.log(data);

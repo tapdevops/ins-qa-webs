@@ -88,6 +88,16 @@ class ValidationController extends Controller {
          $status_validasi = 1;
       }
       $data['status'] = $status_validasi;
+      if(session('REFFERENCE_ROLE')=='COMP_CODE')
+      {
+        $ba_afd_code = explode(",",session('LOCATION_CODE'));
+        $code = implode("','", $ba_afd_code);
+        $data['ba_data'] = $this->db_ebcc->table('T_DETAIL_RENCANA_PANEN')
+                                         ->select(DB::raw("SUBSTR (id_ba_afd_blok, 1, 5) AS ba"))
+                                         ->whereIn(DB::raw('SUBSTR (id_ba_afd_blok, 1, 2)'), $ba_afd_code)
+                                         ->groupBy(DB::raw("SUBSTR (id_ba_afd_blok, 1, 5)"))
+                                         ->orderBy('ba')->get();
+      }
       return view( 'validasi.listheader', $data );
    }
 
@@ -225,6 +235,7 @@ class ValidationController extends Controller {
    public function getValHeader(request $request){
       $data['active_menu'] = $this->active_menu;
       $day = $request->tanggal;
+      session()->put(['werks'=>$request->werks,'afd'=>$request->afd]);
       $result = ( new ValidasiHeader() )->validasi_header($day);
       $res = json_encode( $result);
       $data['tgl_validasi'] = $day;

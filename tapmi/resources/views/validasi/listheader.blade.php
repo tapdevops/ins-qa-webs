@@ -8,9 +8,37 @@
 <div class="row">
 	<div class="col-md-12">
 		<div class="row">
+			@if(session('REFFERENCE_ROLE')=='COMP_CODE')
+			<div class="col-md-3" style="padding-right: 0px;">
+				<div class="input-daterange input-group">
+					<label style="padding-top: 6px" for="werks">BA & Afd&nbsp; &nbsp; </label>
+					<?php 
+						$werks_data = array();
+						$afd_data = array();
+						foreach($ba_data as $key){
+							$werks_data[substr($key->ba,0,4)] = substr($key->ba,0,4);
+							$afd_data[substr($key->ba,-1)] = substr($key->ba,-1);
+						}
+					?>
+					<select name="werks" class="form-control m-input" id="werks">
+						@foreach($werks_data as $key)
+						<option value="{{$key}}" {{$loop->first?'selected':''}}>{{$key}}</option>
+						@endforeach
+					</select>
+					<select name="afd" class="form-control m-input" id="afd">
+						@foreach($afd_data as $key)
+						<option value="{{$key}}" {{$loop->first?'selected':''}}>{{$key}}</option>
+						@endforeach
+					</select>
+				</div>
+			</div>
+			@else 
+			<input type="hidden" name="werks" id="werks">
+			<input type="hidden" name="afd" id="afd">
+			@endif
 			<div class="col-md-4">
 				<div class="input-daterange input-group">
-					<label for="tanggal_rencana">Tanggal &nbsp; &nbsp; </label>
+					<label style="padding-top: 6px" for="tanggal_rencana">Tanggal &nbsp; &nbsp; </label>
 					<?php $tgl = date("d-M-Y", strtotime($tgl_validasi));
 					?>
 					<input type="text" class="form-control m-input" id="generalSearch" name="tanggal_rencana" value="{{$tgl}}" autocomplete="off" readonly="readonly" />
@@ -24,8 +52,6 @@
 				</div>
 
 			</div>
-			<div class="col-md-4"></div>
-			<div class="col-md-4"></div>
 		</div>
 	</div>
 	
@@ -217,6 +243,8 @@
 
 	function refreshData(){
 		var search = document.getElementById('generalSearch').value;
+		var werks = document.getElementById('werks').value;
+		var afd = document.getElementById('afd').value;
 		var datatable = {
 							init: function() {
 								var e;
@@ -274,12 +302,16 @@
 			type:'get',
 			data:{
 				CSRF_TOKEN,
-				'tanggal' : search
+				'tanggal' : search,
+				'werks' : werks,
+				'afd' : afd
 			},
 			success:function(data){
 				$("div#table").html(data);
 				datatable.init();
 				$("#generalSearch").val(search);
+				$("#werks").val(werks);
+				$("#afd").val(afd);
 			}
 		})
 	}

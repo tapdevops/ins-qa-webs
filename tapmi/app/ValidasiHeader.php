@@ -20,6 +20,10 @@ class ValidasiHeader extends Model{
       $day =  date("Y-m-d", strtotime($date));
       $ba_afd_code = explode(",",session('LOCATION_CODE'));
       $code = implode("','", $ba_afd_code);
+      if(session('REFFERENCE_ROLE')=='COMP_CODE')
+      {
+         $code = session('werks').session('afd');
+      }
       $get = $this->db_mobile_ins->select("
       SELECT ebcc.id_ba,
                         ebcc.id_afd,
@@ -105,6 +109,10 @@ class ValidasiHeader extends Model{
    public function data(){
       $ba_afd_code = explode(",",session('LOCATION_CODE'));
       $code = implode("','", $ba_afd_code);
+      if(session('REFFERENCE_ROLE')=='COMP_CODE')
+      {
+         $code = session('werks').session('afd');
+      }
       $get = $this->db_mobile_ins->select("
       SELECT ebcc.id_ba,
                         ebcc.id_afd,
@@ -334,6 +342,10 @@ class ValidasiHeader extends Model{
       $day =  date("Y-m-d", strtotime($date));
       $ba_afd_code = explode(",",session('LOCATION_CODE'));
       $code = implode("','", $ba_afd_code);
+      if(session('REFFERENCE_ROLE')=='COMP_CODE')
+      {
+         $code = session('werks').session('afd');
+      }
       $get = $this->db_mobile_ins->select("
       SELECT hdp.status_validasi
       FROM (
@@ -406,7 +418,6 @@ class ValidasiHeader extends Model{
    public function validasi_cek_aslap($date){
       $day =  date("Y-m-d", strtotime($date));
       $user = session('USERNAME');
-      $user_pt = substr(session('LOCATION_CODE'),0,2).'%';
       $user_pt = explode(',', session('LOCATION_CODE'));
       $pt = [];
       foreach ($user_pt as $key => $value) {
