@@ -7,7 +7,7 @@
 @section( 'content' )
 <div class="row">
 	<div class="col-md-12">
-		<div class="row">
+		<div class="row" style="margin-bottom: 5px;">
 			@if(session('REFFERENCE_ROLE')=='COMP_CODE')
 			<div class="col-md-3" style="padding-right: 0px;">
 				<div class="input-daterange input-group">
@@ -15,9 +15,10 @@
 					<?php 
 						$werks_data = array();
 						$afd_data = array();
+						$afd_data_by_werks = array();
 						foreach($ba_data as $key){
 							$werks_data[substr($key->ba,0,4)] = substr($key->ba,0,4);
-							$afd_data[substr($key->ba,-1)] = substr($key->ba,-1);
+							$afd_data_by_werks[substr($key->ba,0,4)][substr($key->ba,-1)] = substr($key->ba,-1);
 						}
 					?>
 					<select name="werks" class="form-control m-input" id="werks">
@@ -26,8 +27,10 @@
 						@endforeach
 					</select>
 					<select name="afd" class="form-control m-input" id="afd">
-						@foreach($afd_data as $key)
-						<option value="{{$key}}" {{$loop->first?'selected':''}}>{{$key}}</option>
+						@foreach($afd_data_by_werks as $key1 => $afd_data)
+							@foreach($afd_data as $key2 => $val)
+							<option value="{{$val}}" class="{{$key1}} data-afd">{{$val}}</option>
+							@endforeach
 						@endforeach
 					</select>
 				</div>
@@ -221,6 +224,15 @@
 		
 	});
 	
+    $('.data-afd').hide();
+    $('#afd .'+$("#werks").val()).show();
+   	$("#afd").val($("#afd ."+$("#werks").val()+":first").val());
+	$("#werks").change(function () {
+        var val = $(this).val();
+        $('.data-afd').hide();
+        $('#afd .'+val).show();
+        $("#afd").val($("#afd ."+$("#werks").val()+":first").val());
+    });
 	// $(document).ready(function () {
 	// 	$('#generalSearch').datepicker().on('click', function(){
 	// 			var selected = $(this).val();
