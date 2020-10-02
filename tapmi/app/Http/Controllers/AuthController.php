@@ -28,8 +28,10 @@
 class AuthController extends Controller {
 
 	public function __construct() {
-		$this->url_api_ins_msa_auth = APISetup::url()['msa']['ins']['auth'];
-		$this->url_api_ins_msa_hectarestatement = APISetup::url()['msa']['ins']['hectarestatement'];
+		//$this->url_api_ins_msa_auth = APISetup::url()['msa']['ins']['auth'];
+		//$this->url_api_ins_msa_hectarestatement = APISetup::url()['msa']['ins']['hectarestatement'];
+		$this->url_api_ins_msa_auth = 'http://apisqa.tap-agri.com/mobileinspectionqa/ins-msa-qa-auth';
+		$this->url_api_ins_msa_hectarestatement = 'http://apisqa.tap-agri.com/mobileinspectionqa/ins-msa-qa-hectarestatement';
 	}
 	
 	#   		 									  		     ▁ ▂ ▄ ▅ ▆ ▇ █ Login - Form

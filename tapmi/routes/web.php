@@ -98,7 +98,6 @@ Route::get( '/testings', 'KafkaProducerController@test' );
 Route::get( '/kafka/tm_user_auth', 'KafkaController@RUN_INS_MSA_AUTH_TM_USER_AUTH' );
 
 
-Route::get( '/getNewdata', 'ValidationController@getEbccValHeader' );
 // Route::get( '/getGuzzleRequest', 'ValidationController@getGuzzleRequest' );
 Route::get( '/getNewdata', 'ValidationController@getEbccValHeader' );
 Route::get( '/getNewdata2', 'ValidationController@getValHeader' );
