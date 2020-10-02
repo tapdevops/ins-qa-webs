@@ -14,21 +14,25 @@
 		<td style="text-align:center;color: #FFF; background-color: #043077;"><b>Business Area</b></td>
 		<td style="text-align:center;color: #FFF; background-color: #043077;"><b>Total Points</b></td>
 	</tr>
-	@if( !empty( $data ) )
-		@foreach( $data as $key=>$dt )
+	@if( !empty( $data_point ) )
+		@foreach( $data_point as $key=>$dt )
 			<tr>
 				<td>{{ $dt['PERIODE'] }}</td>
 				<td>{{ $dt['NIK'] }}</td>
-				<td>{{ $dt['FULLNAME'] }}</td>
+				<td>
+					@isset($dt['FULLNAME'])
+						{{ $dt['FULLNAME'] }}
+					@endisset
+				</td>
 				<td>{{ $dt['JOB'] }}</td>
-				<td align="center">{{ $dt['LOCATION_CODE'] }}</td>
+				<td align="left">{{ $dt['LOCATION_CODE'] }}</td>
 				<td>{{ $dt['BUSINESS_AREA'] }}</td>
 				<td align="left">{{ $dt['POINT'] }}</td>
 			</tr>
 		@endforeach
 	@else	
 		<tr>
-			<td colspan="7">else</td>
+			<td colspan="7">No data found</td>
 		</tr>
 	@endif
 </table>

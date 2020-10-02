@@ -433,7 +433,7 @@ class ReportOracleController extends Controller {
 		# REPORT POINT BULANAN
 		# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 		else if ( $REPORT_TYPE == 'POINT_BULANAN' ) {
-			$results['data'] = $RO->POINT_BULANAN(
+			$results['data_point'] = $RO->POINT_BULANAN(
 									$REPORT_TYPE, 
 									$START_DATE, 
 									$END_DATE, 
@@ -444,15 +444,35 @@ class ReportOracleController extends Controller {
 									$BLOCK_CODE,
 									$DATE_MONTH
 								);
-			$results['data'] = json_decode( json_encode( $results['data'] ),true );
+			$results['data_point'] = json_decode( json_encode( $results['data_point'] ),true );					
+			$results['data_history'] = $RO->HISTORY_POINT_BULANAN(
+									$REPORT_TYPE, 
+									$START_DATE, 
+									$END_DATE, 
+									$REGION_CODE, 
+									$COMP_CODE, 
+									$BA_CODE, 
+									$AFD_CODE, 
+									$BLOCK_CODE,
+									$DATE_MONTH
+								);					
+			$results['data_history'] = json_decode( json_encode( $results['data_history'] ),true );
 			// echo '<pre>';
-			// print_r( $results['data']);
+			// print_r( $results['data_point']);
+			// print_r( $results['data_history']);
 			// die;
 			$results['date_month'] = date( 'M Y',strtotime( $DATE_MONTH.'-01' ) );
 			$file_name = 'Report Point Bulanan - '.$results['date_month'];
-			$results['sheet_name'] = 'Point Bulanan';
-			$results['view'] = 'orareport.excel-point-bulanan';
-
+			// $results['sheet_name'] = 'Point Bulanan';
+			// $results['view'] = 'orareport.excel-point-bulanan';
+			Excel::create( $file_name, function( $excel ) use ( $results ) {
+				$excel->sheet( 'History Point', function( $sheet ) use ( $results ) {
+					$sheet->loadView( 'orareport.excel-point-bulanan-history', $results );
+				} );
+				$excel->sheet( 'Point Bulanan', function( $sheet ) use ( $results ) {
+					$sheet->loadView( 'orareport.excel-point-bulanan', $results );
+				} );
+			} )->export( 'xlsx' );
 			// return view( 'orareport.excel-point-bulanan', $results );
 			// dd();
 		}

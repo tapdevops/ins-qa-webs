@@ -1,9 +1,10 @@
 <?php
-
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use DB;
+
+set_time_limit(0);
 
 class ReportOracle extends Model{
 	
@@ -1305,13 +1306,68 @@ class ReportOracle extends Model{
 			   CASE WHEN tph.werks is not null then 'INACTIVE' ELSE 'ACTIVE' END status_tph
           FROM tbl hd    LEFT JOIN
                 (SELECT *
-                   FROM ebcc.tm_status_tph
+                   FROM mobile_inspection.tm_status_tph
                   WHERE status = 'INACTIVE') tph
              ON     hd.val_werks = tph.werks
                 AND hd.val_afd_code = tph.afd_code
                 AND hd.val_block_code = tph.block_code
                 AND hd.val_tph_code = tph.no_tph
                 AND hd.val_date_time BETWEEN tph.start_valid AND nvl(tph.end_valid,sysdate)";
+		$sql_helpdesk = " SELECT val_ebcc_code,
+       val_werks,
+       val_est_name,
+       val_nik_validator,
+       val_nama_validator,
+       val_jabatan_validator,
+       val_status_tph_scan,
+       TRIM (TO_CHAR (val_lat_tph)) val_lat_tph,
+       TRIM (TO_CHAR (val_lon_tph)) val_lon_tph,
+       NULL val_maturity_status,
+       val_alasan_manual,
+       val_afd_code,
+       val_block_code,
+       val_date_time,
+       val_block_name,
+       val_tph_code,
+       val_delivery_ticket,
+       val_jml_1,
+       val_jml_2,
+       val_jml_3,
+       val_jml_4,
+       val_jml_5,
+       val_jml_6,
+       val_jml_7,
+       val_jml_8,
+       val_jml_9,
+       val_jml_10,
+       val_jml_11,
+       val_jml_12,
+       val_jml_13,
+       val_jml_14,
+       val_jml_15,
+       val_jml_16,
+       val_total_jjg,
+       ebcc_count,
+       ebcc_nik_kerani_buah,
+       ebcc_nama_kerani_buah,
+       ebcc_no_bcc,
+       ebcc_status_tph,
+       ebcc_jml_bm,
+       ebcc_jml_bk,
+       ebcc_jml_ms,
+       ebcc_jml_or,
+       ebcc_jml_bb,
+       ebcc_jml_jk,
+       ebcc_jml_ba,
+       ebcc_jjg_panen,
+       akurasi_sampling_ebcc,
+       akurasi_kuantitas,
+       akurasi_kualitas_ms,
+       'ACTIVE' status_tph
+  FROM    mobile_inspection.tr_ebcc_compare@proddb_link hd
+       WHERE to_char (hd.val_date_time,'RRRRMMDD') BETWEEN '20200829' AND '20200930' AND val_werks in ('5431', '5432', '5433')";		
+				// echo $sql_helpdesk;
+				// die;
 		$get = $this->db_mobile_ins->select( $sql );
 		$joindata = array();
 		$summary_data = array();
@@ -3430,10 +3486,33 @@ class ReportOracle extends Model{
 		$where = "";
 		date_default_timezone_set('Asia/Jakarta');
 		$timezone='Asia/Jakarta';
+		$last_day = date_create($DATE_MONTH.'-01');
+		$client = new \GuzzleHttp\Client();
+		$get = $client->request( 'GET', //$this->url_api_ins_msa_point.'api/v1.1/point/report/'.date_format($last_day,'Ymt'),
+										'http://apisqa.tap-agri.com/mobileinspectionqa/ins-msa-qa-point/api/v1.1/point/report/'.date_format($last_day,'Ymt'),
+										[
+										 'headers' => [
+											'Accept' => 'application/json',
+											'Authorization' => 'Bearer '.session( 'ACCESS_TOKEN' ),
+													]
+										]
+										);
+		$get = json_decode( $get->getBody(), true );
+		// echo '<pre>';
+		// print_r($get);
+		// die;
+		return $get['data'];
+	}
+	
+	public function HISTORY_POINT_BULANAN( $REPORT_TYPE , $START_DATE , $END_DATE , $REGION_CODE , $COMP_CODE , $BA_CODE , $AFD_CODE , $BLOCK_CODE, $DATE_MONTH ) {
+		$where = "";
+		date_default_timezone_set('Asia/Jakarta');
+		$timezone='Asia/Jakarta';
 		$DATE_MONTH = $DATE_MONTH.'-01';
 		$last_day = date_create($DATE_MONTH);
 		$client = new \GuzzleHttp\Client();
-		$get = $client->request( 'GET', $this->url_api_ins_msa_point.'api/v1.1/point/report/'.date_format($last_day,'Ymt'),
+		$get = $client->request( 'GET', //$this->url_api_ins_msa_point.'api/v1.0/history/report/'.date_format($last_day,'Ymt'),
+										'http://apisqa.tap-agri.com/mobileinspectionqa/ins-msa-qa-point/api/v1.0/history/report/'.date_format($last_day,'Ymt'),
 										[
 										 'headers' => [
 											'Accept' => 'application/json',
@@ -3447,5 +3526,6 @@ class ReportOracle extends Model{
 		// die;
 		return $get['data'];
 	}
-
+	
+	
 }
