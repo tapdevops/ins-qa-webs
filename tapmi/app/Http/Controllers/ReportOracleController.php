@@ -15,13 +15,11 @@ use File;
 
 class ReportOracleController extends Controller {
 	protected $url_api_ins_msa_hectarestatement;
-	protected $url_api_ins_msa_auth;
 	protected $active_menu;
 	
 	public function __construct() {
 		$this->active_menu = '_' . str_replace('.', '', '02.03.00.00.00') . '_';
 		$this->url_api_ins_msa_hectarestatement = APISetup::url()['msa']['ins']['hectarestatement'];
-		$this->url_api_ins_msa_auth = APISetup::url()['msa']['ins']['auth'];
 		$this->db_mobile_ins = DB::connection('mobile_ins');
 	}
 
@@ -69,17 +67,16 @@ class ReportOracleController extends Controller {
 
 			try {
 				$client = new \GuzzleHttp\Client();
-				$url_import_db = $this->url_api_ins_msa_auth . '/api/v2.1/import/database';
-				$response = $client->request( 'POST', $url_import_db, [
-						 'headers' => [
+				$response = $client->request( 'POST', 'http://localhost:3000/upload', [
+						'headers' => [
 							'Accept' => 'application/json',
 							'Authorization' => 'Bearer '.session( 'ACCESS_TOKEN' ),
-						], 
+						],
 						'multipart' => [
 							[
-								'name' => 'JSON',
+								'name' => 'file',
 								'contents' => fopen( './uploads/'.date( 'Y-m-d' ).'/'.$file_name, 'r' ),
-								'filename' => $file_name
+								'filename' => time().'-'.$file_name
 							]
 						]
 					]
@@ -93,7 +90,7 @@ class ReportOracleController extends Controller {
 				}
 				$QV_STATUS = ( $response['status'] == true ? 1 : 0 );
 				$QV_USER_AUTH_CODE = session( 'USER_AUTH_CODE' );
-				/* $insert_db = $this->db_mobile_ins->insert( "
+				$insert_db = $this->db_mobile_ins->insert( "
 					INSERT INTO 
 						T_LOG_IMPORT_DB( 
 							USER_AUTH_CODE, 
@@ -107,15 +104,14 @@ class ReportOracleController extends Controller {
 						SYSDATE,
 						$QV_STATUS
 					)
-				" ); */
+				" );
 			}
 			catch( \Exception $e ) {
 				$data['message'] = $e->getMessage();
 			}
 		}
 
-		//return response()->json( $data, $http_status_code );
-		return redirect()->back() ->with('alert', $data['message']);
+		return response()->json( $data, $http_status_code );
 	}
 
 	public function kafka_control() {
@@ -234,6 +230,7 @@ class ReportOracleController extends Controller {
 		$results['data'] = array();
 		$results['summary'] = array();
 		$results['periode'] = date( 'Ym', strtotime( $START_DATE ) );
+		
 
 		# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 		# REPORT EBCC VALIDATION ESTATE/MILL
@@ -418,7 +415,7 @@ class ReportOracleController extends Controller {
 									$AFD_CODE, 
 									$BLOCK_CODE,
 									$DATE_MONTH
-								);					
+								);
 			$results['data'] = json_decode( json_encode( $results['data'] ), true );
 			$results['date_month'] = $DATE_MONTH.'-01';
 			$file_name = 'Report Class Block - '.$BA_CODE.' - '.date( 'M Y', strtotime( $request->DATE_MONTH.'-01' ) );
@@ -426,34 +423,6 @@ class ReportOracleController extends Controller {
 			$results['view'] = 'orareport.excel-inspection-class-block';
 
 			// return view( 'orareport.excel-inspection-class-block', $results );
-			// dd();
-		}
-		
-		# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-		# REPORT POINT BULANAN
-		# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-		else if ( $REPORT_TYPE == 'POINT_BULANAN' ) {
-			$results['data'] = $RO->POINT_BULANAN(
-									$REPORT_TYPE, 
-									$START_DATE, 
-									$END_DATE, 
-									$REGION_CODE, 
-									$COMP_CODE, 
-									$BA_CODE, 
-									$AFD_CODE, 
-									$BLOCK_CODE,
-									$DATE_MONTH
-								);
-			$results['data'] = json_decode( json_encode( $results['data'] ),true );
-			// echo '<pre>';
-			// print_r( $results['data']);
-			// die;
-			$results['date_month'] = date( 'M Y',strtotime( $DATE_MONTH.'-01' ) );
-			$file_name = 'Report Point Bulanan - '.$results['date_month'];
-			$results['sheet_name'] = 'Point Bulanan';
-			$results['view'] = 'orareport.excel-point-bulanan';
-
-			// return view( 'orareport.excel-point-bulanan', $results );
 			// dd();
 		}
 

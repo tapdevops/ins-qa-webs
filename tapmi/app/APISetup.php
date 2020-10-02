@@ -24,7 +24,7 @@ class APISetup extends Model
 	public static function url()
 	{
 
-		$env = 'qa';
+		$env = 'dev';
 
 		$data = array(
 			"dev" => array(
@@ -37,20 +37,19 @@ class APISetup extends Model
 						// "report" => "http://apis.tap-agri.com/mobileinspectiondev/ins-msa-dev-reports",
 						"report" => "http://app.tap-agri.com/mobileinspection/ins-msa-reports",
 						"ebccvalidation" => "http://app.tap-agri.com/mobileinspectiondev/ins-msa-dev-ebccval",
-						"mivalidation" => "http://127.0.0.1:8000/api",
-						"point" => "http://apisdev.tap-agri.com/mobileinspectiondev/ins-msa-dev-point/"
+						"mivalidation" => "http://127.0.0.1:8000/api"
 					)
 				)
 			),
 			"qa" => array(
 				"msa" => array(
 					"ins" => array(
-						"auth" => "http://apisqa.tap-agri.com/mobileinspectionqa/ins-msa-qa-auth",
-						"hectarestatement" => "http://apisqa.tap-agri.com/mobileinspectionqa/ins-msa-qa-hectarestatement",
-						"finding" => "http://apisqa.tap-agri.com/mobileinspectionqa/ins-msa-qa-finding",
-						"inspection" => "http://apisqa.tap-agri.com/mobileinspectionqa/ins-msa-qa-inspection",
-						"report" => "http://apisqa.tap-agri.com/mobileinspectionqa/ins-msa-qa-reports",
-						"ebccvalidation" => "http://apisqa.tap-agri.com/mobileinspectionqa/ins-msa-qa-ebccval",
+						"auth" => "http://apis.tap-agri.com/mobileinspectionqa/ins-msa-qa-auth",
+						"hectarestatement" => "http://apis.tap-agri.com/mobileinspectionqa/ins-msa-qa-hectarestatement",
+						"finding" => "http://apis.tap-agri.com/mobileinspectionqa/ins-msa-qa-finding",
+						"inspection" => "http://apis.tap-agri.com/mobileinspectionqa/ins-msa-qa-inspection",
+						"report" => "http://apis.tap-agri.com/mobileinspectionqa/ins-msa-qa-reports",
+						"ebccvalidation" => "http://apis.tap-agri.com/mobileinspectionqa/ins-msa-qa-ebccval"
 						"image" => "http://image.tap-agri.com:5012",
 						"point" => "http://apisqa.tap-agri.com/mobileinspectionqa/ins-msa-qa-point/"
 					)

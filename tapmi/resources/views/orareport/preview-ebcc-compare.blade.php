@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 	<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 	<title>Preview - LAPORAN SAMPLING EBCC vs EBCC</title>
@@ -57,35 +57,37 @@
 						<div style="position:absolute;z-index: 1000">
 						<input id="input1" type="image" src="http://inspectiondev.tap-agri.com/storage/rotate_45.png" >
 						</div>
+						<img id="sampling_ebcc_img_jjg" src="{{ $data['val_image_janjang'] }}" width="496px" height="600px" class="rounded mx-auto d-block north">
+						<br />
 						<table class="table table-bordered" style="font-weight: bold;">
-							<tr>
-								<td colspan="6" height="500px" style="text-align: center; vertical-align: middle;"><img id="sampling_ebcc_img_jjg" src="{{ $data['val_image_janjang'] }}" width="100%" height="auto" class="rounded mx-auto d-block north"></td>
-							</tr>
 							<tr style="font-size:14px;">
-								<td class="text-center">BM<br />(jjg)</td>
-								<td class="text-center">MS<br />(jjg)</td>
-								<td class="text-center">OR<br />(jjg)</td>
-								<td class="text-center">BB<br />(jjg)</td>
-								<td class="text-center">JK<br />(jjg)</td>
+								<td class="text-center">BM (jjg)</td>
+								<td class="text-center">BK (jjg)</td>
+								<td class="text-center">MS (jjg)</td>
+								<td class="text-center">OR (jjg)</td>
+								<td class="text-center">BB (jjg)</td>
+								<td class="text-center">JK (jjg)</td>
+								<td class="text-center">BA (jjg)</td>
 								<td class="text-center">Total<br />Janjang<br />Panen</td>
 							</tr>
 							<tr>
 								<td class="text-center" style="color:{{ ( $data['ebcc_jml_bm'] == $data['val_jml_bm'] ? 'green' : 'red' ) }};">{{ $data['val_jml_bm'] }}</td>
+								<td class="text-center" style="color:{{ ( $data['ebcc_jml_bk'] == $data['val_jml_bk'] ? 'green' : 'red' ) }};">{{ $data['val_jml_bk'] }}</td>
 								<td class="text-center" style="color:{{ ( $data['ebcc_jml_ms'] == $data['val_jml_ms'] ? 'green' : 'red' ) }};">{{ $data['val_jml_ms'] }}</td>
 								<td class="text-center" style="color:{{ ( $data['ebcc_jml_or'] == $data['val_jml_or'] ? 'green' : 'red' ) }};">{{ $data['val_jml_or'] }}</td>
 								<td class="text-center" style="color:{{ ( $data['ebcc_jml_bb'] == $data['val_jml_bb'] ? 'green' : 'red' ) }};">{{ $data['val_jml_bb'] }}</td>
 								<td class="text-center" style="color:{{ ( $data['ebcc_jml_jk'] == $data['val_jml_jk'] ? 'green' : 'red' ) }};">{{ $data['val_jml_jk'] }}</td>
+								<td class="text-center" style="color:{{ ( $data['ebcc_jml_ba'] == $data['val_jml_ba'] ? 'green' : 'red' ) }};">{{ $data['val_jml_ba'] }}</td>
 								<td class="text-center" style="color:{{ ( $data['ebcc_jjg_panen'] == $data['val_jjg_panen'] ? 'green' : 'red' ) }};">{{ $data['val_jjg_panen'] }}</td>
 							</tr>
 						</table>
 						<div class="row">
-							<div class="col-md-12">
+							<div class="col-md-8">
 								<table cellpadding="2px;" style="font-size: 12px;">
 									<tr>
-										<td width="25%">NIK</td>
+										<td width="40%">NIK</td>
 										<td width="5%">:</td>
-										<td width="35%">{{ $data['val_nik_validator'] }}</td>
-										<td width="35%" rowspan="5"><img id="sampling_ebcc_img_selfie" src="{{ $data['val_image_selfie'] }}" width="169px"><td>
+										<td width="55%">{{ $data['val_nik_validator'] }}</td>
 									</tr>
 									<tr>
 										<td>Nama Lengkap</td>
@@ -109,6 +111,9 @@
 									</tr>
 								</table>
 							</div>
+							<div class="col-md-4">
+								<img id="sampling_ebcc_img_selfie" src="{{ $data['val_image_selfie'] }}" width="100%;">
+							</div>
 						</div>
 					</div>
 				</div>
@@ -123,38 +128,39 @@
 						<input id="input2" type="image" src="http://inspectiondev.tap-agri.com/storage/rotate_45.png" >
 					</div>
 						@if ( $data['ebcc_no_bcc'] == '' )
-							<img id="ebcc" src="{{ url( 'assets/notfound.jpg' ) }}" width="100%" height="100%" class="rounded mx-auto d-block">
+							<img id="ebcc" src="{{ url( 'assets/notfound.jpg' ) }}" width="496px" height="600px" class="rounded mx-auto d-block north">
 							<h3 class="text-center">EBCC tidak ditemukan</h3><br />
 						@else
+							<img id="ebcc" src="{{ $data['ebcc_picture_name'] }}" width="496px" height="600px" class="rounded mx-auto d-block north"><br />
 							<table class="table table-bordered" style="font-weight: bold;">
-								<tr>
-									<td colspan="6" height="500px" style="text-align: center; vertical-align: middle;"><img id="ebcc" src="{{ $data['ebcc_picture_name'] }}" width="100%" class="rounded mx-auto d-block"></td>
-								</tr>
 								<tr style="font-size:14px;">
-									<td class="text-center">BM<br />(jjg)</td>
-									<td class="text-center">MS<br />(jjg)</td>
-									<td class="text-center">OR<br />(jjg)</td>
-									<td class="text-center">BB<br />(jjg)</td>
-									<td class="text-center">JK<br />(jjg)</td>
+									<td class="text-center">BM (jjg)</td>
+									<td class="text-center">BK (jjg)</td>
+									<td class="text-center">MS (jjg)</td>
+									<td class="text-center">OR (jjg)</td>
+									<td class="text-center">BB (jjg)</td>
+									<td class="text-center">JK (jjg)</td>
+									<td class="text-center">BA (jjg)</td>
 									<td class="text-center">Total<br />Janjang<br />Panen</td>
 								</tr>
 								<tr>
 									<td class="text-center" style="color:{{ ( $data['ebcc_jml_bm'] == $data['val_jml_bm'] ? 'green' : 'red' ) }};">{{ $data['ebcc_jml_bm'] }}</td>
+									<td class="text-center" style="color:{{ ( $data['ebcc_jml_bk'] == $data['val_jml_bk'] ? 'green' : 'red' ) }};">{{ $data['ebcc_jml_bk'] }}</td>
 									<td class="text-center" style="color:{{ ( $data['ebcc_jml_ms'] == $data['val_jml_ms'] ? 'green' : 'red' ) }};">{{ $data['ebcc_jml_ms'] }}</td>
 									<td class="text-center" style="color:{{ ( $data['ebcc_jml_or'] == $data['val_jml_or'] ? 'green' : 'red' ) }};">{{ $data['ebcc_jml_or'] }}</td>
 									<td class="text-center" style="color:{{ ( $data['ebcc_jml_bb'] == $data['val_jml_bb'] ? 'green' : 'red' ) }};">{{ $data['ebcc_jml_bb'] }}</td>
 									<td class="text-center" style="color:{{ ( $data['ebcc_jml_jk'] == $data['val_jml_jk'] ? 'green' : 'red' ) }};">{{ $data['ebcc_jml_jk'] }}</td>
+									<td class="text-center" style="color:{{ ( $data['ebcc_jml_ba'] == $data['val_jml_ba'] ? 'green' : 'red' ) }};">{{ $data['ebcc_jml_ba'] }}</td>
 									<td class="text-center" style="color:{{ ( $data['ebcc_jjg_panen'] == $data['val_jjg_panen'] ? 'green' : 'red' ) }};">{{ $data['ebcc_jjg_panen'] }}</td>
 								</tr>
 							</table>
 							<div class="row">
-								<div class="col-md-12">
+								<div class="col-md-8">
 									<table cellpadding="2px;" style="font-size: 12px;">
 										<tr>
-											<td width="25%">NIK</td>
+											<td width="40%">NIK</td>
 											<td width="5%">:</td>
-											<td width="45%">{{ $data['ebcc_nik_kerani_buah'] }}</td>
-											<td rowspan="5" width="35%"><img src="{{ url( 'assets/user.jpg' ) }}" width="169px"></td>
+											<td width="55%">{{ $data['ebcc_nik_kerani_buah'] }}</td>
 										</tr>
 										<tr>
 											<td>Nama Lengkap</td>
@@ -178,9 +184,9 @@
 										</tr>
 									</table>
 								</div>
-								<!--<div class="col-md-4">
+								<div class="col-md-4">
 									<img src="{{ url( 'assets/user.jpg' ) }}" width="100%;">
-								</div>-->
+								</div>
 							</div>
 						@endif
 					</div>
@@ -189,8 +195,6 @@
 		</div>
 		<br />
 	</div>
-	<p id="demo"></p>
-
 	<!--footer>
 		<br />
 		<center>
@@ -203,30 +207,29 @@
 	<script type="text/javascript" src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 	<script src="https://code.jquery.com/jquery-1.10.1.min.js" integrity="sha256-SDf34fFWX/ZnUozXXEH0AeB+Ip3hvRsjLwp6QNTEb3k="  crossorigin="anonymous" ></script>
 	<script type="text/javascript">
-		var img_sampling = $('#sampling_ebcc_img_jjg');
-		var img_ebcc = $('#ebcc');
 		$('#input1').click(function(){
-			if(img_sampling.hasClass('north')){
-				img_sampling.attr('class','west');
-			}else if(img_sampling.hasClass('west')){
-				img_sampling.attr('class','south');
-			}else if(img_sampling.hasClass('south')){
-				img_sampling.attr('class','east');
-			}else {
-				img_sampling.attr('class','north');
+			var img = $('#sampling_ebcc_img_jjg');
+			if(img.hasClass('north')){
+				img.attr('class','west');
+			}else if(img.hasClass('west')){
+				img.attr('class','south');
+			}else if(img.hasClass('south')){
+				img.attr('class','east');
+			}else if(img.hasClass('east')){
+				img.attr('class','north');
 			}
 		});
 		
 		$('#input2').click(function(){
-			var img_ebcc = $('#ebcc');
-			if(img_ebcc.hasClass('rounded mx-auto d-block north')){
-				img_ebcc.attr('class',' rounded mx-auto d-block west');
-			}else if(img_ebcc.hasClass('rounded mx-auto d-block west')){
-				img_ebcc.attr('class','rounded mx-auto d-block south');
-			}else if(img_ebcc.hasClass('rounded mx-auto d-block south')){
-				img_ebcc.attr('class','rounded mx-auto d-block east');
-			}else {
-				img_ebcc.attr('class','rounded mx-auto d-block north');
+			var img = $('#ebcc');
+			if(img.hasClass('rounded mx-auto d-block north')){
+				img.attr('class',' rounded mx-auto d-block west');
+			}else if(img.hasClass('rounded mx-auto d-block west')){
+				img.attr('class','rounded mx-auto d-block south');
+			}else if(img.hasClass('rounded mx-auto d-block south')){
+				img.attr('class','rounded mx-auto d-block east');
+			}else if(img.hasClass('rounded mx-auto d-block east')){
+				img.attr('class','rounded mx-auto d-block north');
 			}
 		});
 		
@@ -235,9 +238,9 @@
 			var sampling_ebcc_img_selfie = document.getElementById( 'sampling_ebcc_img_selfie' );
 			var sampling_ebcc_img_selfie_width = sampling_ebcc_img_selfie.clientWidth;
 			var sampling_ebcc_img_selfie_height = sampling_ebcc_img_selfie.clientHeight;
-			
+	
 			if ( parseInt( sampling_ebcc_img_selfie_height ) < parseInt( sampling_ebcc_img_selfie_width ) ) {
-				$( "#sampling_ebcc_img_selfie" ).addClass( 'east' );
+				$( "#sampling_ebcc_img_selfie" ).addClass( 'rotate' );
 			}
 
 			// Rotasi Image Janjang
@@ -246,10 +249,7 @@
 			var sampling_ebcc_img_jjg_height = sampling_ebcc_img_jjg.clientHeight;
 			
 			if ( parseInt( sampling_ebcc_img_jjg_height ) > parseInt( sampling_ebcc_img_jjg_width ) ) {
-				$( "#sampling_ebcc_img_jjg" ).addClass( 'west' );
-			}
-			else{
-				$( "#sampling_ebcc_img_jjg" ).addClass( 'north' );
+				//$( "#sampling_ebcc_img_jjg" ).addClass( 'rotate' );
 			}
 		}
 

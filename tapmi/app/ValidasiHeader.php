@@ -12,7 +12,7 @@ class ValidasiHeader extends Model{
    
    public function __construct() {
       $this->db_mobile_ins = DB::connection( 'mobile_ins' );
-      $this->env = 'QA';
+		$this->env = 'DEV';
    }
 
    //filter H-1

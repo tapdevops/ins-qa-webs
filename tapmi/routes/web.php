@@ -74,12 +74,12 @@ Route::group( [ 'middleware' => 'web' ], function() {
 			Route::get('/summarykrani/{ba_code}/{start_date}/{end_date}', 'Temp2Controller@download_proses')->name('download_temp2/{ba_code}/{start_date}/{end_date}');
 		});
 
+
 		#validation_image_data
 		Route::get( '/listvalidasi/{tgl?}', 'ValidationController@index'); 
 		Route::get( '/validasi/create/{id}', 'ValidationController@create' );
 		Route::get( '/validasi/cek_aslap', 'ValidationController@cek_aslap'); 
 		Route::post( '/validasi/create_action', 'ValidationController@create_action')->name('create_validation');
-
 	});
 
 	// Cron URL
@@ -98,6 +98,7 @@ Route::get( '/testings', 'KafkaProducerController@test' );
 Route::get( '/kafka/tm_user_auth', 'KafkaController@RUN_INS_MSA_AUTH_TM_USER_AUTH' );
 
 
+Route::get( '/getNewdata', 'ValidationController@getEbccValHeader' );
 // Route::get( '/getGuzzleRequest', 'ValidationController@getGuzzleRequest' );
 Route::get( '/getNewdata', 'ValidationController@getEbccValHeader' );
 Route::get( '/getNewdata2', 'ValidationController@getValHeader' );
