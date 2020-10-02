@@ -6,6 +6,7 @@ RUN apt-get update && \
 # Copy
 COPY tapmi /var/www/html/
 COPY vhost.conf /etc/apache2/sites-available/000-default.conf
+COPY memory-limit-php.ini /usr/local/etc/php/conf.d/memory-limit-php.ini
 
 # Change mode 777 HTML folder
 RUN chmod 777 -R /var/www/html/
@@ -20,9 +21,11 @@ RUN cp /var/www/html/env-example /var/www/html/.env
 # Generate App Key
 #RUN php artisan key:generate
 
+RUN echo memory_limit=-1 /usr/local/etc/php/conf.d/memory-limit-php.ini
 RUN docker-php-ext-install mbstring pdo pdo_mysql
 RUN chown -R www-data:www-data /var/www/html/
 RUN a2enmod rewrite
 
 CMD php artisan serve --host=0.0.0.0 --port=80
 EXPOSE 80
+#test clone dari branch qa

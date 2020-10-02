@@ -61,7 +61,7 @@ class AuthController extends Controller {
 			$username = Input::get( 'USERNAME' );
 			$password = Input::get( 'PASSWORD' );
 			$client = new \GuzzleHttp\Client();
-			$res = $client->request( 'POST', $this->url_api_ins_msa_auth.'/api/v1.1/auth/login', [
+			$res = $client->request( 'POST', $this->url_api_ins_msa_auth.'/api/v2.0/auth/login', [
 				'json' => [
 					'username' => $username,
 					'password' => $password

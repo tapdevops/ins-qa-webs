@@ -7,10 +7,41 @@
 @section( 'content' )
 <div class="row">
 	<div class="col-md-12">
-		<div class="row">
+		<div class="row" style="margin-bottom: 5px;">
+			@if(session('REFFERENCE_ROLE')=='COMP_CODE')
+			<div class="col-md-3" style="padding-right: 0px;">
+				<div class="input-daterange input-group">
+					<label style="padding-top: 6px" for="werks">BA & Afd&nbsp; &nbsp; </label>
+					<?php 
+						$werks_data = array();
+						$afd_data = array();
+						$afd_data_by_werks = array();
+						foreach($ba_data as $key){
+							$werks_data[substr($key->ba,0,4)] = substr($key->ba,0,4);
+							$afd_data_by_werks[substr($key->ba,0,4)][substr($key->ba,-1)] = substr($key->ba,-1);
+						}
+					?>
+					<select name="werks" class="form-control m-input" id="werks">
+						@foreach($werks_data as $key)
+						<option value="{{$key}}" {{$loop->first?'selected':''}}>{{$key}}</option>
+						@endforeach
+					</select>
+					<select name="afd" class="form-control m-input" id="afd">
+						@foreach($afd_data_by_werks as $key1 => $afd_data)
+							@foreach($afd_data as $key2 => $val)
+							<option value="{{$val}}" class="{{$key1}} data-afd">{{$val}}</option>
+							@endforeach
+						@endforeach
+					</select>
+				</div>
+			</div>
+			@else 
+			<input type="hidden" name="werks" id="werks">
+			<input type="hidden" name="afd" id="afd">
+			@endif
 			<div class="col-md-4">
 				<div class="input-daterange input-group">
-					<label for="tanggal_rencana">Tanggal &nbsp; &nbsp; </label>
+					<label style="padding-top: 6px" for="tanggal_rencana">Tanggal &nbsp; &nbsp; </label>
 					<?php $tgl = date("d-M-Y", strtotime($tgl_validasi));
 					?>
 					<input type="text" class="form-control m-input" id="generalSearch" name="tanggal_rencana" value="{{$tgl}}" autocomplete="off" readonly="readonly" />
@@ -24,8 +55,6 @@
 				</div>
 
 			</div>
-			<div class="col-md-4"></div>
-			<div class="col-md-4"></div>
 		</div>
 	</div>
 	
@@ -37,29 +66,49 @@
 		<div class="row">
 			<div class="col-md-4"></div>
 			<div class="col-md-4"></div>
-			<div class="col-md-4 m--align-right">
-			<!-- '.$id.'-'.$q['id_ba'].'-'.$q['id_afd']) ba afd dari session -->
 			@if(!empty($records) && $status == 1)
+			<div class="col-md-4 m--align-right" style="white-space:nowrap;margin-bottom:20px;">
+				<div id="cekaslap_index" class="btn btn-danger m-btn m-btn--custom m-btn--icon m-btn--air m-btn--pill">
+					<span>
+						<i class="fa fa-refresh"></i>
+						<span>Cek Validasi Krani Buah</span>
+					</span>
+				</div>
+				@if($status_validasi_aslap==1)
 				<a href="{{ URL::to('/validasi/create/'.$tgl_validasi) }}" class="btn btn-focus m-btn m-btn--custom m-btn--icon m-btn--air m-btn--pill">
 					<span>
 						<i class="fa fa-clipboard"></i>
 						<span>Validasi</span>
 					</span>
 				</a>
-			@endif
+				@else
+				<div class="btn btn-dark m-btn m-btn--custom m-btn--icon m-btn--air m-btn--pil disabled" style="border-radius: 60px;">
+					<span>
+						<i class="fa fa-clipboard"></i>
+						<span>Validasi</span>
+					</span>
+				</div>
+				@endif
 				<div class="m-separator m-separator--dashed d-xl-none"></div>
 			</div>
+			@endif
+			@if($status_validasi_aslap==0 && !empty($records))
+			<div class="col-md-12 m--align-center" style="white-space:nowrap;">
+				<h5 class="m-subheader__title m-subheader__title--separator text-danger">Anda harus melakukan "Cek Validasi Krani Buah" terlebih dulu</h5>
+			</div>
+			@endif
 		</div>
 	</div>
 	
 </div>
-<table class="m-datatable" id="html_table" width="100%" style="margin-top:20px;">
+<table class="m-datatable" id="html_table" width="100%">
 	<thead>
 		<tr>
 			<th>Tanggal</th>
 			<th>Krani Buah</th>
 			<th>Afdeling</th>
 			<th>Mandor Panen</th>
+			<th>BCC berhasil Divalidasi</th>
 			<th>Jumlah BCC yang Divalidasi</th>
 			<th>Keterangan</th>
 		</tr>
@@ -72,6 +121,7 @@
 				<td>{{ $q['nama_krani_buah'] }} - {{$q['nik_kerani_buah']}}</td>
 				<td>{{ $q['id_afd'] }}</td>
 				<td>{{ $q['nama_mandor'] }} - {{$q['nik_mandor']}}</td>
+				<td>{{ $q['aslap_validation'] }}</td>
 				<td>{{ $q['jumlah_ebcc_validated'] }} / {{ $q['target_validasi'] }}  </td>
 				<?php 
 					$id = str_replace("/",".",$q['id_validasi']);
@@ -83,9 +133,15 @@
 				@endif	
 			</tr>
 		@endforeach
-		@endforeach
+	@endforeach
 	</tbody>
 </table>
+	@if($nodata==1)
+	<div class="col-md-12 m--align-center" style="white-space:nowrap; padding-top:20px;">
+		<h5 class="m-subheader__title m-subheader__title--separator text-danger">Tidak bisa melanjutkan validasi karena ada aslap yang tidak melakukan validasi / validasi BCC tidak "MATCH"</h5>
+		<h5 class="m-subheader__title m-subheader__title--separator text-danger">Lakukan proses validasi manual terlebih dulu di TAP MOTION eBCC</h5>
+	</div>
+	@endif
 </div>
 @endsection
 
@@ -168,6 +224,15 @@
 		
 	});
 	
+    $('.data-afd').hide();
+    $('#afd .'+$("#werks").val()).show();
+   	$("#afd").val($("#afd ."+$("#werks").val()+":first").val());
+	$("#werks").change(function () {
+        var val = $(this).val();
+        $('.data-afd').hide();
+        $('#afd .'+val).show();
+        $("#afd").val($("#afd ."+$("#werks").val()+":first").val());
+    });
 	// $(document).ready(function () {
 	// 	$('#generalSearch').datepicker().on('click', function(){
 	// 			var selected = $(this).val();
@@ -190,6 +255,8 @@
 
 	function refreshData(){
 		var search = document.getElementById('generalSearch').value;
+		var werks = document.getElementById('werks').value;
+		var afd = document.getElementById('afd').value;
 		var datatable = {
 							init: function() {
 								var e;
@@ -247,15 +314,61 @@
 			type:'get',
 			data:{
 				CSRF_TOKEN,
-				'tanggal' : search
+				'tanggal' : search,
+				'werks' : werks,
+				'afd' : afd
 			},
 			success:function(data){
 				$("div#table").html(data);
 				datatable.init();
 				$("#generalSearch").val(search);
+				$("#werks").val(werks);
+				$("#afd").val(afd);
 			}
 		})
 	}
 	
+</script>
+<script>
+	$(document).on('click','#cekaslap_index',function(){
+		$('#cekaslap_index>span>i').addClass('fa-spin');
+		$('#cekaslap_index').addClass('disabled');
+		$('#cekaslap_index>span>span').html('Proses pengecekan');
+		cekaslap_index();
+	});
+	function cekaslap_index(){
+		const CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+		var search = document.getElementById('generalSearch').value;
+		$.ajax({
+			url:"{{ URL::to('/validasi/cek_aslap/') }}",
+			type:'get',
+			data:{
+				CSRF_TOKEN,
+				'tanggal' : search
+			},
+			success:function(data){
+				// console.log(data);
+				$("#tampilkan").trigger('click');
+				toastr.options = {
+					"closeButton": false,
+					"debug": false,
+					"newestOnTop": false,
+					"progressBar": false,
+					"positionClass": "toast-top-right",
+					"preventDuplicates": false,
+					"onclick": null,
+					"showDuration": "300",
+					"hideDuration": "1000",
+					"timeOut": "5000",
+					"extendedTimeOut": "1000",
+					"showEasing": "swing",
+					"hideEasing": "linear",
+					"showMethod": "fadeIn",
+					"hideMethod": "fadeOut"
+				};
+				toastr.success( 'Pengecekan validasi Aslap selesai' , "Sukses");
+			}
+		})
+	}
 </script>
 @endsection
