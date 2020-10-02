@@ -224,6 +224,7 @@
 		
 	});
 	
+	@if(session('REFFERENCE_ROLE')=='COMP_CODE')
     $('.data-afd').hide();
     $('#afd .'+$("#werks").val()).show();
    	$("#afd").val($("#afd ."+$("#werks").val()+":first").val());
@@ -233,6 +234,7 @@
         $('#afd .'+val).show();
         $("#afd").val($("#afd ."+$("#werks").val()+":first").val());
     });
+    @endif;
 	// $(document).ready(function () {
 	// 	$('#generalSearch').datepicker().on('click', function(){
 	// 			var selected = $(this).val();
