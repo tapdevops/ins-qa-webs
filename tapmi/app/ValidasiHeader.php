@@ -430,6 +430,8 @@ class ValidasiHeader extends Model{
                                                 '$day',
                                                 '$day',
                                                 '$key',
+                                                NULL,
+                                                NULL,
                                                 'MI Web : $user'
                                              ) ;
                                        END;");
