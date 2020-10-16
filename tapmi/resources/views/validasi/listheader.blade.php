@@ -214,6 +214,7 @@
 				leftArrow: '<i class="la la-angle-left"></i>',
 				rightArrow: '<i class="la la-angle-right"></i>'
 			},
+			startDate: "<?php echo $last_work_daily ?>d",
 			endDate: "-1d",
 			format: 'dd-M-yyyy',
             orientation: 'bottom'

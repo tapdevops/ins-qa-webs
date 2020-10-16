@@ -98,6 +98,12 @@ class ValidationController extends Controller {
                                          ->groupBy(DB::raw("SUBSTR (id_ba_afd_blok, 1, 5)"))
                                          ->orderBy('ba')->get();
       }
+      $last_work_daily = $this->db_mobile_ins->select("SELECT trunc(TANGGAL) - trunc(sysdate) AS DIFF,MIN(FLAG_HK),MIN(NAMA_HARI) 
+                                                               FROM TM_TIME_DAILY@DWH_LINK 
+                                                               WHERE TANGGAL < trunc(sysdate)
+                                                               GROUP BY TANGGAL
+                                                               ORDER BY TANGGAL DESC FETCH NEXT 1 ROWS ONLY");
+      $data['last_work_daily'] = isset($last_work_daily[0])?$last_work_daily[0]->diff:'-1';
       return view( 'validasi.listheader', $data );
    }
 
