@@ -3427,5 +3427,189 @@ class ReportOracle extends Model{
 		return $get['data'];
 	}
 	
+	public function PENILAIAN_INSPEKSI( $REPORT_TYPE , $START_DATE , $END_DATE , $REGION_CODE , $COMP_CODE , $BA_CODE , $AFD_CODE , $BLOCK_CODE, $DATE_MONTH ) {
+		$where = "";
+		$DATE_MONTH = $DATE_MONTH.'-01';
+		# BA_CODE, DATE_MONTH
+
+		$sql = "
+			SELECT employee_name,
+                   user_role,
+                   jlh_afd,
+                   libur,
+                   target,
+                   jlh_inspeksi,
+                   jlh_genba,
+                   tgl_genba,
+                   total_actual,
+                   CASE WHEN achievement > 100 THEN 100 ELSE achievement END achievement
+              FROM (SELECT                                                                                                                                                                  --       user_auth_code,
+                                                                                                                                                                                              --       employee_nik,
+                           employee_name,
+                           user_role,
+                           --       ref_role,
+                           --       location_code_raw,
+                           jlh_afd,
+                           libur,
+                           CASE
+                              WHEN user_role IN ('SEM', 'GM') THEN NULL
+                              WHEN user_role IN ('EM') THEN 2
+                              WHEN user_role IN ('KEPALA_KEBUN') THEN 2 * jlh_afd
+                              WHEN user_role IN ('ASISTEN_LAPANGAN') THEN 7 - libur * 2
+                           END
+                              target,
+                           jlh_inspeksi,
+                           jlh_genba,
+                           tgl_genba,
+                           CASE WHEN user_role = 'ASISTEN_LAPANGAN' THEN NVL (jlh_inspeksi, 0) + (NVL (jlh_genba, 0) * 2) ELSE NVL (jlh_inspeksi, 0) + NVL (jlh_genba, 0) END total_actual,
+                             CASE WHEN user_role = 'ASISTEN_LAPANGAN' THEN NVL (jlh_inspeksi, 0) + (NVL (jlh_genba, 0) * 2) ELSE NVL (jlh_inspeksi, 0) + NVL (jlh_genba, 0) END
+                           / NULLIF (CASE
+                                        WHEN user_role IN ('SEM', 'GM') THEN NULL
+                                        WHEN user_role IN ('EM') THEN 2
+                                        WHEN user_role IN ('KEPALA_KEBUN') THEN 2 * jlh_afd
+                                        WHEN user_role IN ('ASISTEN_LAPANGAN') THEN 7 - libur * 2
+                                     END, 0)
+                           * 100
+                              achievement
+                      FROM (  SELECT user_auth_code,
+                                     employee_nik,
+                                     user_role,
+                                     ref_role,
+                                     location_code_raw,
+                                     COUNT (DISTINCT werks || afd_code) jlh_afd,
+                                     MAX (libur) libur
+                                FROM (SELECT user_auth_code,
+                                             employee_nik,
+                                             user_role,
+                                             ref_role,
+                                             location_code_raw,
+                                             location_code,
+                                             lu.werks,
+                                             afd_code,
+                                             FIRST_VALUE (libur) OVER (PARTITION BY user_auth_code ORDER BY lu.werks) libur
+                                        FROM (  SELECT user_auth_code,
+                                                       employee_nik,
+                                                       user_role,
+                                                       ref_role,
+                                                       location_code_raw,
+                                                       location_code
+                                                  FROM mobile_inspection.v_tm_user_auth hd
+                                                 WHERE delete_time IS NULL OR delete_time > TO_DATE ('$START_DATE', 'dd-mm-yyyy')
+                                              GROUP BY user_auth_code,
+                                                       employee_nik,
+                                                       user_role,
+                                                       ref_role,
+                                                       location_code_raw,
+                                                       location_code) hd
+                                             LEFT JOIN (  SELECT region_code,
+                                                                 comp_code,
+                                                                 werks,
+                                                                 afd_code,
+                                                                 spmon
+                                                            FROM tap_dw.tr_hs_land_use@dwh_link
+                                                           WHERE     spmon BETWEEN TRUNC (ADD_MONTHS (SYSDATE, -1), 'YEAR') AND LAST_DAY (ADD_MONTHS (SYSDATE, -1))
+                                                                 AND werks = NVL ('$BA_CODE', werks)
+                                                                 AND afd_code = NVL ('$AFD_CODE', afd_code)
+                                                                 AND block_code = NVL ('$BLOCK_CODE', block_code)
+                                                        GROUP BY region_code,
+                                                                 comp_code,
+                                                                 werks,
+                                                                 afd_code,
+                                                                 spmon
+                                                        UNION
+                                                          SELECT region_code,
+                                                                 comp_code,
+                                                                 werks,
+                                                                 afd_code,
+                                                                 ADD_MONTHS (spmon, 1) spmon
+                                                            FROM tap_dw.tr_hs_land_use@dwh_link
+                                                           WHERE     spmon = (  SELECT MAX (spmon) FROM tap_dw.tr_hs_land_use@dwh_link)
+                                                                 AND werks = NVL ('$BA_CODE', werks)
+                                                                 AND afd_code = NVL ('$AFD_CODE', afd_code)
+                                                                 AND block_code = NVL ('$BLOCK_CODE', block_code)
+                                                        GROUP BY region_code,
+                                                                 comp_code,
+                                                                 werks,
+                                                                 afd_code,
+                                                                 spmon) lu
+                                                ON TRUNC (LAST_DAY (TO_DATE ('$START_DATE', 'dd-mm-yyyy'))) = lu.spmon
+                                                   AND CASE
+                                                         WHEN hd.ref_role = 'AFD_CODE' THEN lu.werks || lu.afd_code
+                                                         WHEN hd.ref_role = 'BA_CODE' THEN lu.werks
+                                                         WHEN hd.ref_role = 'COMP_CODE' THEN lu.comp_code
+                                                         WHEN hd.ref_role = 'REGION' THEN lu.region_code
+                                                         WHEN hd.ref_role = 'NATIONAL' THEN 'ALL'
+                                                      END = hd.location_code
+                                             LEFT JOIN (  SELECT werks, COUNT (DISTINCT tanggal) libur
+                                                            FROM tap_dw.tm_time_daily@dwh_link
+                                                           WHERE tanggal BETWEEN TO_DATE ('$START_DATE', 'dd-mm-yyyy') - 7 AND TO_DATE ('$START_DATE', 'dd-mm-yyyy') - 1 AND flag_hk = 'N'
+                                                        GROUP BY werks) libur
+                                                ON lu.werks = libur.werks) mst
+                            GROUP BY user_auth_code,
+                                     employee_nik,
+                                     user_role,
+                                     ref_role,
+                                     location_code_raw) hd
+                           LEFT JOIN (  SELECT insp_h.insert_user, COUNT (DISTINCT TRUNC (insp_h.inspection_date) || werks || afd_code || block_code) jlh_inspeksi
+                                          FROM mobile_inspection.tr_block_inspection_h insp_h LEFT JOIN mobile_inspection.tm_user_auth user_auth
+                                                  ON insp_h.insert_user = user_auth.user_auth_code
+                                         WHERE     insp_h.block_inspection_code NOT IN (  SELECT block_inspection_code FROM mobile_inspection.tr_inspection_genba)
+                                               AND CASE WHEN user_role = 'ASISTEN_LAPANGAN' AND insp_h.areal < 2 THEN 0 ELSE 1 END = 1
+                                               AND TRUNC (inspection_date) BETWEEN TO_DATE ('$START_DATE', 'dd-mm-yyyy') - 7 AND TO_DATE ('$START_DATE', 'dd-mm-yyyy') - 1
+                                               AND werks = NVL ('$BA_CODE', werks)
+                                               AND afd_code = NVL ('$AFD_CODE', afd_code)
+                                               AND block_code = NVL ('$BLOCK_CODE', block_code)
+                                      GROUP BY insp_h.insert_user) inspeksi
+                              ON hd.user_auth_code = inspeksi.insert_user
+                           LEFT JOIN (  SELECT genba_user, COUNT (DISTINCT inspection_date || genba_user) jlh_genba, RTRIM (XMLAGG (XMLELEMENT (e, inspection_date || ',')).EXTRACT ('//text()'), ',') tgl_genba
+                                          FROM (SELECT DISTINCT insp_h.werks,
+                                                                TO_CHAR (insp_h.inspection_date, 'dd-mm-yyyy') inspection_date,
+                                                                genba.genba_user,
+                                                                user_auth.user_role
+                                                  FROM (SELECT DISTINCT block_inspection_code, genba_user FROM mobile_inspection.tr_inspection_genba
+                                                        UNION
+                                                        SELECT DISTINCT hd.block_inspection_code, insert_user
+                                                          FROM mobile_inspection.tr_block_inspection_h hd JOIN mobile_inspection.tr_inspection_genba genba
+                                                                  ON hd.block_inspection_code = genba.block_inspection_code
+                                                         WHERE     1 = 1
+                                                               AND TRUNC (inspection_date) BETWEEN TO_DATE ('$START_DATE', 'dd-mm-yyyy') - 7 AND TO_DATE ('$START_DATE', 'dd-mm-yyyy') - 1
+                                                               AND hd.werks = NVL ('$BA_CODE', hd.werks)
+                                                               AND hd.afd_code = NVL ('$AFD_CODE', hd.afd_code)
+                                                               AND hd.block_code = NVL ('$BLOCK_CODE', hd.block_code)) genba
+                                                       INNER JOIN (SELECT DISTINCT werks, TRUNC (inspection_date) inspection_date, block_inspection_code
+                                                                     FROM mobile_inspection.tr_block_inspection_h hd
+                                                                    WHERE     TRUNC (hd.inspection_date) BETWEEN TO_DATE ('$START_DATE', 'dd-mm-yyyy') - 7 AND TO_DATE ('$START_DATE', 'dd-mm-yyyy') - 1
+                                                                          AND hd.werks = NVL ('$BA_CODE', hd.werks)
+                                                                          AND hd.afd_code = NVL ('$AFD_CODE', hd.afd_code)
+                                                                          AND hd.block_code = NVL ('$BLOCK_CODE', hd.block_code)) insp_h
+                                                          ON genba.block_inspection_code = insp_h.block_inspection_code
+                                                       LEFT JOIN mobile_inspection.tm_user_auth user_auth
+                                                          ON genba.genba_user = user_auth.user_auth_code
+                                                 WHERE insp_h.block_inspection_code IN (SELECT block_inspection_code FROM mobile_inspection.tr_inspection_genba)
+                                                       AND TRUNC (inspection_date) BETWEEN TO_DATE ('$START_DATE', 'dd-mm-yyyy') - 7 AND TO_DATE ('$START_DATE', 'dd-mm-yyyy') - 1)
+                                      GROUP BY genba_user) genba
+                              ON hd.user_auth_code = genba.genba_user
+                           LEFT JOIN (SELECT nik,
+                                             employee_name,
+                                             job_code,
+                                             start_valid,
+                                             CASE WHEN res_date IS NOT NULL THEN res_date ELSE end_valid END end_valid
+                                        FROM tap_dw.tm_employee_sap@dwh_link
+                                      UNION
+                                      SELECT employee_nik,
+                                             employee_fullname,
+                                             employee_position,
+                                             employee_joindate,
+                                             CASE WHEN employee_resigndate IS NULL THEN TO_DATE ('9999-12-31', 'RRRR-MM-DD') ELSE employee_resigndate END employee_regisndate
+                                        FROM tap_dw.tm_employee_hris@dwh_link) emp
+                              ON hd.employee_nik = emp.nik AND TO_DATE ('$START_DATE', 'dd-mm-yyyy') BETWEEN emp.start_valid AND emp.end_valid)
+							 WHERE total_actual > 0
+							 ORDER BY employee_name, user_role
+		";
+
+		$get = $this->db_mobile_ins->select( $sql );
+		return $get;
+	}
+	
 	
 }
