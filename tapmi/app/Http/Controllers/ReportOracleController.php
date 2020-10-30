@@ -223,9 +223,9 @@ class ReportOracleController extends Controller {
 		$COMP_CODE = $request->COMP_CODE != '' ? $request->COMP_CODE : null;
 		$BA_CODE = $request->BA_CODE != '' ? $request->BA_CODE : null;
 		$BA_NAME = $this->db_mobile_ins->select("select est_name from tap_dw.tm_est@proddw_link where werks = '$BA_CODE'");
-		$est_name='';
+		$EST_NAME='';
 		foreach ($BA_NAME as $ba) {
-			$est_name         = $ba->est_name;
+			$EST_NAME         = $ba->est_name;
 		}
 		
 		$AFD_CODE = $request->AFD_CODE != '' ? $request->AFD_CODE : null;
@@ -240,7 +240,7 @@ class ReportOracleController extends Controller {
 		$results['data'] = array();
 		$results['summary'] = array();
 		$results['periode'] = date( 'Ym', strtotime( $START_DATE ) );
-		$results['ba_name'] = $est_name;
+		$results['ba_name'] = $EST_NAME;
 		
 
 		# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -486,10 +486,10 @@ class ReportOracleController extends Controller {
 		}
 
 		# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-		# REPORT PENILAIAN INSPEKSI
+		# REPORT PENCAPAIAN INSPEKSI
 		# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-		else if ( $REPORT_TYPE == 'PENILAIAN_INSPEKSI' ) {
-			$results['data'] = $RO->PENILAIAN_INSPEKSI(
+		else if ( $REPORT_TYPE == 'PENCAPAIAN_INSPEKSI' ) {
+			$results['data'] = $RO->PENCAPAIAN_INSPEKSI(
 									$REPORT_TYPE, 
 									$START_DATE, 
 									$END_DATE, 
@@ -501,12 +501,12 @@ class ReportOracleController extends Controller {
 									$DATE_MONTH
 								);					
 			$results['data'] = json_decode( json_encode( $results['data'] ), true );
-			$results['date_month'] = $DATE_MONTH.'-01';
-			$file_name = 'Laporan Penilaian Inspeksi Lapangan - '.$BA_CODE.' - '.date( 'M Y', strtotime( $request->START_DATE ) );
+			$results['periode'] = date('d M Y',(strtotime ( '-7 day' , strtotime ( $START_DATE) ) ))." - ".date('d M Y',(strtotime ( '-1 day' , strtotime ( $START_DATE) ) ));
+			$file_name = 'Laporan Pencapaian Inspeksi Lapangan - '.$BA_CODE.' - '.date( 'M Y', strtotime( $request->START_DATE ));
 			$results['sheet_name'] = 'Achievement';
-			$results['view'] = 'orareport.excel-penilaian-inspeksi';
+			$results['view'] = 'orareport.excel-pencapaian-inspeksi';
 
-			// return view( 'orareport.excel-inspection-class-block', $results );
+			// return view( 'orareport.excel-pencapaian-inspeksi', $results );
 			// dd();
 		}
 

@@ -41,7 +41,7 @@
 					<option value="FINDING">TEMUAN</option>
 					<option value="INSPEKSI">INSPEKSI</option>
 					<option value="INSPEKSI_GENBA">INSPEKSI GENBA</option>
-					<option value="PENILAIAN_INSPEKSI">PENILAIAN INSPEKSI</option>
+					<option value="PENCAPAIAN_INSPEKSI">PENCAPAIAN INSPEKSI</option>
 					<option value="CLASS_BLOCK_AFD_ESTATE">CLASS, BLOCK, AFD, &amp; ESTATE</option>
 					<option value="POINT_BULANAN">POINT BULANAN</option>
 				</select>
@@ -293,7 +293,7 @@
 				$("#report-hs-afd").hide();
 				$("#report-hs-block").hide();
 				break;	
-			case 'PENILAIAN_INSPEKSI':
+			case 'PENCAPAIAN_INSPEKSI':
 				$("#report-date-month").hide();
 				$("#report-date-full").show();
 				$("#report-end-date").hide();
@@ -401,7 +401,7 @@
 				toastr.error("Field jenis report harus dipilih.", "Validasi Gagal!");
 			}
 			
-			if ($("#report-select").val() != 'CLASS_BLOCK_AFD_ESTATE' && $("#report-select").val() != 'POINT_BULANAN' && $("#report-select").val() != 'PENILAIAN_INSPEKSI') {
+			if ($("#report-select").val() != 'CLASS_BLOCK_AFD_ESTATE' && $("#report-select").val() != 'POINT_BULANAN' && $("#report-select").val() != 'PENCAPAIAN_INSPEKSI') {
 				if ($("#report-start-date").val() != '' && $("#report-end-date").val() != '') {
 					next = true;
 				} else {
@@ -416,7 +416,7 @@
 				}
 			} else if ($("#report-select").val() == 'POINT_BULANAN') {
 				next = true;
-			} else if ($("#report-select").val() == 'PENILAIAN_INSPEKSI') {
+			} else if ($("#report-select").val() == 'PENCAPAIAN_INSPEKSI') {
 				if ($("#select-ba").val().length > 0 ) {
 					next = true;
 				} else {
