@@ -222,10 +222,16 @@ class ReportOracleController extends Controller {
 		$REGION_CODE = $request->REGION_CODE != '' ? $request->REGION_CODE : null;
 		$COMP_CODE = $request->COMP_CODE != '' ? $request->COMP_CODE : null;
 		$BA_CODE = $request->BA_CODE != '' ? $request->BA_CODE : null;
+		$BA_NAME = $this->db_mobile_ins->select("select est_name from tap_dw.tm_est@proddw_link where werks = '$BA_CODE'");
+		$EST_NAME='';
+		foreach ($BA_NAME as $ba) {
+			$EST_NAME         = $ba->est_name;
+		}
+		
 		$AFD_CODE = $request->AFD_CODE != '' ? $request->AFD_CODE : null;
 		$BLOCK_CODE = $request->BLOCK_CODE != '' ? $request->BLOCK_CODE : null;
 		$DATE_MONTH = $request->DATE_MONTH != '' ? $request->DATE_MONTH : null;
-
+		
 		$file_name = null;
 		$file_name_date = date( 'd F Y', strtotime( $START_DATE ) ).' - '.date( 'd F Y', strtotime( $END_DATE ) );
 
@@ -234,6 +240,8 @@ class ReportOracleController extends Controller {
 		$results['data'] = array();
 		$results['summary'] = array();
 		$results['periode'] = date( 'Ym', strtotime( $START_DATE ) );
+		$results['ba_name'] = $EST_NAME;
+		
 
 		# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 		# REPORT EBCC VALIDATION ESTATE/MILL
@@ -474,6 +482,31 @@ class ReportOracleController extends Controller {
 				} );
 			} )->export( 'xlsx' );
 			// return view( 'orareport.excel-point-bulanan', $results );
+			// dd();
+		}
+
+		# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+		# REPORT PENCAPAIAN INSPEKSI
+		# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+		else if ( $REPORT_TYPE == 'PENCAPAIAN_INSPEKSI' ) {
+			$results['data'] = $RO->PENCAPAIAN_INSPEKSI(
+									$REPORT_TYPE, 
+									$START_DATE, 
+									$END_DATE, 
+									$REGION_CODE, 
+									$COMP_CODE, 
+									$BA_CODE, 
+									$AFD_CODE, 
+									$BLOCK_CODE,
+									$DATE_MONTH
+								);					
+			$results['data'] = json_decode( json_encode( $results['data'] ), true );
+			$results['periode'] = date('d M Y',(strtotime ( '-7 day' , strtotime ( $START_DATE) ) ))." - ".date('d M Y',(strtotime ( '-1 day' , strtotime ( $START_DATE) ) ));
+			$file_name = 'Laporan Pencapaian Inspeksi Lapangan - '.$BA_CODE.' - '.date( 'M Y', strtotime( $request->START_DATE ));
+			$results['sheet_name'] = 'Achievement';
+			$results['view'] = 'orareport.excel-pencapaian-inspeksi';
+
+			// return view( 'orareport.excel-pencapaian-inspeksi', $results );
 			// dd();
 		}
 

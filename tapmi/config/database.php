@@ -82,6 +82,7 @@ return [
 			'driver'   => 'oracle',
 			'tns'      =>  '',
 			'host'     => '10.20.1.111',
+			/*'host'     => 'dboracle.tap-agri.com',*/
 			'port'     => '1521',
 			'database' => 'tapapps',
 			'username' => 'mobile_inspection',
