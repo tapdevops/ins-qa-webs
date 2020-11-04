@@ -296,6 +296,7 @@
 			case 'PENCAPAIAN_INSPEKSI':
 				$("#report-date-month").hide();
 				$("#report-date-full").show();
+				$("#report-start-date").show();
 				$("#report-end-date").hide();
 				$("#report-hs-region").show();
 				$("#report-hs-comp").show();
@@ -306,6 +307,8 @@
 			default:	
 				$("#report-date-month").hide();
 				$("#report-date-full").show();
+				$("#report-start-date").show();
+				$("#report-end-date").show();
 				$("#report-hs-region").show();
 				$("#report-hs-comp").show();
 				$("#report-hs-est").show();

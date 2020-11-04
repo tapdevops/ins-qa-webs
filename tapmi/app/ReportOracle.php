@@ -3536,6 +3536,19 @@ class ReportOracle extends Model{
                                                                  comp_code,
                                                                  werks,
                                                                  afd_code,
+                                                                 spmon
+														 UNION
+                                                          SELECT region_code,
+                                                                 comp_code,
+                                                                 werks,
+                                                                 afd_code,
+                                                                 ADD_MONTHS (spmon, 2) spmon
+                                                            FROM tap_dw.tr_hs_land_use@dwh_link
+                                                           WHERE     spmon = (  SELECT MAX (spmon) FROM tap_dw.tr_hs_land_use@dwh_link)
+                                                        GROUP BY region_code,
+                                                                 comp_code,
+                                                                 werks,
+                                                                 afd_code,
                                                                  spmon) lu
                                                 ON TRUNC (LAST_DAY (TO_DATE ('$START_DATE', 'dd-mm-yyyy'))) = lu.spmon
                                                    AND CASE
@@ -3558,8 +3571,11 @@ class ReportOracle extends Model{
                            LEFT JOIN (  SELECT insp_h.insert_user, COUNT (DISTINCT TRUNC (insp_h.inspection_date) || werks || afd_code || block_code) jlh_inspeksi
                                           FROM mobile_inspection.tr_block_inspection_h@proddb_link insp_h LEFT JOIN mobile_inspection.tm_user_auth@proddb_link user_auth
                                                   ON insp_h.insert_user = user_auth.user_auth_code
+											   LEFT JOIN (  SELECT DISTINCT block_inspection_code FROM mobile_inspection.tr_inspection_genba@proddb_link) genba
+												ON insp_h.block_inspection_code = genba.block_inspection_code
                                          WHERE     insp_h.block_inspection_code NOT IN (  SELECT block_inspection_code FROM mobile_inspection.tr_inspection_genba)
-                                               AND CASE WHEN user_role = 'ASISTEN_LAPANGAN' AND insp_h.areal < 2 THEN 0 ELSE 1 END = 1
+                                               AND genba.block_inspection_code is null
+											   AND CASE WHEN user_role = 'ASISTEN_LAPANGAN' AND insp_h.areal < 2 THEN 0 ELSE 1 END = 1
                                                AND TRUNC (inspection_date) BETWEEN TO_DATE ('$START_DATE', 'dd-mm-yyyy') - 7 AND TO_DATE ('$START_DATE', 'dd-mm-yyyy') - 1
                                                AND werks = NVL ('$BA_CODE', werks)
                                                AND afd_code = NVL ('$AFD_CODE', afd_code)
@@ -3590,8 +3606,7 @@ class ReportOracle extends Model{
                                                           ON genba.block_inspection_code = insp_h.block_inspection_code
                                                        LEFT JOIN mobile_inspection.tm_user_auth user_auth
                                                           ON genba.genba_user = user_auth.user_auth_code
-                                                 WHERE insp_h.block_inspection_code IN (SELECT block_inspection_code FROM mobile_inspection.tr_inspection_genba)
-                                                       AND TRUNC (inspection_date) BETWEEN TO_DATE ('$START_DATE', 'dd-mm-yyyy') - 7 AND TO_DATE ('$START_DATE', 'dd-mm-yyyy') - 1)
+                                                 WHERE TRUNC (inspection_date) BETWEEN TO_DATE ('$START_DATE', 'dd-mm-yyyy') - 7 AND TO_DATE ('$START_DATE', 'dd-mm-yyyy') - 1)
                                       GROUP BY genba_user) genba
                               ON hd.user_auth_code = genba.genba_user
                            INNER JOIN (SELECT nik,
@@ -3608,7 +3623,8 @@ class ReportOracle extends Model{
                                              CASE WHEN employee_resigndate IS NULL THEN TO_DATE ('9999-12-31', 'RRRR-MM-DD') ELSE employee_resigndate END employee_regisndate
                                         FROM tap_dw.tm_employee_hris@dwh_link) emp
                               ON hd.employee_nik = emp.nik 
-							WHERE TO_DATE ('$START_DATE', 'dd-mm-yyyy') BETWEEN emp.start_valid AND emp.end_valid)
+							WHERE TO_DATE ('$START_DATE', 'dd-mm-yyyy') BETWEEN emp.start_valid AND emp.end_valid
+							AND user_role in ('SEM_GM','EM','KEPALA_KEBUN','ASISTEN_LAPANGAN'))
 							 ORDER BY CASE
 										WHEN user_role = 'SEM_GM' THEN 1
 										WHEN user_role = 'EM' THEN 2
