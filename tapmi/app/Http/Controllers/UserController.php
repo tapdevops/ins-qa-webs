@@ -56,11 +56,13 @@ class UserController extends Controller {
 									employee_joindate AS start_date,
 									CASE WHEN employee_resigndate IS NULL THEN TO_DATE ('99991231', 'RRRRMMDD') ELSE employee_resigndate END AS end_date
 									FROM tap_dw.tm_employee_hris@dwh_link
+									WHERE employee_nik = '$nik'
 										UNION ALL
 										SELECT nik,
 												start_valid,
 												CASE WHEN res_date IS NOT NULL THEN res_date ELSE end_valid END end_valid
 									FROM tap_dw.tm_employee_sap@dwh_link
+									WHERE nik = '$nik'
 									) a
 									WHERE a.EMPLOYEE_NIK = '$nik'";
 					$dt = json_decode(json_encode($this->db_mobile_ins->select($sql)),true);

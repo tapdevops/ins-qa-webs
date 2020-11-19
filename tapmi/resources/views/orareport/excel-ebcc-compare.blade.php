@@ -16,6 +16,8 @@ tr > th {
 		<th rowspan="2">Akurasi Sampling EBCC</th>
 		<th rowspan="2">Akurasi Kuantitas</th>
 		<th rowspan="2">Akurasi Kualitas MS</th>
+		<th rowspan="2">Jam Input Sampling</th>
+		<th rowspan="2">Jam Input EBCC</th>
 	</tr>
 	<tr>
 		<!-- EBCC Validation -->
@@ -99,6 +101,8 @@ tr > th {
 				<td style="color:#fff;background-color:@if( $dt['akurasi_sampling_ebcc']=='MATCH' ) #27ae60 @else #e74c3c @endif;">{{ $dt['akurasi_sampling_ebcc'] }}</td>
 				<td style="color:#fff;background-color:@if( $dt['akurasi_kuantitas']=='MATCH' ) #27ae60 @else #e74c3c @endif;">{{ $dt['akurasi_kuantitas'] }}</td>
 				<td>{{ $dt['akurasi_kualitas_ms'] }}</td>
+				<td>{{ $dt['jam_input_sampling'] }}</td>
+				<td>{{ $dt['jam_input_ebcc'] }}</td>
 
 			</tr>
 

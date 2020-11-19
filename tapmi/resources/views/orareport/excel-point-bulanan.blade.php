@@ -17,7 +17,9 @@
 	@if( !empty( $data_point ) )
 		@foreach( $data_point as $key=>$dt )
 			<tr>
-				<td>{{ $dt['PERIODE'] }}</td>
+				<td>@isset($dt['PERIODE'])
+						{{ $dt['PERIODE'] }}
+					@endisset</td>
 				<td>{{ $dt['NIK'] }}</td>
 				<td>
 					@isset($dt['FULLNAME'])

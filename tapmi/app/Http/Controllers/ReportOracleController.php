@@ -453,36 +453,32 @@ class ReportOracleController extends Controller {
 									$DATE_MONTH
 								);
 			$results['data_point'] = json_decode( json_encode( $results['data_point'] ),true );					
-			$results['data_history'] = $RO->HISTORY_POINT_BULANAN(
-									$REPORT_TYPE, 
-									$START_DATE, 
-									$END_DATE, 
-									$REGION_CODE, 
-									$COMP_CODE, 
-									$BA_CODE, 
-									$AFD_CODE, 
-									$BLOCK_CODE,
-									$DATE_MONTH
-								);					
-			$results['data_history'] = json_decode( json_encode( $results['data_history'] ),true );
-			// echo '<pre>';
-			// print_r( $results['data_point']);
-			// print_r( $results['data_history']);
-			// die;
+			// $results['data_history'] = $RO->HISTORY_POINT_BULANAN(
+									// $REPORT_TYPE, 
+									// $START_DATE, 
+									// $END_DATE, 
+									// $REGION_CODE, 
+									// $COMP_CODE, 
+									// $BA_CODE, 
+									// $AFD_CODE, 
+									// $BLOCK_CODE,
+									// $DATE_MONTH
+								// );					
+			//$results['data_history'] = json_decode( json_encode( $results['data_history'] ),true );
+			
 			$results['date_month'] = date( 'M Y',strtotime( $DATE_MONTH.'-01' ) );
 			$file_name = 'Report Point Bulanan - '.$results['date_month'];
 			// $results['sheet_name'] = 'Point Bulanan';
 			// $results['view'] = 'orareport.excel-point-bulanan';
 			Excel::create( $file_name, function( $excel ) use ( $results ) {
-				$excel->sheet( 'History Point', function( $sheet ) use ( $results ) {
-					$sheet->loadView( 'orareport.excel-point-bulanan-history', $results );
-				} );
+				// $excel->sheet( 'History Point', function( $sheet ) use ( $results ) {
+					// $sheet->loadView( 'orareport.excel-point-bulanan-history', $results );
+				// } );
 				$excel->sheet( 'Point Bulanan', function( $sheet ) use ( $results ) {
 					$sheet->loadView( 'orareport.excel-point-bulanan', $results );
 				} );
 			} )->export( 'xlsx' );
-			// return view( 'orareport.excel-point-bulanan', $results );
-			// dd();
+			
 		}
 
 		# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -547,6 +543,20 @@ class ReportOracleController extends Controller {
 		// else {
 		// 	return 'Data not found.';
 		// }
+	}
+	
+	# View Page Report Finding
+	# Untuk menampilkan view
+	public function view_page_report_finding( Request $req ) {
+		$results = array();
+		$results['data'] = ( new ReportOracle() )->FINDING_PREVIEW( $req->id );
+
+		if ( !empty( $results['data'] ) ) {
+			return view( 'orareport/preview-finding', $results );
+		}
+		else {
+			return 'Data not found.';
+		}
 	}
 	
 }

@@ -25,6 +25,7 @@
 		<th style="text-align:center;">End Time</th>
 		<th style="text-align:center;">Progress (%)</th>
 		<th style="text-align:center;">Last Update</th>
+		<th style="text-align:center;">Lihat Foto</th>
 	</tr>
 	@if ( count( $data ) > 0 )
 		@foreach ( $data as $finding )
@@ -58,6 +59,7 @@
 					<td style="text-align:center;">{{ $finding['progress'] }} %</td>
 				@endif
 				<td style="text-align:center;">{{ $finding['update_time'] }}</td>
+				<td><a href="{{ $finding['link_foto'] }}">Link Foto</a></td>
 			</tr>
 		@endforeach
 	@endif

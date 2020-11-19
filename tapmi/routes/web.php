@@ -90,6 +90,7 @@ Route::group( [ 'middleware' => 'web' ], function() {
 
 Route::get( '/preview/compare-ebcc/{id}', 'ReportOracleController@view_page_report_ebcc_compare' );
 Route::get( '/pdf/compare-ebcc/{id}', 'ReportOracleController@pdf_report_ebcc_compare' );
+Route::get( '/preview/finding/{id}', 'ReportOracleController@view_page_report_finding' );
 Route::get( '/repair', 'ReportOracleController@testing' );
 Route::get( '/nohup', 'ReportOracleController@nohup' );
 Route::get( '/phpinfo', 'ReportOracleController@phpinfo' );

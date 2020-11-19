@@ -412,10 +412,15 @@
 				}
 
 			} else if ($("#report-select").val() == 'CLASS_BLOCK_AFD_ESTATE') {
-				if ($("#select-ba").val().length > 0 && $("#select-afd").val() == 0 && $("#select-block").val() == 0) {
+				if ($("#select-ba").val().length > 0 && $("#select-afd").val() == 0 && $("#select-block").val() == 0 && $("#m_datepicker_2").val() != '') {
 					next = true;
 				} else {
-					toastr.error("Report Class Block hanya bisa diambil dari BA Code.", "Validasi Gagal!");
+					if ($("#m_datepicker_2").val()==''){
+						toastr.error("Silahkan masukkan bulan.", "Validasi Gagal!");
+					}
+					else {
+						toastr.error("Report Class Block hanya bisa diambil dari BA Code.", "Validasi Gagal!");
+					}
 				}
 			} else if ($("#report-select").val() == 'POINT_BULANAN') {
 				next = true;

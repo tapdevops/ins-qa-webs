@@ -81,8 +81,8 @@ return [
 		'mobile_ins' => [
 			'driver'   => 'oracle',
 			'tns'      =>  '',
-			'host'     => '10.20.1.111',
 			/*'host'     => 'dboracle.tap-agri.com',*/
+			'host'     => 'dboracledev.tap-agri.com',
 			'port'     => '1521',
 			'database' => 'tapapps',
 			'username' => 'mobile_inspection',
@@ -94,7 +94,7 @@ return [
 		'ebcc' => [
 			'driver'   => 'oracle',
 			'tns'      =>  '',
-			'host'     => '10.20.1.111',
+			'host'     => 'dboracledev.tap-agri.com',
 			'port'     => '1521',
 			'database' => 'tapapps',
 			'username' => 'ebcc',
@@ -106,7 +106,7 @@ return [
         'tapdw' => [
 			'driver'   => 'oracle',
 			'tns'      =>  '',
-			'host'     => '10.20.1.103',
+			'host'     => 'devdw.tap-agri.com',
 			'port'     => '1521',
 			'database' => 'tapdw',
 			'username' => 'tap_dw',

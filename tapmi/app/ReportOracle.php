@@ -162,7 +162,10 @@ class ReportOracle extends Model{
 																				 FROM DUAL))) land_use
 										  ON land_use.werks = ebcc_header.werks AND land_use.afd_code = ebcc_header.afd_code AND land_use.block_code = ebcc_header.block_code
 									   LEFT JOIN tap_dw.tm_sub_block@dwh_link subblock
-										  ON subblock.werks = ebcc_header.werks AND subblock.sub_block_code = ebcc_header.block_code
+										  ON subblock.werks = ebcc_header.werks 
+										  AND subblock.afd_code= ebcc_header.afd_code 
+										  AND subblock.sub_block_code = ebcc_header.block_code
+										  AND TRUNC (ebcc_header.insert_time) BETWEEN subblock.start_valid AND subblock.end_valid
 								 WHERE     1 = 1
 									   AND SUBSTR (ebcc_header.ebcc_validation_code, 0, 1) = '$REPORT_TYPE'
 									   AND TRUNC (ebcc_header.insert_time) BETWEEN TRUNC (TO_DATE ('$START_DATE', 'RRRR-MM-DD')) AND TRUNC (TO_DATE ('$END_DATE', 'RRRR-MM-DD')) 
@@ -357,8 +360,10 @@ class ReportOracle extends Model{
 								EST.WERKS = EBCC_HEADER.WERKS 
 								AND SYSDATE BETWEEN EST.START_VALID AND EST.END_VALID
 							LEFT JOIN TAP_DW.TM_SUB_BLOCK@DWH_LINK SUBBLOCK
-								ON SUBBLOCK.WERKS = EBCC_HEADER.WERKS
-								AND SUBBLOCK.SUB_BLOCK_CODE = EBCC_HEADER.BLOCK_CODE
+								ON subblock.werks = ebcc_header.werks 
+							    AND subblock.afd_code= ebcc_header.afd_code 
+							    AND subblock.sub_block_code = ebcc_header.block_code
+							    AND TRUNC (ebcc_header.insert_time) BETWEEN subblock.start_valid AND subblock.end_valid
 						WHERE
 							1 = 1
 							AND EBCC_HEADER.EBCC_VALIDATION_CODE = '{$id}'
@@ -759,7 +764,10 @@ class ReportOracle extends Model{
                                              AND land_use.afd_code = ebcc_header.afd_code
                                              AND land_use.block_code = ebcc_header.block_code
                                        LEFT JOIN tap_dw.tm_sub_block@dwh_link subblock
-                                          ON subblock.werks = ebcc_header.werks AND subblock.sub_block_code = ebcc_header.block_code
+                                          ON subblock.werks = ebcc_header.werks 
+										  AND subblock.afd_code= ebcc_header.afd_code 
+										  AND subblock.sub_block_code = ebcc_header.block_code
+										  AND TRUNC (ebcc_header.insert_time) BETWEEN subblock.start_valid AND subblock.end_valid
                                  WHERE 1 = 1 AND SUBSTR (ebcc_header.ebcc_validation_code, 0, 1) = '$REPORT_TYPE'
                                        AND TRUNC (ebcc_header.insert_time) BETWEEN TRUNC (TO_DATE ('$START_DATE', 'RRRR-MM-DD'))
                                                                                AND  TRUNC (TO_DATE ('$END_DATE', 'RRRR-MM-DD'))
@@ -1136,8 +1144,8 @@ class ReportOracle extends Model{
                                  AND ebcc_me.id_afd = val_afd_code
                                  AND ebcc_me.id_blok = val_block_code
                                  AND ebcc_me.no_tph = val_tph_code
-                                 AND CASE WHEN TRUNC (ebcc_me.tanggal_rencana) <= TRUNC (cut_off_date) THEN NVL (ebcc_me.kode_delivery_ticket, '-') ELSE ebcc_me.kode_delivery_ticket END =
-                                       NVL (val_delivery_ticket, '-')
+                                 AND CASE WHEN TRUNC (ebcc_me.tanggal_rencana) <= TRUNC (cut_off_date) THEN NVL (val_delivery_ticket, '-') ELSE nvl(ebcc_me.kode_delivery_ticket,'-') END =
+									 NVL (val_delivery_ticket, '-')
                                        )
         SELECT val_ebcc_code,
                val_werks,
@@ -1189,7 +1197,8 @@ class ReportOracle extends Model{
                akurasi_sampling_ebcc,
                akurasi_kuantitas,
                akurasi_kualitas_ms, 
-               CASE WHEN tph.werks is not null then 'INACTIVE' ELSE 'ACTIVE' END status_tph
+               CASE WHEN tph.werks is not null then 'INACTIVE' ELSE 'ACTIVE' END status_tph,
+			   end_ins_time jam_input_ebcc
           FROM tbl hd    LEFT JOIN
                 (SELECT *
                    FROM mobile_inspection.tm_status_tph
@@ -1200,7 +1209,8 @@ class ReportOracle extends Model{
                 AND hd.val_block_code = tph.block_code
                 AND hd.val_tph_code = tph.no_tph
                 AND hd.val_date_time BETWEEN tph.start_valid AND nvl(tph.end_valid,sysdate)
-                
+				LEFT JOIN ebcc.t_timestamp
+			 ON ebcc_no_bcc = id_timestamp   
 
                 
 ";
@@ -1254,12 +1264,16 @@ class ReportOracle extends Model{
        akurasi_sampling_ebcc,
        akurasi_kuantitas,
        akurasi_kualitas_ms,
-       'ACTIVE' status_tph
+       'ACTIVE' status_tph,
+	   end_ins_time jam_input_ebcc
   FROM mobile_inspection.tr_ebcc_compare@proddb_link hd
- WHERE TO_CHAR (hd.val_date_time, 'RRRRMMDD') BETWEEN '20200921' AND '20200930'
- and val_sumber = 'MI'";				
-				 //echo $sql;
-				 //die;
+  LEFT JOIN ebcc.t_timestamp@proddb_link
+	ON ebcc_no_bcc = id_timestamp
+ WHERE TO_CHAR (hd.val_date_time, 'RRRRMMDD') BETWEEN '20200701' AND '20201130'
+ and val_sumber = 'ME'
+ and val_werks in ('5921', '5931', '5932')";				
+				 // echo $sql_helpdesk;
+				 // die;
 		$get = $this->db_mobile_ins->select( $sql );
 		$joindata = array();
 		$summary_data = array();
@@ -1314,6 +1328,8 @@ class ReportOracle extends Model{
 				$joindata[$i]['akurasi_sampling_ebcc'] = $ec->akurasi_sampling_ebcc;
 				$joindata[$i]['akurasi_kuantitas'] = $ec->akurasi_kuantitas;
 				$joindata[$i]['link_foto'] = url( 'preview/compare-ebcc/'.$ec->val_ebcc_code );
+				$joindata[$i]['jam_input_sampling'] = date( 'Y-m-d H:i:s', strtotime( $ec->val_date_time ) );
+				$joindata[$i]['jam_input_ebcc'] = $ec->jam_input_ebcc;
 
 				/* // Data Summary
 				if ( !isset( $summary_data[$summary_code] ) ) {
@@ -1444,7 +1460,6 @@ class ReportOracle extends Model{
 				$i++;
 			}
 		}
-
 		return array(
 			"data" => $joindata,
 			//"summary" => $summary_data
@@ -1492,7 +1507,7 @@ class ReportOracle extends Model{
 				UPDATE_TIME,
 				PROGRESS,
 				FINDING_DESC,
-				STATUS
+				STATUS, '".url( 'preview/finding/' )."/'||FINDING_CODE link_foto
 			FROM 
 				(
 					SELECT 
@@ -1671,7 +1686,6 @@ class ReportOracle extends Model{
 				FINDING.STATUS ASC,
 				FINDING.TANGGAL_TEMUAN ASC
 		";
-
 		$get = $this->db_mobile_ins->select( $sql );
 		return $get;
 	}
@@ -2529,7 +2543,6 @@ class ReportOracle extends Model{
 				\"Tanggal Inspeksi\" ASC, 
 				\"Nama Reporter\" ASC
 		";
-
 		
 		$get = $this->db_mobile_ins->select( $sql );
 
@@ -3388,16 +3401,19 @@ class ReportOracle extends Model{
 		$timezone='Asia/Jakarta';
 		$last_day = date_create($DATE_MONTH.'-01');
 		$client = new \GuzzleHttp\Client();
-		$get = $client->request( 'GET', //$this->url_api_ins_msa_point.'api/v1.1/point/report/'.date_format($last_day,'Ymt'),
-										'http://apisqa.tap-agri.com/mobileinspectionqa/ins-msa-qa-point/api/v1.1/point/report/'.date_format($last_day,'Ymt'),
-										[
-										 'headers' => [
-											'Accept' => 'application/json',
-											'Authorization' => 'Bearer '.session( 'ACCESS_TOKEN' ),
-													]
-										]
-										);
-		$get = json_decode( $get->getBody(), true );
+		$get = $client->request( 'GET', $this->url_api_ins_msa_point.'api/v1.1/point/report/'.date_format($last_day,'Ymt'),
+									//'http://apisqa.tap-agri.com/mobileinspectionqa/ins-msa-qa-point/api/v1.1/point/report/'.date_format($last_day,'Ymt'),
+									[
+									 'headers' => [
+										'Accept' => 'application/json',
+										'Authorization' => 'Bearer '.session( 'ACCESS_TOKEN' ),
+												]		
+									]
+									);
+		if ($get->getStatusCode() == '200'){
+			$get = json_decode( $get->getBody(), true );
+		};	
+		
 		// echo '<pre>';
 		// print_r($get);
 		// die;
@@ -3411,8 +3427,7 @@ class ReportOracle extends Model{
 		$DATE_MONTH = $DATE_MONTH.'-01';
 		$last_day = date_create($DATE_MONTH);
 		$client = new \GuzzleHttp\Client();
-		$get = $client->request( 'GET', //$this->url_api_ins_msa_point.'api/v1.0/history/report/'.date_format($last_day,'Ymt'),
-										'http://apisqa.tap-agri.com/mobileinspectionqa/ins-msa-qa-point/api/v1.0/history/report/'.date_format($last_day,'Ymt'),
+		$get = $client->request( 'GET', $this->url_api_ins_msa_point.'/api/v1.1/history/report/20201031'.date_format($last_day,'Ymt'),
 										[
 										 'headers' => [
 											'Accept' => 'application/json',
@@ -3421,9 +3436,6 @@ class ReportOracle extends Model{
 										]
 										);
 		$get = json_decode( $get->getBody(), true );
-		// echo '<pre>';
-		// print_r($point_data);
-		// die;
 		return $get['data'];
 	}
 	
@@ -3444,14 +3456,14 @@ class ReportOracle extends Model{
                    total_actual,
                    CASE WHEN achievement > 100 THEN 100 ELSE achievement END achievement
               FROM (SELECT                                                                                                                                                                  
-						   /*user_auth_code,employee_nik,*/
+                           /*user_auth_code,employee_nik,*/
                            employee_name,
                            user_role,
                            /*ref_role,location_code_raw,*/
                            jlh_afd,
                            libur,
                            CASE
-                              WHEN user_role IN ('SEM', 'GM') THEN NULL
+                              WHEN user_role IN ('SEM_GM') THEN 2
                               WHEN user_role IN ('EM') THEN 2
                               WHEN user_role IN ('KEPALA_KEBUN') THEN 2 * jlh_afd
                               WHEN user_role IN ('ASISTEN_LAPANGAN') THEN (7 - libur) * 2
@@ -3463,7 +3475,7 @@ class ReportOracle extends Model{
                            CASE WHEN user_role = 'ASISTEN_LAPANGAN' THEN NVL (jlh_inspeksi, 0) + (NVL (jlh_genba, 0) * 2) ELSE NVL (jlh_inspeksi, 0) + NVL (jlh_genba, 0) END total_actual,
                              CASE WHEN user_role = 'ASISTEN_LAPANGAN' THEN NVL (jlh_inspeksi, 0) + (NVL (jlh_genba, 0) * 2) ELSE NVL (jlh_inspeksi, 0) + NVL (jlh_genba, 0) END
                            / NULLIF (CASE
-                                        WHEN user_role IN ('SEM_GM') THEN NULL
+                                        WHEN user_role IN ('SEM_GM') THEN 2
                                         WHEN user_role IN ('EM') THEN 2
                                         WHEN user_role IN ('KEPALA_KEBUN') THEN 2 * jlh_afd
                                         WHEN user_role IN ('ASISTEN_LAPANGAN') THEN (7 - libur) * 2
@@ -3487,31 +3499,31 @@ class ReportOracle extends Model{
                                              afd_code,
                                              FIRST_VALUE (libur) OVER (PARTITION BY user_auth_code ORDER BY lu.werks) libur
                                         FROM (    SELECT user_auth_code,
-														 employee_nik,
-														 user_role,
-														 ref_role,
-														 location_code_raw,
-														 location_code
-													FROM mobile_inspection.v_tm_user_auth@proddb_link hd
-												   WHERE (delete_time IS NULL OR delete_time > TO_DATE ('$START_DATE', 'dd-mm-yyyy'))
-														 AND (   CASE
-																	WHEN hd.ref_role = 'AFD_CODE' THEN SUBSTR (location_code, 1, 4)
-																	WHEN hd.ref_role = 'BA_CODE' THEN location_code
-																	ELSE '9999'
-																 END = NVL ('$BA_CODE', location_code)
-															  OR CASE WHEN hd.ref_role = 'COMP_CODE' THEN location_code END IN (SELECT comp_code
-																																  FROM tap_dw.tm_est@proddw_link
-																																 WHERE werks = NVL ('$BA_CODE', werks))
-															  OR CASE WHEN hd.ref_role = 'REGION_CODE' THEN location_code END IN (SELECT region_code
-																																	FROM tap_dw.tm_est@proddw_link
-																																   WHERE werks = NVL ('$BA_CODE', werks))
-															  OR CASE WHEN hd.ref_role = 'NATIONAL' THEN location_code END = 'ALL')
-												GROUP BY user_auth_code,
-														 employee_nik,
-														 user_role,
-														 ref_role,
-														 location_code_raw,
-														 location_code) hd
+                                                         employee_nik,
+                                                         user_role,
+                                                         ref_role,
+                                                         location_code_raw,
+                                                         location_code
+                                                    FROM mobile_inspection.v_tm_user_auth/*@proddb_link*/ hd
+                                                   WHERE (delete_time IS NULL OR delete_time > TO_DATE ('$START_DATE', 'dd-mm-yyyy'))
+                                                         AND (   CASE
+                                                                    WHEN hd.ref_role = 'AFD_CODE' THEN SUBSTR (location_code, 1, 4)
+                                                                    WHEN hd.ref_role = 'BA_CODE' THEN location_code
+                                                                    ELSE '9999'
+                                                                 END = NVL ('$BA_CODE', location_code)
+                                                              OR CASE WHEN hd.ref_role = 'COMP_CODE' THEN location_code END IN (SELECT comp_code
+                                                                                                                                  FROM tap_dw.tm_est@proddw_link
+                                                                                                                                 WHERE werks = NVL ('$BA_CODE', werks))
+                                                              OR CASE WHEN hd.ref_role = 'REGION_CODE' THEN location_code END IN (SELECT region_code
+                                                                                                                                    FROM tap_dw.tm_est@proddw_link
+                                                                                                                                   WHERE werks = NVL ('$BA_CODE', werks))
+                                                              OR CASE WHEN hd.ref_role = 'NATIONAL' THEN location_code END = 'ALL')
+                                                GROUP BY user_auth_code,
+                                                         employee_nik,
+                                                         user_role,
+                                                         ref_role,
+                                                         location_code_raw,
+                                                         location_code) hd
                                              LEFT JOIN (  SELECT region_code,
                                                                  comp_code,
                                                                  werks,
@@ -3537,7 +3549,7 @@ class ReportOracle extends Model{
                                                                  werks,
                                                                  afd_code,
                                                                  spmon
-														 UNION
+                                                         UNION
                                                           SELECT region_code,
                                                                  comp_code,
                                                                  werks,
@@ -3549,7 +3561,7 @@ class ReportOracle extends Model{
                                                                  comp_code,
                                                                  werks,
                                                                  afd_code,
-                                                                 spmon) lu
+                                                                 spmon         ) lu
                                                 ON TRUNC (LAST_DAY (TO_DATE ('$START_DATE', 'dd-mm-yyyy'))) = lu.spmon
                                                    AND CASE
                                                          WHEN hd.ref_role = 'AFD_CODE' THEN lu.werks || lu.afd_code
@@ -3569,13 +3581,13 @@ class ReportOracle extends Model{
                                      ref_role,
                                      location_code_raw) hd
                            LEFT JOIN (  SELECT insp_h.insert_user, COUNT (DISTINCT TRUNC (insp_h.inspection_date) || werks || afd_code || block_code) jlh_inspeksi
-                                          FROM mobile_inspection.tr_block_inspection_h@proddb_link insp_h LEFT JOIN mobile_inspection.tm_user_auth@proddb_link user_auth
+                                          FROM mobile_inspection.tr_block_inspection_h/*@proddb_link*/ insp_h LEFT JOIN mobile_inspection.tm_user_auth/*@proddb_link*/ user_auth
                                                   ON insp_h.insert_user = user_auth.user_auth_code
-											   LEFT JOIN (  SELECT DISTINCT block_inspection_code FROM mobile_inspection.tr_inspection_genba@proddb_link) genba
-												ON insp_h.block_inspection_code = genba.block_inspection_code
+                                                LEFT JOIN (  SELECT DISTINCT block_inspection_code FROM mobile_inspection.tr_inspection_genba/*@proddb_link*/) genba
+                                                ON insp_h.block_inspection_code = genba.block_inspection_code  
                                          WHERE     insp_h.block_inspection_code NOT IN (  SELECT block_inspection_code FROM mobile_inspection.tr_inspection_genba)
                                                AND genba.block_inspection_code is null
-											   AND CASE WHEN user_role = 'ASISTEN_LAPANGAN' AND insp_h.areal < 2 THEN 0 ELSE 1 END = 1
+                                               AND CASE WHEN user_role = 'ASISTEN_LAPANGAN' AND insp_h.areal < 2 THEN 0 ELSE 1 END = 1
                                                AND TRUNC (inspection_date) BETWEEN TO_DATE ('$START_DATE', 'dd-mm-yyyy') - 7 AND TO_DATE ('$START_DATE', 'dd-mm-yyyy') - 1
                                                AND werks = NVL ('$BA_CODE', werks)
                                                AND afd_code = NVL ('$AFD_CODE', afd_code)
@@ -3587,10 +3599,10 @@ class ReportOracle extends Model{
                                                                 TO_CHAR (insp_h.inspection_date, 'dd-mm-yyyy') inspection_date,
                                                                 genba.genba_user,
                                                                 user_auth.user_role
-                                                  FROM (SELECT DISTINCT block_inspection_code, genba_user FROM mobile_inspection.tr_inspection_genba@proddb_link
+                                                  FROM (SELECT DISTINCT block_inspection_code, genba_user FROM mobile_inspection.tr_inspection_genba/*@proddb_link*/
                                                         UNION
                                                         SELECT DISTINCT hd.block_inspection_code, insert_user
-                                                          FROM mobile_inspection.tr_block_inspection_h@proddb_link hd JOIN mobile_inspection.tr_inspection_genba@proddb_link genba
+                                                          FROM mobile_inspection.tr_block_inspection_h/*@proddb_link*/ hd JOIN mobile_inspection.tr_inspection_genba/*@proddb_link*/ genba
                                                                   ON hd.block_inspection_code = genba.block_inspection_code
                                                          WHERE     1 = 1
                                                                AND TRUNC (inspection_date) BETWEEN TO_DATE ('$START_DATE', 'dd-mm-yyyy') - 7 AND TO_DATE ('$START_DATE', 'dd-mm-yyyy') - 1
@@ -3598,7 +3610,7 @@ class ReportOracle extends Model{
                                                                AND hd.afd_code = NVL ('$AFD_CODE', hd.afd_code)
                                                                AND hd.block_code = NVL ('$BLOCK_CODE', hd.block_code)) genba
                                                        INNER JOIN (SELECT DISTINCT werks, TRUNC (inspection_date) inspection_date, block_inspection_code
-                                                                     FROM mobile_inspection.tr_block_inspection_h@proddb_link hd
+                                                                     FROM mobile_inspection.tr_block_inspection_h/*@proddb_link*/ hd
                                                                     WHERE     TRUNC (hd.inspection_date) BETWEEN TO_DATE ('$START_DATE', 'dd-mm-yyyy') - 7 AND TO_DATE ('$START_DATE', 'dd-mm-yyyy') - 1
                                                                           AND hd.werks = NVL ('$BA_CODE', hd.werks)
                                                                           AND hd.afd_code = NVL ('$AFD_CODE', hd.afd_code)
@@ -3623,15 +3635,15 @@ class ReportOracle extends Model{
                                              CASE WHEN employee_resigndate IS NULL THEN TO_DATE ('9999-12-31', 'RRRR-MM-DD') ELSE employee_resigndate END employee_regisndate
                                         FROM tap_dw.tm_employee_hris@dwh_link) emp
                               ON hd.employee_nik = emp.nik 
-							WHERE TO_DATE ('$START_DATE', 'dd-mm-yyyy') BETWEEN emp.start_valid AND emp.end_valid
-							AND user_role in ('SEM_GM','EM','KEPALA_KEBUN','ASISTEN_LAPANGAN'))
-							 ORDER BY CASE
-										WHEN user_role = 'SEM_GM' THEN 1
-										WHEN user_role = 'EM' THEN 2
-										WHEN user_role = 'KEPALA_KEBUN' THEN 3
-										WHEN user_role = 'ASISTEN_LAPANGAN' THEN 4
-										ELSE 5
-									 END, employee_name
+                            WHERE TO_DATE ('$START_DATE', 'dd-mm-yyyy') BETWEEN emp.start_valid AND emp.end_valid
+                            AND user_role in ('SEM_GM','EM','KEPALA_KEBUN','ASISTEN_LAPANGAN'))
+                             ORDER BY CASE
+                                        WHEN user_role = 'SEM_GM' THEN 1
+                                        WHEN user_role = 'EM' THEN 2
+                                        WHEN user_role = 'KEPALA_KEBUN' THEN 3
+                                        WHEN user_role = 'ASISTEN_LAPANGAN' THEN 4
+                                        ELSE 5
+                                     END, employee_name
 		";
 		// echo $sql;
 		// die;
@@ -3639,5 +3651,188 @@ class ReportOracle extends Model{
 		return $get;
 	}
 	
+	public function FINDING_PREVIEW( $id ) {
+		$sql = "
+			SELECT finding_code,
+				   region_code,
+				   comp_code,
+				   werks,
+				   est_name,
+				   afd_code,
+				   block_code,
+				   block_name,
+				   tanggal_temuan,
+				   creator_employee_nik,
+				   creator_employee_fullname,
+				   creator_employee_position,
+				   maturity_status,
+				   lat_finding,
+				   long_finding,
+				   category_code,
+				   nvl(category_name,'Tidak ditentukan')category_name,
+				   category_icon,
+				   finding_priority,
+				   nvl(to_char(due_date,'YYYY-MM-DD'),'Tidak ditentukan') due_date,
+				   pic_employee_nik,
+				   pic_employee_fullname,
+				   pic_employee_position,
+				   end_time,
+				   rating_value,
+				   rating_message,
+				   update_time,
+				   progress,
+				   replace(finding_desc ,chr(92)||'n','') finding_desc,
+				   status
+			  FROM (SELECT finding.finding_code,
+						   est.region_code,
+						   est.comp_code,
+						   est.est_code,
+						   finding.werks,
+						   est.est_name,
+						   finding.afd_code,
+						   block.block_code,
+						   block.block_name,
+						   finding.insert_time AS tanggal_temuan,
+						   emp_creator.nik AS creator_employee_nik,
+						   emp_creator.employee_name AS creator_employee_fullname,
+						   REPLACE (user_auth_creator.user_role, '_', ' ') AS creator_employee_position,
+						   land_use.maturity_status AS maturity_status,
+						   finding.lat_finding,
+						   finding.long_finding,
+						   category.category_code,
+						   category.category_name,
+						   category.icon AS category_icon,
+						   finding.finding_priority,
+						   finding.due_date,
+						   emp_pic.nik AS pic_employee_nik,
+						   emp_pic.employee_name AS pic_employee_fullname,
+						   REPLACE (user_auth_pic.user_role, '_', ' ') AS pic_employee_position,
+						   finding.end_time,
+						   finding.rating_value,
+						   finding.rating_message,
+						   finding.update_time,
+						   finding.progress,
+						   finding.finding_desc,
+						   CASE WHEN finding.progress = 100 THEN 'SELESAI' ELSE 'BELUM SELESAI' END AS status
+					  FROM mobile_inspection.tr_finding finding
+						   LEFT JOIN mobile_inspection.tm_category category
+							  ON category.category_code = finding.finding_category
+						   LEFT JOIN tap_dw.tm_block@dwh_link block
+							  ON block.werks = finding.werks AND block.block_code = finding.block_code AND TRUNC (finding.insert_time) BETWEEN block.start_valid AND block.end_valid
+						   LEFT JOIN tap_dw.tm_est@dwh_link est
+							  ON est.werks = finding.werks AND TRUNC (finding.insert_time) BETWEEN est.start_valid AND est.end_valid
+						   LEFT JOIN mobile_inspection.tm_user_auth user_auth_creator
+							  ON user_auth_creator.user_auth_code = (CASE WHEN LENGTH (finding.insert_user) = 3 THEN '0' || finding.insert_user ELSE finding.insert_user END)
+						   LEFT JOIN (SELECT employee_nik nik,
+											 employee_fullname employee_name,
+											 employee_position job_code,
+											 employee_joindate AS start_date,
+											 CASE WHEN employee_resigndate IS NULL THEN TO_DATE ('99991231', 'RRRRMMDD') ELSE employee_resigndate END AS end_date
+										FROM tap_dw.tm_employee_hris@dwh_link
+									  UNION ALL
+									  SELECT nik,
+											 employee_name,
+											 job_code,
+											 start_valid start_date,
+											 CASE WHEN res_date IS NOT NULL THEN res_date ELSE end_valid END end_date
+										FROM tap_dw.tm_employee_sap@dwh_link) emp_creator
+							  ON emp_creator.nik = user_auth_creator.employee_nik AND TRUNC (finding.insert_time) BETWEEN emp_creator.start_date AND emp_creator.end_date
+						   LEFT JOIN mobile_inspection.tm_user_auth user_auth_pic
+							  ON user_auth_pic.user_auth_code = (CASE WHEN LENGTH (finding.assign_to) = 3 THEN '0' || finding.assign_to ELSE finding.assign_to END)
+						   LEFT JOIN (SELECT employee_nik nik,
+											 employee_fullname employee_name,
+											 employee_position job_code,
+											 employee_joindate AS start_date,
+											 CASE WHEN employee_resigndate IS NULL THEN TO_DATE ('99991231', 'RRRRMMDD') ELSE employee_resigndate END AS end_date
+										FROM tap_dw.tm_employee_hris@dwh_link
+									  UNION ALL
+									  SELECT nik,
+											 employee_name,
+											 job_code,
+											 start_valid start_date,
+											 CASE WHEN res_date IS NOT NULL THEN res_date ELSE end_valid END end_date
+										FROM tap_dw.tm_employee_sap@dwh_link) emp_pic
+							  ON emp_pic.nik = user_auth_pic.employee_nik AND TRUNC (finding.insert_time) BETWEEN emp_pic.start_date AND emp_pic.end_date
+						   LEFT JOIN (  SELECT werks,
+											   afd_code,
+											   land_use_code block_code,
+											   block_name,
+											   maturity_status,
+											   spmon
+										  FROM tap_dw.tr_hs_land_use@dwh_link
+										 WHERE spmon BETWEEN TRUNC (ADD_MONTHS (SYSDATE, -1), 'YEAR') AND LAST_DAY (ADD_MONTHS (SYSDATE, -1))
+									  GROUP BY werks,
+											   afd_code,
+											   land_use_code,
+											   block_name,
+											   maturity_status,
+											   spmon
+									  UNION
+										SELECT werks,
+											   afd_code,
+											   land_use_code block_code,
+											   block_name,
+											   maturity_status,
+											   ADD_MONTHS (spmon, 1) spmon
+										  FROM tap_dw.tr_hs_land_use@dwh_link
+										 WHERE spmon = (  SELECT MAX (spmon) FROM tap_dw.tr_hs_land_use@dwh_link)
+									  GROUP BY werks,
+											   afd_code,
+											   land_use_code,
+											   block_name,
+											   maturity_status,
+											   spmon) land_use
+							  ON finding.werks = land_use.werks AND land_use.afd_code = finding.afd_code AND land_use.block_code = finding.block_code AND spmon = TRUNC (LAST_DAY (finding.insert_time))
+					 WHERE finding.finding_code = '".$id."') finding
+		";
+		$get = collect( $this->db_mobile_ins->select( $sql ) )->first();
+		$joindata = array();
+		if ( !empty( $get ) ) {
+			$client = new \GuzzleHttp\Client();
+			$image_finding = $client->request( 'GET', $this->url_api_ins_msa_image.'/api/v2.2/finding/'.$get->finding_code,
+									[
+									 'headers' => [
+										'Accept' => 'application/json',
+										'Authorization' => 'Bearer '.session( 'ACCESS_TOKEN' ),
+												]		
+									] );
+			$image_finding = json_decode( $image_finding->getBody(), true );
+			$joindata['finding_code'] = $get->finding_code;
+			$joindata['region_code'] = $get->region_code;
+			$joindata['comp_code'] = $get->comp_code;
+			$joindata['werks'] = $get->werks;
+			$joindata['est_name'] = $get->est_name;
+			$joindata['afd_code'] = $get->afd_code;
+			$joindata['block_code'] = $get->block_code;
+			$joindata['block_name'] = $get->block_name;
+			$joindata['tanggal_temuan'] = $get->tanggal_temuan;
+			$joindata['creator_employee_nik'] = $get->creator_employee_nik;
+			$joindata['creator_employee_fullname'] = $get->creator_employee_fullname;
+			$joindata['creator_employee_position'] = $get->creator_employee_position;
+			$joindata['maturity_status'] = $get->maturity_status;
+			$joindata['lat_finding'] = $get->lat_finding;
+			$joindata['long_finding'] = $get->long_finding;
+			$joindata['category_code'] = $get->category_code;
+			$joindata['category_name'] = $get->category_name;
+			$joindata['category_icon'] = $get->category_icon;
+			$joindata['finding_priority'] = $get->finding_priority;
+			$joindata['due_date'] = $get->due_date;
+			$joindata['pic_employee_nik'] = $get->pic_employee_nik;
+			$joindata['pic_employee_fullname'] = $get->pic_employee_fullname;
+			$joindata['pic_employee_position'] = $get->pic_employee_position;
+			$joindata['end_time'] = $get->end_time;
+			$joindata['rating_value'] = $get->rating_value;
+			$joindata['rating_message'] = $get->rating_message;
+			$joindata['update_time'] = $get->update_time;
+			$joindata['progress'] = $get->progress;
+			$joindata['finding_desc'] = $get->finding_desc;
+			if (isset($image_finding['message']) & $image_finding['message'] == "Invalid Token"){
+				$joindata['finding_desc'] .= " (Silahkan login untuk lihat photo)";
+			}
+			$joindata['status'] = $get->status;
+			$joindata['image'] = ( isset( $image_finding['data'] ) ? $image_finding['data'] : url( 'assets/user.jpg' ) );
+		}
+		return $joindata;
+	}
 	
 }
