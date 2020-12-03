@@ -13,6 +13,7 @@ class ReportOracle extends Model{
 	
 	public function __construct() {
 		$this->db_mobile_ins = DB::connection( 'mobile_ins' );
+		$this->db_ebcc = DB::connection('ebcc');
 		$this->url_api_ins_msa_image = APISetup::url()['msa']['ins']['image'];
 		$this->url_api_ins_msa_point = APISetup::url()['msa']['ins']['point'];
 	}
@@ -3833,6 +3834,40 @@ class ReportOracle extends Model{
 			$joindata['image'] = ( isset( $image_finding['data'] ) ? $image_finding['data'] : url( 'assets/user.jpg' ) );
 		}
 		return $joindata;
+	}
+	
+	public function MONITORING_UPLOAD_EBCC($tgl,$reg,$comp) {
+		$comp = strlen($comp)<1?'':"AND comp.COMP_CODE = '$comp'";
+		$get = $this->db_ebcc->select("
+			SELECT to_char(TANGGAL_RENCANA,'DD-MON') TANGGAL, COMP_NAME, ID_BA, AFD, NIK_KERANI_BUAH,COUNT(NIK_MANDOR) MANDOR, MIN(EMPLOYEE_NAME) NAME, MIN(JOB_CODE) USER_ROLE,
+				SUM(CASE WHEN SYNC_SERVER BETWEEN TRUNC(TANGGAL_RENCANA) AND TRUNC(TANGGAL_RENCANA)+1+1/24 THEN 1 ELSE 0 END) COUNT1,
+				SUM(CASE WHEN SYNC_SERVER BETWEEN TRUNC(TANGGAL_RENCANA)+1+1/24 AND TRUNC(TANGGAL_RENCANA)+1+14/24 THEN 1 ELSE 0 END) COUNT2
+				FROM (
+						SELECT 
+							MIN(tlhp.SYNC_SERVER) SYNC_SERVER, 
+							MIN(thrp.TANGGAL_RENCANA) TANGGAL_RENCANA,
+							SUBSTR(MIN(tdrp.ID_BA_AFD_BLOK),1,4) ID_BA,
+							SUBSTR(MIN(tdrp.ID_BA_AFD_BLOK),5,1) AFD,
+							MIN(thrp.NIK_KERANI_BUAH) NIK_KERANI_BUAH,
+							MIN(thrp.NIK_MANDOR) NIK_MANDOR,
+							COMP_NAME,
+							MIN(JOB_CODE) JOB_CODE,
+							MIN(EMPLOYEE_NAME) EMPLOYEE_NAME
+						FROM T_HASIL_PANEN thp 
+						left JOIN T_HEADER_RENCANA_PANEN thrp ON thrp.ID_RENCANA = thp.ID_RENCANA  
+						INNER JOIN T_DETAIL_RENCANA_PANEN tdrp ON tdrp.ID_RENCANA = thrp.ID_RENCANA 
+						INNER JOIN T_LOG_HASIL_PANEN tlhp ON tlhp.ON_NO_BCC = thp.NO_BCC AND tlhp.INSERTUPDATE = 'INSERT'
+						INNER JOIN tap_dw.tm_comp@dwh_link comp ON comp.comp_code = SUBSTR(tdrp.ID_BA_AFD_BLOK,1,2)
+						INNER JOIN tap_dw.tm_employee_sap@dwh_link emp ON emp.NIK = NIK_KERANI_BUAH AND start_valid <= sysdate AND end_valid >= sysdate 
+						WHERE 
+							thrp.TANGGAL_RENCANA = TO_DATE ('$tgl', 'dd-mm-yyyy')
+						AND
+							comp.REGION_CODE = '$reg'  $comp
+						GROUP BY thp.NO_BCC,COMP_NAME
+					) head 
+				GROUP BY TANGGAL_RENCANA, COMP_NAME, ID_BA,AFD,NIK_KERANI_BUAH,SYNC_SERVER 
+		");
+		return $get;
 	}
 	
 }

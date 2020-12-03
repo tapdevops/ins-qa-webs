@@ -506,6 +506,37 @@ class ReportOracleController extends Controller {
 			// dd();
 		}
 
+		# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+		# REPORT MONITORING UPLOAD EBCC
+		# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+		else if ( $REPORT_TYPE == 'MONITORING_UPLOAD_EBCC' ) {
+			$results['data'] = $RO->MONITORING_UPLOAD_EBCC(
+									$START_DATE, 
+									$REGION_CODE, 
+									$COMP_CODE
+								);	
+			$region = $this->db_mobile_ins->select("SELECT REGION_NAME FROM tap_dw.tm_region@dwh_link WHERE REGION_CODE = '$REGION_CODE'");
+			$region_name='';
+			foreach ($region as $reg) {
+				$region_name = $reg->region_name;
+			}
+			$results['region'] = $region_name;
+			$company = $this->db_mobile_ins->select("SELECT COMP_NAME FROM tap_dw.tm_comp@dwh_link WHERE COMP_CODE = '$REGION_CODE'");
+			$company_name='ALL';
+			foreach ($company as $reg) {
+				$company_name = $reg->company_name;
+			}
+			$results['company'] = $company_name;
+			$results['data'] = json_decode( json_encode( $results['data'] ), true );
+			$results['date'] = date('d M Y',( strtotime ( $START_DATE)));
+			$file_name = 'Monitoring Upload EBCC - '.date( 'M Y', strtotime( $request->START_DATE ));
+			$results['sheet_name'] = 'Monitoring Upload EBCC';
+			$results['view'] = 'orareport.excel-monitoring-upload-ebcc';
+
+			// return view( 'orareport.excel-pencapaian-inspeksi', $results );
+			// dd();
+		}
+
 		if( $file_name && $REPORT_TYPE != 'INSPEKSI' AND $REPORT_TYPE != 'EBCC_COMPARE_ESTATE' AND $REPORT_TYPE != 'EBCC_COMPARE_MILL') {
 			
 			Excel::create( $file_name, function( $excel ) use ( $results ) {

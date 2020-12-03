@@ -20,9 +20,18 @@ class ValidasiHeader extends Model{
       $day =  date("Y-m-d", strtotime($date));
       $ba_afd_code = explode(",",session('LOCATION_CODE'));
       $code = implode("','", $ba_afd_code);
+      $substr_id_ba_afd_blok = 5;
       if(session('REFFERENCE_ROLE')=='COMP_CODE')
       {
          $code = session('werks').session('afd');
+      }
+      if(session('REFFERENCE_ROLE')=='BA_CODE')
+      {
+         $substr_id_ba_afd_blok = 4;
+      }
+      if(session('REFFERENCE_ROLE')=='REGION_CODE')
+      {
+         $substr_id_ba_afd_blok = 2;
       }
       $get = $this->db_mobile_ins->select("
       SELECT ebcc.id_ba,
@@ -59,7 +68,7 @@ class ValidasiHeader extends Model{
                            WHERE     SUBSTR (ID_BA_AFD_BLOK, 1, 2) IN (SELECT comp_code
                                                                         FROM tap_dw.tm_comp@dwh_link)
                                  AND hrp.tanggal_rencana = TO_DATE ('$day', 'YYYY-MM-DD')
-                                 AND SUBSTR (drp.id_ba_afd_blok, 1, 5) in ('$code')
+                                 AND SUBSTR (drp.id_ba_afd_blok, 1, $substr_id_ba_afd_blok) in ('$code')
                                  -- SID - tambahin group by
                            GROUP BY SUBSTR (drp.id_ba_afd_blok, 1, 4),
                                  SUBSTR (drp.id_ba_afd_blok, 5, 1),
@@ -342,9 +351,18 @@ class ValidasiHeader extends Model{
       $day =  date("Y-m-d", strtotime($date));
       $ba_afd_code = explode(",",session('LOCATION_CODE'));
       $code = implode("','", $ba_afd_code);
+      $substr_id_ba_afd_blok = 5;
       if(session('REFFERENCE_ROLE')=='COMP_CODE')
       {
          $code = session('werks').session('afd');
+      }
+      if(session('REFFERENCE_ROLE')=='BA_CODE')
+      {
+         $substr_id_ba_afd_blok = 4;
+      }
+      if(session('REFFERENCE_ROLE')=='REGION_CODE')
+      {
+         $substr_id_ba_afd_blok = 2;
       }
       $get = $this->db_mobile_ins->select("
       SELECT hdp.status_validasi
@@ -383,7 +401,7 @@ class ValidasiHeader extends Model{
                                        WHERE     SUBSTR (ID_BA_AFD_BLOK, 1, 2) IN (SELECT comp_code
                                                                                     FROM tap_dw.tm_comp@dwh_link)
                                              AND hrp.tanggal_rencana = TO_DATE ('$day', 'YYYY-MM-DD')
-                                             AND SUBSTR (drp.id_ba_afd_blok, 1, 5) in ('$code')
+                                             AND SUBSTR (drp.id_ba_afd_blok, 1, $substr_id_ba_afd_blok) in ('$code')
                                              -- SID - tambahin group by
                                        GROUP BY SUBSTR (drp.id_ba_afd_blok, 1, 4),
                                              SUBSTR (drp.id_ba_afd_blok, 5, 1),
