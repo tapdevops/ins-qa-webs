@@ -3870,4 +3870,46 @@ class ReportOracle extends Model{
 		return $get;
 	}
 	
+	public function MONITORING_SYNC_MI($tgl,$reg,$comp) {
+		$comp = strlen($comp)<1?'':"AND comp.COMP_CODE = '$comp'";
+		$get = $this->db_mobile_ins->select(" SELECT 
+											to_char(TANGGAL_RENCANA,'DD-MON') TANGGAL, COMP_NAME,  ID_BA,  AFD, NIK_KERANI_BUAH,
+											COUNT(NIK_MANDOR), MIN(EMPLOYEE_NAME) NAME, MIN(JOB_CODE) USER_ROLE,
+											SUM(CASE WHEN SYNC_TIME BETWEEN TRUNC(TANGGAL_RENCANA) AND TRUNC(TANGGAL_RENCANA)+1+1/24 THEN 1 ELSE 0 END) COUNT1,
+											SUM(CASE WHEN SYNC_TIME BETWEEN TRUNC(TANGGAL_RENCANA)+1+1/24 AND TRUNC(TANGGAL_RENCANA)+1+14/24 THEN 1 ELSE 0 END) COUNT2
+										FROM TR_EBCC_VALIDATION_H tevh 
+										INNER JOIN 
+											(
+												SELECT 
+													MIN(thp.NO_BCC) NO_BCC, MIN(thp.KODE_DELIVERY_TICKET) KODE_DELIVERY_TICKET,
+													MIN(thrp.TANGGAL_RENCANA) TANGGAL_RENCANA,
+													MIN(ID_BA_AFD_BLOK) ID_BA_AFD_BLOK,
+													SUBSTR(MIN(tdrp.ID_BA_AFD_BLOK),1,4) ID_BA,
+													SUBSTR(MIN(tdrp.ID_BA_AFD_BLOK),5,1) AFD,
+													MIN(thrp.NIK_KERANI_BUAH) NIK_KERANI_BUAH,
+													MIN(thrp.NIK_MANDOR) NIK_MANDOR,
+													COMP_NAME,
+													MIN(JOB_CODE) JOB_CODE,
+													MIN(EMPLOYEE_NAME) EMPLOYEE_NAME
+												FROM EBCC.T_HASIL_PANEN thp  
+												LEFT JOIN EBCC.T_HEADER_RENCANA_PANEN thrp ON thrp.ID_RENCANA = thp.ID_RENCANA  
+												INNER JOIN EBCC.T_DETAIL_RENCANA_PANEN tdrp ON tdrp.ID_RENCANA = thrp.ID_RENCANA 
+												INNER JOIN tap_dw.tm_comp@dwh_link comp ON comp.comp_code = SUBSTR(tdrp.ID_BA_AFD_BLOK,1,2)
+												INNER JOIN tap_dw.tm_employee_sap@dwh_link emp ON emp.NIK = NIK_KERANI_BUAH AND start_valid <= sysdate AND end_valid >= sysdate 
+												WHERE 
+													thrp.TANGGAL_RENCANA = TO_DATE ('$tgl', 'dd-mm-yyyy') AND
+												comp.REGION_CODE = '$reg'  $comp 
+												GROUP BY thp.NO_BCC,COMP_NAME
+											) ebcc  
+										ON 
+											tevh.WERKS || tevh.AFD_CODE || tevh.BLOCK_CODE = ebcc.ID_BA_AFD_BLOK
+										AND 
+											tevh.DELIVERY_CODE = ebcc.KODE_DELIVERY_TICKET
+										AND 
+											TRUNC(tevh.INSERT_TIME) = TRUNC(ebcc.TANGGAL_RENCANA)
+										GROUP BY TANGGAL_RENCANA, COMP_NAME, ID_BA,AFD,NIK_KERANI_BUAH,SYNC_TIME
+		");
+		return $get;
+	}
+	
 }

@@ -45,6 +45,7 @@
 					<option value="CLASS_BLOCK_AFD_ESTATE">CLASS, BLOCK, AFD, &amp; ESTATE</option>
 					<option value="POINT_BULANAN">POINT BULANAN</option>
 					<option value="MONITORING_UPLOAD_EBCC">MONTORING UPLOAD EBCC</option>
+					<option value="MONITORING_SYNC_MI">MONTORING SYNC MI</option>
 				</select>
 			</div>
 		</div>
@@ -306,6 +307,17 @@
 				$("#report-hs-block").hide();
 				break;	
 			case 'MONITORING_UPLOAD_EBCC':
+				$("#report-date-month").hide();
+				$("#report-date-full").show();
+				$("#report-start-date").show();
+				$("#report-end-date").hide();
+				$("#report-hs-region").show();
+				$("#report-hs-comp").show();
+				$("#report-hs-est").hide();
+				$("#report-hs-afd").hide();
+				$("#report-hs-block").hide();
+				break;	
+			case 'MONITORING_SYNC_MI':
 				$("#report-date-month").hide();
 				$("#report-date-full").show();
 				$("#report-start-date").show();
