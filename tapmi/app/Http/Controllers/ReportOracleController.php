@@ -516,7 +516,7 @@ class ReportOracleController extends Controller {
 									$COMP_CODE
 								);	
 			$region = $this->db_mobile_ins->select("SELECT REGION_NAME FROM tap_dw.tm_region@dwh_link WHERE REGION_CODE = '$REGION_CODE'");
-			$region_name='';
+			$region_name='ALL';
 			foreach ($region as $reg) {
 				$region_name = $reg->region_name;
 			}
@@ -547,7 +547,7 @@ class ReportOracleController extends Controller {
 									$COMP_CODE
 								);	
 			$region = $this->db_mobile_ins->select("SELECT REGION_NAME FROM tap_dw.tm_region@dwh_link WHERE REGION_CODE = '$REGION_CODE'");
-			$region_name='';
+			$region_name='ALL';
 			foreach ($region as $reg) {
 				$region_name = $reg->region_name;
 			}
@@ -563,6 +563,68 @@ class ReportOracleController extends Controller {
 			$file_name = 'Monitoring Sync MI - '.date( 'M Y', strtotime( $request->START_DATE ));
 			$results['sheet_name'] = 'Monitoring Sync MI';
 			$results['view'] = 'orareport.excel-monitoring-sync-mi';
+
+			// return view( 'orareport.excel-pencapaian-inspeksi', $results );
+			// dd();
+		}
+
+		# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+		# REPORT MONITORING CETAK LHM
+		# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+		else if ( $REPORT_TYPE == 'MONITORING_CETAK_LHM' ) {
+			$results['data'] = $RO->MONITORING_CETAK_LHM(
+									$START_DATE, 
+									$REGION_CODE, 
+									$COMP_CODE
+								);	
+			$region = $this->db_mobile_ins->select("SELECT REGION_NAME FROM tap_dw.tm_region@dwh_link WHERE REGION_CODE = '$REGION_CODE'");
+			$region_name='ALL';
+			foreach ($region as $reg) {
+				$region_name = $reg->region_name;
+			}
+			$results['region'] = $region_name;
+			$company = $this->db_mobile_ins->select("SELECT COMP_NAME FROM tap_dw.tm_comp@dwh_link WHERE COMP_CODE = '$REGION_CODE'");
+			$company_name='ALL';
+			foreach ($company as $reg) {
+				$company_name = $reg->company_name;
+			}
+			$results['company'] = $company_name;
+			$results['data'] = json_decode( json_encode( $results['data'] ), true );
+			$results['date'] = date('d M Y',( strtotime ( $START_DATE)));
+			$file_name = 'Monitoring Cetak LHM - '.date( 'M Y', strtotime( $request->START_DATE ));
+			$results['sheet_name'] = 'Monitoring Cetak LHM';
+			$results['view'] = 'orareport.excel-monitoring-cetak-lhm';
+
+			// return view( 'orareport.excel-pencapaian-inspeksi', $results );
+			// dd();
+		}
+
+		# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+		# REPORT MONITORING VALIDASI DESKTOP
+		# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+		else if ( $REPORT_TYPE == 'MONITORING_VALIDASI_DESKTOP' ) {
+			$results['data'] = $RO->MONITORING_VALIDASI_DESKTOP(
+									$START_DATE, 
+									$REGION_CODE, 
+									$COMP_CODE
+								);	
+			$region = $this->db_mobile_ins->select("SELECT REGION_NAME FROM tap_dw.tm_region@dwh_link WHERE REGION_CODE = '$REGION_CODE'");
+			$region_name='ALL';
+			foreach ($region as $reg) {
+				$region_name = $reg->region_name;
+			}
+			$results['region'] = $region_name;
+			$company = $this->db_mobile_ins->select("SELECT COMP_NAME FROM tap_dw.tm_comp@dwh_link WHERE COMP_CODE = '$REGION_CODE'");
+			$company_name='ALL';
+			foreach ($company as $reg) {
+				$company_name = $reg->company_name;
+			}
+			$results['company'] = $company_name;
+			$results['data'] = json_decode( json_encode( $results['data'] ), true );
+			$results['date'] = date('d M Y',( strtotime ( $START_DATE)));
+			$file_name = 'Monitoring Validasi Desktop - '.date( 'M Y', strtotime( $request->START_DATE ));
+			$results['sheet_name'] = 'Monitoring Validasi Desktop';
+			$results['view'] = 'orareport.excel-monitoring-validasi-desktop';
 
 			// return view( 'orareport.excel-pencapaian-inspeksi', $results );
 			// dd();

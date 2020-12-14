@@ -46,6 +46,8 @@
 					<option value="POINT_BULANAN">POINT BULANAN</option>
 					<option value="MONITORING_UPLOAD_EBCC">MONTORING UPLOAD EBCC</option>
 					<option value="MONITORING_SYNC_MI">MONTORING SYNC MI</option>
+					<option value="MONITORING_CETAK_LHM">MONITORING CETAK LHM</option>
+					<option value="MONITORING_VALIDASI_DESKTOP">MONITORING VALIDASI DESKTOP</option>
 				</select>
 			</div>
 		</div>
@@ -318,6 +320,28 @@
 				$("#report-hs-block").hide();
 				break;	
 			case 'MONITORING_SYNC_MI':
+				$("#report-date-month").hide();
+				$("#report-date-full").show();
+				$("#report-start-date").show();
+				$("#report-end-date").hide();
+				$("#report-hs-region").show();
+				$("#report-hs-comp").show();
+				$("#report-hs-est").hide();
+				$("#report-hs-afd").hide();
+				$("#report-hs-block").hide();
+				break;	
+			case 'MONITORING_CETAK_LHM':
+				$("#report-date-month").hide();
+				$("#report-date-full").show();
+				$("#report-start-date").show();
+				$("#report-end-date").hide();
+				$("#report-hs-region").show();
+				$("#report-hs-comp").show();
+				$("#report-hs-est").hide();
+				$("#report-hs-afd").hide();
+				$("#report-hs-block").hide();
+				break;	
+			case 'MONITORING_VALIDASI_DESKTOP':
 				$("#report-date-month").hide();
 				$("#report-date-full").show();
 				$("#report-start-date").show();
