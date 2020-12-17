@@ -23,7 +23,7 @@ class ValidasiHeader extends Model{
       $substr_id_ba_afd_blok = 5;
       if(session('REFFERENCE_ROLE')=='COMP_CODE')
       {
-         $code = session('werks').session('afd');
+         $substr_id_ba_afd_blok = 2;
       }
       if(session('REFFERENCE_ROLE')=='BA_CODE')
       {
@@ -32,6 +32,19 @@ class ValidasiHeader extends Model{
       if(session('REFFERENCE_ROLE')=='REGION_CODE')
       {
          $substr_id_ba_afd_blok = 2;
+      }
+      if(session('werks') && session('afd'))
+      {
+         if(session('werks')!='')
+         {
+            $code = session('werks');
+            $substr_id_ba_afd_blok = 4;
+            if(session('werks')!='')
+            {
+               $code .= session('afd');
+               $substr_id_ba_afd_blok = 5;
+            }
+         }
       }
       $get = $this->db_mobile_ins->select("
       SELECT ebcc.id_ba,
@@ -354,7 +367,7 @@ class ValidasiHeader extends Model{
       $substr_id_ba_afd_blok = 5;
       if(session('REFFERENCE_ROLE')=='COMP_CODE')
       {
-         $code = session('werks').session('afd');
+         $substr_id_ba_afd_blok = 2;
       }
       if(session('REFFERENCE_ROLE')=='BA_CODE')
       {
@@ -363,6 +376,19 @@ class ValidasiHeader extends Model{
       if(session('REFFERENCE_ROLE')=='REGION_CODE')
       {
          $substr_id_ba_afd_blok = 2;
+      }
+      if(session('werks') && session('afd'))
+      {
+         if(session('werks')!='')
+         {
+            $code = session('werks');
+            $substr_id_ba_afd_blok = 4;
+            if(session('werks')!='')
+            {
+               $code .= session('afd');
+               $substr_id_ba_afd_blok = 5;
+            }
+         }
       }
       $get = $this->db_mobile_ins->select("
       SELECT hdp.status_validasi

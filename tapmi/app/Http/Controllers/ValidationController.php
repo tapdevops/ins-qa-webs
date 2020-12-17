@@ -88,16 +88,27 @@ class ValidationController extends Controller {
          $status_validasi = 1;
       }
       $data['status'] = $status_validasi;
+      $substr_id_ba_afd_blok = 5;
+      $ba_afd_code = explode(",",session('LOCATION_CODE'));
+      $code = implode("','", $ba_afd_code);
       if(session('REFFERENCE_ROLE')=='COMP_CODE')
       {
-        $ba_afd_code = explode(",",session('LOCATION_CODE'));
-        $code = implode("','", $ba_afd_code);
-        $data['ba_data'] = $this->db_ebcc->table('T_DETAIL_RENCANA_PANEN')
-                                         ->select(DB::raw("SUBSTR (id_ba_afd_blok, 1, 5) AS ba"))
-                                         ->whereIn(DB::raw('SUBSTR (id_ba_afd_blok, 1, 2)'), $ba_afd_code)
-                                         ->groupBy(DB::raw("SUBSTR (id_ba_afd_blok, 1, 5)"))
-                                         ->orderBy('ba')->get();
+         $substr_id_ba_afd_blok = 2;
       }
+      if(session('REFFERENCE_ROLE')=='BA_CODE')
+      {
+         $substr_id_ba_afd_blok = 4;
+      }
+      if(session('REFFERENCE_ROLE')=='REGION_CODE')
+      {
+         $substr_id_ba_afd_blok = 2;
+      }
+      $data['ba_data'] = $this->db_ebcc->table('T_DETAIL_RENCANA_PANEN')
+                                       ->select(DB::raw("SUBSTR (id_ba_afd_blok, 1, 5) AS ba"))
+                                       ->whereRaw("SUBSTR (id_ba_afd_blok, 1,$substr_id_ba_afd_blok) IN('$code')")
+                                       ->groupBy(DB::raw("SUBSTR (id_ba_afd_blok, 1, 5)"))
+                                       ->orderBy('ba')->get();
+      // dd(session()->all());
       $last_work_daily = $this->db_mobile_ins->select("SELECT trunc(TANGGAL) - trunc(sysdate) AS DIFF,MIN(FLAG_HK),MIN(NAMA_HARI) 
                                                                FROM TM_TIME_DAILY@DWH_LINK 
                                                                WHERE TANGGAL < trunc(sysdate)
@@ -120,8 +131,8 @@ class ValidationController extends Controller {
       foreach ($data as $key => $value) 
       {
          //  IF DATA NOT EXPORTED TO SAP
-          if($value['export_status']!='X')
-          {
+          // if($value['export_status']!='X')
+          // {
             $id_validasi = $value['ebcc_nik_kerani_buah'].'-'.$value['ebcc_nik_mandor'].'-'.str_replace('-','',$day);
             // $check = TRValidasiDetail::where(['id_validasi'=>$id_validasi,'no_bcc'=>$value['ebcc_no_bcc']])->first();
             // if(!$check)
@@ -225,7 +236,7 @@ class ValidationController extends Controller {
             //         'ID_KUALITAS' => 3
             //      ])->update(['QTY'=>$value['val_jml_3']]);
             //   }   
-          }
+          // }
       }
    }
 

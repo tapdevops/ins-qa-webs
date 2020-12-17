@@ -8,7 +8,6 @@
 <div class="row">
 	<div class="col-md-12">
 		<div class="row" style="margin-bottom: 5px;">
-			@if(session('REFFERENCE_ROLE')=='COMP_CODE')
 			<div class="col-md-3" style="padding-right: 0px;">
 				<div class="input-daterange input-group">
 					<label style="padding-top: 6px" for="werks">BA & Afd&nbsp; &nbsp; </label>
@@ -22,11 +21,13 @@
 						}
 					?>
 					<select name="werks" class="form-control m-input" id="werks">
+						<option value="" selected="">Semua</option>
 						@foreach($werks_data as $key)
-						<option value="{{$key}}" {{$loop->first?'selected':''}}>{{$key}}</option>
+						<option value="{{$key}}">{{$key}}</option>
 						@endforeach
 					</select>
 					<select name="afd" class="form-control m-input" id="afd">
+						<option value="" selected="">Semua</option>
 						@foreach($afd_data_by_werks as $key1 => $afd_data)
 							@foreach($afd_data as $key2 => $val)
 							<option value="{{$val}}" class="{{$key1}} data-afd">{{$val}}</option>
@@ -35,10 +36,6 @@
 					</select>
 				</div>
 			</div>
-			@else 
-			<input type="hidden" name="werks" id="werks">
-			<input type="hidden" name="afd" id="afd">
-			@endif
 			<div class="col-md-4">
 				<div class="input-daterange input-group">
 					<label style="padding-top: 6px" for="tanggal_rencana">Tanggal &nbsp; &nbsp; </label>
@@ -225,17 +222,15 @@
 		
 	});
 	
-	@if(session('REFFERENCE_ROLE')=='COMP_CODE')
     $('.data-afd').hide();
-    $('#afd .'+$("#werks").val()).show();
-   	$("#afd").val($("#afd ."+$("#werks").val()+":first").val());
+    // $('#afd .'+$("#werks").val()).show();
+   	// $("#afd").val($("#afd ."+$("#werks").val()+":first").val());
 	$("#werks").change(function () {
         var val = $(this).val();
         $('.data-afd').hide();
         $('#afd .'+val).show();
         $("#afd").val($("#afd ."+$("#werks").val()+":first").val());
     });
-    @endif;
 	// $(document).ready(function () {
 	// 	$('#generalSearch').datepicker().on('click', function(){
 	// 			var selected = $(this).val();
