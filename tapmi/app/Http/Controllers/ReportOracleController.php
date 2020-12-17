@@ -529,7 +529,7 @@ class ReportOracleController extends Controller {
 			$results['company'] = $company_name;
 			$results['data'] = json_decode( json_encode( $results['data'] ), true );
 			$results['date'] = date('d M Y',( strtotime ( $START_DATE)));
-			$file_name = 'Monitoring Upload EBCC - '.date( 'M Y', strtotime( $request->START_DATE ));
+			$file_name = 'Monitoring Upload EBCC - '.date( 'd M Y', strtotime( $request->START_DATE ));
 			$results['sheet_name'] = 'Monitoring Upload EBCC';
 			$results['view'] = 'orareport.excel-monitoring-upload-ebcc';
 
@@ -560,7 +560,7 @@ class ReportOracleController extends Controller {
 			$results['company'] = $company_name;
 			$results['data'] = json_decode( json_encode( $results['data'] ), true );
 			$results['date'] = date('d M Y',( strtotime ( $START_DATE)));
-			$file_name = 'Monitoring Sync MI - '.date( 'M Y', strtotime( $request->START_DATE ));
+			$file_name = 'Monitoring Sync MI - '.date( 'd M Y', strtotime( $request->START_DATE ));
 			$results['sheet_name'] = 'Monitoring Sync MI';
 			$results['view'] = 'orareport.excel-monitoring-sync-mi';
 
@@ -591,7 +591,7 @@ class ReportOracleController extends Controller {
 			$results['company'] = $company_name;
 			$results['data'] = json_decode( json_encode( $results['data'] ), true );
 			$results['date'] = date('d M Y',( strtotime ( $START_DATE)));
-			$file_name = 'Monitoring Cetak LHM - '.date( 'M Y', strtotime( $request->START_DATE ));
+			$file_name = 'Monitoring Cetak LHM - '.date( 'd M Y', strtotime( $request->START_DATE ));
 			$results['sheet_name'] = 'Monitoring Cetak LHM';
 			$results['view'] = 'orareport.excel-monitoring-cetak-lhm';
 
@@ -622,7 +622,7 @@ class ReportOracleController extends Controller {
 			$results['company'] = $company_name;
 			$results['data'] = json_decode( json_encode( $results['data'] ), true );
 			$results['date'] = date('d M Y',( strtotime ( $START_DATE)));
-			$file_name = 'Monitoring Validasi Desktop - '.date( 'M Y', strtotime( $request->START_DATE ));
+			$file_name = 'Monitoring Validasi Desktop - '.date( 'd M Y', strtotime( $request->START_DATE ));
 			$results['sheet_name'] = 'Monitoring Validasi Desktop';
 			$results['view'] = 'orareport.excel-monitoring-validasi-desktop';
 
