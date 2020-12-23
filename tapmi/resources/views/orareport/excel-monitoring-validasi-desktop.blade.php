@@ -23,7 +23,7 @@
 		<td style="text-align:center;color: #FFF; background-color: #043077;"><b>Mulai validasi</b></td>
 		<td style="text-align:center;color: #FFF; background-color: #043077;"><b>Selesai validasi</b></td>
 		<td style="text-align:center;color: #FFF; background-color: #043077;"><b>Durasi [menit]</b></td>
-		<td style="text-align:center;color: #FFF; background-color: #043077;"><b># BCC tersedia</b></td>
+		<td style="text-align:center;color: #FFF; background-color: #043077;"><b># BCC divalidasi</b></td>
 	</tr>
 	@if( !empty( $data ) )
 		@foreach( $data as $key=>$dt )

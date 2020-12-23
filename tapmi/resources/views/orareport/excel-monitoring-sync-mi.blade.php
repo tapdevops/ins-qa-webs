@@ -23,7 +23,7 @@
 		<td style="text-align:center;color: #FFF; background-color: #043077;"><b># Kemandoran</b></td>
 		<td style="text-align:center;color: #FFF; background-color: #043077;"><b>Jam Upload H+0 - H+1 &lt; 1AM</b></td>
 		<td style="text-align:center;color: #FFF; background-color: #043077;"><b>Jam Upload H+1 1AM - 2PM</b></td>
-		<td style="text-align:center;color: #FFF; background-color: #043077;"><b># BCC</b></td>
+		<td style="text-align:center;color: #FFF; background-color: #043077;"><b># Sampling</b></td>
 	</tr>
 	@if( !empty( $data ) )
 		@foreach( $data as $key=>$dt )
@@ -74,8 +74,8 @@
 					@endisset
 				</td>
 				<td>
-					@isset($dt['count1'])
-						{{ $dt['count1']+$dt['count2'] }}
+					@isset($dt['total'])
+						{{ $dt['total'] }}
 					@endisset
 				</td>
 			</tr>

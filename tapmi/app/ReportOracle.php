@@ -3838,95 +3838,219 @@ class ReportOracle extends Model{
 	}
 	
 	public function MONITORING_UPLOAD_EBCC($tgl,$reg,$comp) {
-		$reg = strlen($reg)<1?'':"AND comp.REGION_CODE = '$reg'";
-		$comp = strlen($comp)<1?'':"AND comp.COMP_CODE = '$comp'";
-		$get = $this->db_ebcc->select("
-			SELECT to_char(TANGGAL_RENCANA,'DD-MON') TANGGAL, COMP_NAME, ID_BA, AFD, NIK_KERANI_BUAH,COUNT(DISTINCT NIK_MANDOR) MANDOR, 
-				MIN(EMPLOYEE_NAME) NAME,
-				MIN(JOB_CODE) USER_ROLE,
-				SUM(CASE WHEN SYNC_SERVER BETWEEN TRUNC(TANGGAL_RENCANA) AND TRUNC(TANGGAL_RENCANA)+1+1/24 THEN 1 ELSE 0 END) COUNT1,
-				SUM(CASE WHEN SYNC_SERVER BETWEEN TRUNC(TANGGAL_RENCANA)+1+1/24 AND TRUNC(TANGGAL_RENCANA)+1+14/24 THEN 1 ELSE 0 END) COUNT2
-				FROM (
-						SELECT 
-							tlhp.SYNC_SERVER SYNC_SERVER, 
-							thrp.TANGGAL_RENCANA TANGGAL_RENCANA,
-							(SUBSTR(MIN(tdrp.ID_BA_AFD_BLOK),1,4) || ' - ' || NAMA_BA) ID_BA,
-							SUBSTR(MIN(tdrp.ID_BA_AFD_BLOK),5,1) AFD,
-							thrp.NIK_KERANI_BUAH,
-							thrp.NIK_MANDOR,
-							(comp.COMP_CODE || ' - ' || comp.COMP_NAME) COMP_NAME,
-							JOB_CODE,
-							(EMPLOYEE_NAME || ' - ' || thrp.NIK_KERANI_BUAH) EMPLOYEE_NAME
-						FROM EBCC.T_HASIL_PANEN@proddb_link thp 
-						left JOIN EBCC.T_HEADER_RENCANA_PANEN@proddb_link thrp ON thrp.ID_RENCANA = thp.ID_RENCANA  
-						INNER JOIN EBCC.T_DETAIL_RENCANA_PANEN@proddb_link tdrp ON tdrp.ID_RENCANA = thrp.ID_RENCANA 
-						INNER JOIN EBCC.T_BUSSINESSAREA@proddb_link tb ON tb.ID_BA = SUBSTR(tdrp.ID_BA_AFD_BLOK,1,4) 
-						INNER JOIN EBCC.T_LOG_HASIL_PANEN@proddb_link tlhp ON tlhp.ON_NO_BCC = thp.NO_BCC AND tlhp.INSERTUPDATE = 'INSERT'
-						INNER JOIN tap_dw.tm_comp@dwh_link comp ON comp.comp_code = SUBSTR(tdrp.ID_BA_AFD_BLOK,1,2)
-						INNER JOIN tap_dw.tm_employee_sap@dwh_link emp ON emp.NIK = NIK_KERANI_BUAH AND start_valid <= sysdate AND end_valid >= sysdate 
-						WHERE 
-							thrp.TANGGAL_RENCANA = TO_DATE ('$tgl', 'dd-mm-yyyy') $reg $comp
-						GROUP BY tlhp.SYNC_SERVER,NAMA_BA,thrp.TANGGAL_RENCANA,thrp.NIK_KERANI_BUAH,thrp.NIK_MANDOR,JOB_CODE,EMPLOYEE_NAME,thp.NO_BCC,comp.COMP_CODE,comp.COMP_NAME
-					) head 
-				GROUP BY TANGGAL_RENCANA, COMP_NAME, ID_BA,AFD,NIK_KERANI_BUAH 
-				ORDER BY COMP_NAME, ID_BA,AFD,NAME ASC
+		$reg = strlen($reg)<1?'':"WHERE comp.REGION_CODE = '$reg'";
+		$comp = strlen($comp)<1?'':"WHERE COMP.ID_CC = '$comp'";
+		$get = $this->db_ebcc->select(" SELECT to_char(TGL_PANEN,'DD-MON-YYYY') TANGGAL, head.COMP COMP_NAME, head.BA ID_BA, head.AFD_PANEN AFD,COUNT(DISTINCT head.NIK_MANDOR) MANDOR, 
+										PIC NAME,
+										JABATAN USER_ROLE,
+										to_char(MIN(tvd.INSERT_TIME),'HH:mi') mulai,
+										to_char(MAX(tvd.INSERT_TIME),'HH:mi') selesai,
+									    (24* 60*(TO_DATE(TO_CHAR(MAX(tvd.INSERT_TIME), 'YYYY-MM-DD hh24:mi'), 'YYYY-MM-DD hh24:mi') - TO_DATE(TO_CHAR(MIN(tvd.INSERT_TIME), 'YYYY-MM-DD hh24:mi'), 'YYYY-MM-DD hh24:mi'))) durasi,
+										COUNT(head.NO_BCC) BCC
+										FROM (
+												SELECT 	THRP.TANGGAL_RENCANA as TGL_PANEN,
+						 								COMP.ID_CC,
+														COMP.ID_CC || ' - ' || COMP.COMP_NAME as COMP,
+														BA.ID_BA || ' - ' || NAMA_BA as BA,
+														AFD.ID_AFD as AFD_PANEN,
+														EMP.EMP_NAME || ' - ' || THRP.NIK_KERANI_BUAH as PIC,
+														EMP.JOB_CODE as JABATAN,
+														THRP.NIK_MANDOR,
+														TDRP.ID_BA_AFD_BLOK,
+														THP.NO_TPH,
+														THP.NO_BCC,
+														THP.KODE_DELIVERY_TICKET
+												FROM(
+													SELECT *
+													FROM EBCC.T_HEADER_RENCANA_PANEN@proddb_link 
+													/* FILTER TANGGAL DISINI */
+													WHERE TANGGAL_RENCANA = TO_DATE ('$tgl', 'dd-mm-yyyy')
+												) THRP
+												INNER JOIN EBCC.T_DETAIL_RENCANA_PANEN@proddb_link TDRP
+													ON TDRP.ID_RENCANA = THRP. ID_RENCANA
+												INNER JOIN EBCC.T_HASIL_PANEN@proddb_link THP
+													ON THP.ID_RENCANA = TDRP.ID_RENCANA
+													AND THP.NO_REKAP_BCC = TDRP.NO_REKAP_BCC
+												LEFT JOIN EBCC.T_BLOK@proddb_link BLK
+													ON BLK.ID_BA_AFD_BLOK = TDRP.ID_BA_AFD_BLOK
+												LEFT JOIN EBCC.T_AFDELING@proddb_link AFD
+													ON AFD.ID_BA_AFD = BLK.ID_BA_AFD
+												LEFT JOIN EBCC.T_BUSSINESSAREA@proddb_link BA
+													ON BA.ID_BA = AFD.ID_BA
+												LEFT JOIN EBCC.T_COMPANYCODE@proddb_link COMP
+													ON COMP.ID_CC = BA.ID_CC
+												LEFT JOIN EBCC.T_EMPLOYEE@proddb_link EMP
+													ON EMP.NIK = THRP.NIK_KERANI_BUAH
+												$comp
+												/* FILTER LOKASI DISINI */
+												--WHERE BA.ID_BA = '2121' AND AFD.ID_AFD = 'C' AND THRP.NIK_KERANI_BUAH = '21/2121/0500/214'
+												GROUP BY THRP.TANGGAL_RENCANA,
+						 								COMP.ID_CC,
+														COMP.ID_CC || ' - ' || COMP.COMP_NAME,
+														BA.ID_BA || ' - ' || NAMA_BA,
+														AFD.ID_AFD,
+														THRP.NIK_KERANI_BUAH,
+														EMP.EMP_NAME, 
+														EMP.JOB_CODE,
+														THRP.NIK_MANDOR,
+														TDRP.ID_BA_AFD_BLOK,
+														THP.NO_TPH,
+														THP.NO_BCC,
+														THP.KODE_DELIVERY_TICKET
+											) head 
+										LEFT JOIN tap_dw.tm_comp@dwh_link comp ON comp.comp_code = head.ID_CC
+										LEFT JOIN MOBILE_INSPECTION.TR_VALIDASI_DETAIL@proddb_link tvd  
+										ON tvd.NO_BCC = head.NO_BCC
+										$reg
+										GROUP BY TGL_PANEN, COMP, BA,AFD_PANEN, PIC, JABATAN
+										ORDER BY COMP, BA,AFD_PANEN,NAME ASC
 		");
 		return $get;
 	}
 	
 	public function MONITORING_SYNC_MI($tgl,$reg,$comp) {
-		$reg = strlen($reg)<1?'':"AND comp.REGION_CODE = '$reg'";
-		$comp = strlen($comp)<1?'':"AND comp.COMP_CODE = '$comp'";
-		$get = $this->db_mobile_ins->select(" SELECT 
-												to_char(TANGGAL_RENCANA,'DD-MON') TANGGAL, COMP_NAME,  ID_BA,  AFD,
-												COUNT(DISTINCT NIK_MANDOR) MANDOR, (employee.EMPLOYEE_FULLNAME || ' - ' || employee.EMPLOYEE_NIK) NAME, employee.employee_position USER_ROLE,
-												SUM(CASE WHEN SYNC_TIME BETWEEN TRUNC(TANGGAL_RENCANA) AND TRUNC(TANGGAL_RENCANA)+1+1/24 THEN 1 ELSE 0 END) COUNT1,
-												SUM(CASE WHEN SYNC_TIME BETWEEN TRUNC(TANGGAL_RENCANA)+1+1/24 AND TRUNC(TANGGAL_RENCANA)+1+14/24 THEN 1 ELSE 0 END) COUNT2
-											FROM MOBILE_INSPECTION.TR_EBCC_VALIDATION_H@proddb_link tevh 
-											INNER JOIN MOBILE_INSPECTION.TM_USER_AUTH@proddb_link tua ON tua.user_auth_code = tevh.insert_user 
-											INNER JOIN (
-											
-														SELECT employee_nik,
-																employee_fullname,
-																employee_position,
-																employee_joindate AS start_date,
-																CASE WHEN employee_resigndate IS NULL THEN TO_DATE ('99991231', 'RRRRMMDD') ELSE employee_resigndate END AS end_date
-															FROM tap_dw.tm_employee_hris@dwh_link
-														UNION ALL
-														SELECT nik,
-																employee_name,
-																job_code,
-																start_valid,
-																CASE WHEN res_date IS NOT NULL THEN res_date ELSE end_valid END end_valid
-															FROM tap_dw.tm_employee_sap@dwh_link	
-											) employee ON employee.employee_nik = tua.employee_nik
-											INNER JOIN 
-												(
-													SELECT 
-														thp.NO_BCC NO_BCC, thp.KODE_DELIVERY_TICKET,
-														thrp.TANGGAL_RENCANA TANGGAL_RENCANA,
-														ID_BA_AFD_BLOK,
-														(SUBSTR(tdrp.ID_BA_AFD_BLOK,1,4) || ' - ' || NAMA_BA) ID_BA,
-														SUBSTR(tdrp.ID_BA_AFD_BLOK,5,1) AFD,
-														thrp.NIK_MANDOR NIK_MANDOR,
-														(comp.COMP_CODE || ' - ' || comp.COMP_NAME) COMP_NAME
-													FROM EBCC.T_HASIL_PANEN@proddb_link thp  
-													LEFT JOIN EBCC.T_HEADER_RENCANA_PANEN@proddb_link thrp ON thrp.ID_RENCANA = thp.ID_RENCANA  
-													INNER JOIN EBCC.T_DETAIL_RENCANA_PANEN@proddb_link tdrp ON tdrp.ID_RENCANA = thrp.ID_RENCANA 
-													INNER JOIN EBCC.T_BUSSINESSAREA@proddb_link tb ON tb.ID_BA = SUBSTR(tdrp.ID_BA_AFD_BLOK,1,4) 
-													INNER JOIN tap_dw.tm_comp@dwh_link comp ON comp.comp_code = SUBSTR(tdrp.ID_BA_AFD_BLOK,1,2)
-													WHERE 
-														thrp.TANGGAL_RENCANA = TO_DATE ('$tgl', 'dd-mm-yyyy')  $reg $comp
-													GROUP BY thp.KODE_DELIVERY_TICKET,tdrp.ID_BA_AFD_BLOK,NAMA_BA,thrp.TANGGAL_RENCANA,thrp.NIK_MANDOR,thp.NO_BCC,comp.COMP_CODE,comp.COMP_NAME
-												) ebcc  
-											ON 
-												tevh.WERKS || tevh.AFD_CODE || tevh.BLOCK_CODE = ebcc.ID_BA_AFD_BLOK
-											AND 
-												tevh.DELIVERY_CODE = ebcc.KODE_DELIVERY_TICKET
-											AND 
-												TRUNC(tevh.INSERT_TIME) = TRUNC(ebcc.TANGGAL_RENCANA)
-											GROUP BY TANGGAL_RENCANA, COMP_NAME, ID_BA,AFD,employee.EMPLOYEE_FULLNAME,employee.EMPLOYEE_NIK,employee.employee_position
-											ORDER BY COMP_NAME, ID_BA,AFD,NAME ASC
+		$where = strlen($reg)<1?'':"AND COMP.REGION_CODE = '$reg'";
+		$where .= strlen($comp)<1?'':"AND COMP.COMP_CODE = '$comp'";
+		$get = $this->db_mobile_ins->select("SELECT 	to_char(TGL_PANEN,'DD-MON-YYYY') as TANGGAL,
+														COMP as COMP_NAME,
+														BA ID_BA,
+														AFD_PANEN as AFD,
+														PIC NAME,
+														JABATAN as USER_ROLE,
+														JML_KEMANDORAN as MANDOR,
+														GROUP_SYNC_1 as COUNT1,
+														GROUP_SYNC_2 as COUNT2,
+														TOTAL_BCC as TOTAL
+												FROM (
+													SELECT	VALIDATION.TGL_PANEN,
+															VALIDATION.COMP,
+															VALIDATION.BA,
+															VALIDATION.AFD_PANEN,
+															VALIDATION.PIC,
+															VALIDATION.JABATAN,
+															MAX(EBCC.JML_KEMANDORAN) as JML_KEMANDORAN,
+															SUM(GROUP_SYNC_1) as GROUP_SYNC_1,
+															SUM(GROUP_SYNC_2) as GROUP_SYNC_2,
+															SUM(TOTAL_BCC) as TOTAL_BCC
+													FROM(
+														SELECT	TGL_PANEN,
+																COMP,
+																BA,
+																AFD_PANEN,
+																PIC,
+																JABATAN,
+																SUM(
+																	CASE
+																		WHEN SYNC_SERVER BETWEEN TRUNC(TGL_PANEN) AND TRUNC(TGL_PANEN)+1+1/24 
+																		THEN 1
+																		ELSE 0
+																	END
+																) as GROUP_SYNC_1,
+																SUM( 
+																	CASE
+																		WHEN SYNC_SERVER BETWEEN TRUNC(TGL_PANEN)+1+1/24 + INTERVAL '1' SECOND AND TRUNC(TGL_PANEN)+1+14/24
+																		THEN 1
+																		ELSE 0
+																	END 
+																) as GROUP_SYNC_2,
+																SUM(1) as TOTAL_BCC
+														FROM (		
+															SELECT 	TRUNC(HEADER.INSERT_TIME) as TGL_PANEN,
+																	EST.COMP_CODE || ' - ' || COMP.COMP_NAME as COMP,
+																	HEADER.WERKS || ' - ' || EST.EST_NAME as BA,
+																	HEADER.AFD_CODE as AFD_PANEN,
+																	EMP.EMPLOYEE_FULLNAME || ' - ' || AUTH.EMPLOYEE_NIK as PIC,
+																	REPLACE(AUTH.USER_ROLE, '_', ' ') as JABATAN,
+																	HEADER.EBCC_VALIDATION_CODE,
+																	HEADER.SYNC_TIME as SYNC_SERVER
+															FROM(
+																SELECT *
+																FROM MOBILE_INSPECTION.TR_EBCC_VALIDATION_H@proddb_link
+																/* FILTER TANGGAL & LOKASI DISINI */
+																WHERE TRUNC(INSERT_TIME) = TO_DATE ('$tgl', 'dd-mm-yyyy')
+															) HEADER
+															LEFT JOIN MOBILE_INSPECTION.TM_USER_AUTH@proddb_link AUTH
+																ON AUTH.USER_AUTH_CODE =
+																(CASE
+																	WHEN LENGTH (HEADER.INSERT_USER) = 3 THEN '0' || HEADER.INSERT_USER
+																	ELSE HEADER.INSERT_USER
+																END)
+															LEFT JOIN (
+																SELECT 	EMPLOYEE_NIK,
+																		EMPLOYEE_FULLNAME,
+																		EMPLOYEE_POSITION,
+																		EMPLOYEE_JOINDATE as START_DATE,
+																		CASE 
+																			WHEN EMPLOYEE_RESIGNDATE IS NULL 
+																				THEN TO_DATE ('99991231', 'RRRRMMDD')
+																			ELSE EMPLOYEE_RESIGNDATE
+																		END as END_DATE
+																FROM TAP_DW.TM_EMPLOYEE_HRIS@DWH_LINK
+																UNION ALL
+																SELECT	NIK,
+																		EMPLOYEE_NAME,
+																		JOB_CODE,
+																		START_VALID,
+																		CASE
+																			WHEN RES_DATE IS NOT NULL
+																				THEN RES_DATE
+																			ELSE END_VALID
+																		END as END_VALID
+																FROM TAP_DW.TM_EMPLOYEE_SAP@DWH_LINK
+															) EMP
+																ON EMP.EMPLOYEE_NIK = AUTH.EMPLOYEE_NIK
+																AND TRUNC(HEADER.INSERT_TIME) BETWEEN TRUNC(EMP.START_DATE) AND TRUNC(EMP.END_DATE)
+															LEFT JOIN TAP_DW.TM_EST@DWH_LINK EST
+																ON EST.WERKS = HEADER.WERKS
+																AND TRUNC(HEADER.INSERT_TIME) BETWEEN TRUNC(EST.START_VALID) AND TRUNC(EST.END_VALID)
+															LEFT JOIN TAP_DW.TM_COMP@DWH_LINK COMP
+																ON COMP.COMP_CODE = EST.COMP_CODE
+															WHERE AUTH.USER_ROLE IN ('SEM_GM', 'EM', 'KEPALA_KEBUN', 'ASISTEN_LAPANGAN')
+															$where
+															GROUP BY TRUNC(HEADER.INSERT_TIME),
+																	EST.COMP_CODE || ' - ' || COMP.COMP_NAME,
+																	HEADER.WERKS || ' - ' || EST.EST_NAME,
+																	HEADER.AFD_CODE,
+																	EMP.EMPLOYEE_FULLNAME || ' - ' || AUTH.EMPLOYEE_NIK,
+																	REPLACE(AUTH.USER_ROLE, '_', ' '),
+																	HEADER.EBCC_VALIDATION_CODE,
+																	HEADER.SYNC_TIME
+														)
+														GROUP BY TGL_PANEN,
+																COMP,
+																BA,
+																AFD_PANEN,
+																PIC,
+																JABATAN
+													) VALIDATION				
+													LEFT JOIN (
+														SELECT 	BA_AFD,
+																COUNT(1) as JML_KEMANDORAN
+														FROM (
+															SELECT 	SUBSTR(ID_BA_AFD_BLOK,1,5) as BA_AFD, 
+																	NIK_MANDOR
+															FROM(
+																SELECT *
+																FROM EBCC.T_HEADER_RENCANA_PANEN@proddb_link 
+																/* FILTER TANGGAL */
+																WHERE TANGGAL_RENCANA = TRUNC(SYSDATE-1)
+															) THRP
+															INNER JOIN EBCC.T_DETAIL_RENCANA_PANEN@proddb_link TDRP
+																ON TDRP.ID_RENCANA = THRP. ID_RENCANA
+															GROUP BY SUBSTR(ID_BA_AFD_BLOK,1,5), NIK_MANDOR
+														)
+														/* FILTER LOKASI DISINI */
+														GROUP BY BA_AFD
+													) EBCC
+														ON EBCC.BA_AFD = SUBSTR(VALIDATION.BA,1,4) || VALIDATION.AFD_PANEN	
+													GROUP BY VALIDATION.TGL_PANEN,
+															VALIDATION.COMP,
+															VALIDATION.BA,
+															VALIDATION.AFD_PANEN,
+															VALIDATION.PIC,
+															VALIDATION.JABATAN	
+												)
+												ORDER BY 1,2,3,4,5
 		");
 		return $get;
 	}
@@ -3934,69 +4058,115 @@ class ReportOracle extends Model{
 	public function MONITORING_CETAK_LHM($tgl,$reg,$comp) {
 		$reg = strlen($reg)<1?'':"AND comp.REGION_CODE = '$reg'";
 		$comp = strlen($comp)<1?'':"AND comp.COMP_CODE = '$comp'";
-		$get = $this->db_ebcc->select("SELECT 	to_char(TANGGAL_RENCANA,'DD-MON') TANGGAL, COMP_NAME, ID_BA, AFD,COUNT(DISTINCT NIK_MANDOR) MANDOR,
+		$get = $this->db_ebcc->select("SELECT 	to_char(TANGGAL_RENCANA,'DD-MON-YYYY') TANGGAL, COMP_NAME, ID_BA, AFD,COUNT(DISTINCT NIK_MANDOR) MANDOR,
 												SUM(CASE WHEN compare.VAL_JABATAN_VALIDATOR IS NULL THEN 0 WHEN compare.VAL_JABATAN_VALIDATOR LIKE '%ASISTEN%' THEN 1 ELSE 0 end) ASLAP, 
 												SUM(CASE WHEN compare.VAL_JABATAN_VALIDATOR IS NULL THEN 0 WHEN compare.VAL_JABATAN_VALIDATOR LIKE '%KEPALA%' OR compare.VAL_JABATAN_VALIDATOR
 																										IN('EM','ESTATE MANAGER','GM','SEM','SEM GM','SENIOR ESTATE MANAGER','GENERAL MANAGER')	
 																										THEN 1 ELSE 0 end) KABUN,
 												COUNT(DISTINCT approval_em.BA) em_exception,
 												MIN(approval_em.ALASAN) ALASAN,
-												CASE WHEN MIN(head.CETAK_DATE) BETWEEN TRUNC(TANGGAL_RENCANA) AND TRUNC(TANGGAL_RENCANA)+1+14/24 THEN 'Sudah' ELSE 'Belum' END CETAK,
-												NIK_KERANI_BUAH, 
-												MIN(EMPLOYEE_NAME) NAME,
-												MIN(JOB_CODE) USER_ROLE
-												FROM (
-														SELECT 
-															thp.NO_BCC,
-															thp.CETAK_DATE, 
-															thrp.TANGGAL_RENCANA,
-															SUBSTR(tdrp.ID_BA_AFD_BLOK,1,4) WERKS,
-															(SUBSTR(tdrp.ID_BA_AFD_BLOK,1,4) || ' - ' || NAMA_BA) ID_BA,
-															SUBSTR(MIN(tdrp.ID_BA_AFD_BLOK),5,1) AFD,
-															thrp.NIK_KERANI_BUAH,
-															thrp.NIK_MANDOR,
-															(comp.COMP_CODE || ' - ' || comp.COMP_NAME) COMP_NAME,
-															JOB_CODE,
-															(EMPLOYEE_NAME || ' - ' || thrp.NIK_KERANI_BUAH) EMPLOYEE_NAME
-														FROM EBCC.T_HASIL_PANEN@proddb_link thp 
-														left JOIN EBCC.T_HEADER_RENCANA_PANEN@proddb_link thrp ON thrp.ID_RENCANA = thp.ID_RENCANA  
-														INNER JOIN EBCC.T_DETAIL_RENCANA_PANEN@proddb_link tdrp ON tdrp.ID_RENCANA = thrp.ID_RENCANA 
-														INNER JOIN EBCC.T_BUSSINESSAREA@proddb_link tb ON tb.ID_BA = SUBSTR(tdrp.ID_BA_AFD_BLOK,1,4) 
-														INNER JOIN EBCC.T_LOG_HASIL_PANEN@proddb_link tlhp ON tlhp.ON_NO_BCC = thp.NO_BCC AND tlhp.INSERTUPDATE = 'INSERT'
-														INNER JOIN tap_dw.tm_comp@dwh_link comp ON comp.comp_code = SUBSTR(tdrp.ID_BA_AFD_BLOK,1,2)
-														INNER JOIN tap_dw.tm_employee_sap@dwh_link emp ON emp.NIK = NIK_KERANI_BUAH AND start_valid <= sysdate AND end_valid >= sysdate 
-														WHERE 
-															thrp.TANGGAL_RENCANA = TO_DATE ('$tgl', 'dd-mm-yyyy')  $reg $comp
-														GROUP BY thp.CETAK_DATE,tdrp.ID_BA_AFD_BLOK,NAMA_BA,thrp.TANGGAL_RENCANA,thrp.NIK_KERANI_BUAH,thrp.NIK_MANDOR,JOB_CODE,EMPLOYEE_NAME,thp.NO_BCC,comp.COMP_CODE,comp.COMP_NAME
-													) head  
-												LEFT JOIN MOBILE_INSPECTION.TR_EBCC_COMPARE@proddb_link compare ON compare.EBCC_NO_BCC = head.NO_BCC 
-												LEFT JOIN EBCC.T_APPROVAL_CETAK_LHM@proddb_link approval_em ON approval_em.BA = head.WERKS AND approval_em.AFDELING = head.AFD AND TRUNC(approval_em.TANGGAL_EBCC) = TRUNC(head.TANGGAL_RENCANA)
-												GROUP BY TANGGAL_RENCANA, COMP_NAME, ID_BA,AFD,NIK_KERANI_BUAH 
-												ORDER BY COMP_NAME, ID_BA,AFD,NAME ASC
+												CASE WHEN MIN(head.CETAK_DATE) BETWEEN TRUNC(TANGGAL_RENCANA) AND TRUNC(TANGGAL_RENCANA)+1+14/24 THEN 'Sudah' ELSE 'Belum' END CETAK
+										FROM (
+												SELECT 
+													thp.NO_BCC,
+													thp.CETAK_DATE, 
+													thrp.TANGGAL_RENCANA,
+													SUBSTR(tdrp.ID_BA_AFD_BLOK,1,4) WERKS,
+													(SUBSTR(tdrp.ID_BA_AFD_BLOK,1,4) || ' - ' || NAMA_BA) ID_BA,
+													SUBSTR(tdrp.ID_BA_AFD_BLOK,5,1) AFD,
+													thrp.NIK_KERANI_BUAH,
+													thrp.NIK_MANDOR,
+													(comp.COMP_CODE || ' - ' || comp.COMP_NAME) COMP_NAME,
+													JOB_CODE,
+													(EMPLOYEE_NAME || ' - ' || thrp.NIK_KERANI_BUAH) EMPLOYEE_NAME
+												FROM EBCC.T_HASIL_PANEN@proddb_link thp 
+												left JOIN EBCC.T_HEADER_RENCANA_PANEN@proddb_link thrp ON thrp.ID_RENCANA = thp.ID_RENCANA  
+												INNER JOIN EBCC.T_DETAIL_RENCANA_PANEN@proddb_link tdrp ON tdrp.ID_RENCANA = thrp.ID_RENCANA 
+												INNER JOIN EBCC.T_BUSSINESSAREA@proddb_link tb ON tb.ID_BA = SUBSTR(tdrp.ID_BA_AFD_BLOK,1,4) 
+												INNER JOIN EBCC.T_LOG_HASIL_PANEN@proddb_link tlhp ON tlhp.ON_NO_BCC = thp.NO_BCC AND tlhp.INSERTUPDATE = 'INSERT'
+												INNER JOIN tap_dw.tm_comp@dwh_link comp ON comp.comp_code = SUBSTR(tdrp.ID_BA_AFD_BLOK,1,2)
+												INNER JOIN tap_dw.tm_employee_sap@dwh_link emp ON emp.NIK = NIK_KERANI_BUAH AND start_valid <= sysdate AND end_valid >= sysdate 
+												WHERE 
+													thrp.TANGGAL_RENCANA = TO_DATE ('$tgl', 'dd-mm-yyyy')  $reg $comp
+													GROUP BY thp.CETAK_DATE,(SUBSTR(tdrp.ID_BA_AFD_BLOK,1,4) || ' - ' || NAMA_BA),SUBSTR(tdrp.ID_BA_AFD_BLOK,1,4), SUBSTR(tdrp.ID_BA_AFD_BLOK,5,1) ,NAMA_BA,thrp.TANGGAL_RENCANA,thrp.NIK_KERANI_BUAH,thrp.NIK_MANDOR,JOB_CODE,EMPLOYEE_NAME,thp.NO_BCC,comp.COMP_CODE,comp.COMP_NAME
+											 ) head  
+										LEFT JOIN MOBILE_INSPECTION.TR_EBCC_COMPARE@proddb_link compare ON compare.EBCC_NO_BCC = head.NO_BCC 
+										LEFT JOIN EBCC.T_APPROVAL_CETAK_LHM@proddb_link approval_em ON approval_em.BA = head.WERKS AND approval_em.AFDELING = head.AFD AND TRUNC(approval_em.TANGGAL_EBCC) = TRUNC(head.TANGGAL_RENCANA)
+										GROUP BY TANGGAL_RENCANA, COMP_NAME, ID_BA,AFD 
+										ORDER BY COMP_NAME, ID_BA,AFD ASC
 		");
 		return $get;
 	}
 	
 	public function MONITORING_VALIDASI_DESKTOP($tgl,$reg,$comp) {
-		$reg = strlen($reg)<1?'':"AND comp.REGION_CODE = '$reg'";
-		$comp = strlen($comp)<1?'':"AND comp.COMP_CODE = '$comp'";
-		$get = $this->db_mobile_ins->select("SELECT 	to_char(TANGGAL_EBCC,'DD-MON') TANGGAL, 
-														(comp.comp_code || ' - ' || comp.comp_name) comp,
-														(tvd.BA_CODE || ' - ' || tvd.BA_NAME) ba,
-														afd_code afd,
-														(tvd.INSERT_USER_FULLNAME || ' - ' || tvd.INSERT_USER) pic,
-														INSERT_USER_USERROLE job,
-														to_char(MIN(INSERT_TIME),'HH:mi') mulai,
-														to_char(MAX(INSERT_TIME),'HH:mi') selesai,
-														(24* 60*(TO_DATE(TO_CHAR(MAX(INSERT_TIME), 'YYYY-MM-DD hh24:mi'), 'YYYY-MM-DD hh24:mi') - TO_DATE(TO_CHAR(MIN(INSERT_TIME), 'YYYY-MM-DD hh24:mi'), 'YYYY-MM-DD hh24:mi'))) durasi,
-														COUNT(NO_BCC) BCC
-												FROM MOBILE_INSPECTION.TR_VALIDASI_DETAIL@proddb_link tvd  
-												INNER JOIN	tap_dw.tm_comp@dwh_link comp
-												ON comp.comp_code = SUBSTR( tvd.BA_CODE, 1,2 )
-												WHERE tvd.DATA_SOURCE IS NULL AND
-											    	  TANGGAL_EBCC = TO_DATE ('$tgl', 'dd-mm-yyyy')  $reg $comp
-												GROUP BY TANGGAL_EBCC,comp.comp_code,comp.comp_name,tvd.BA_CODE,tvd.BA_NAME,afd_code,tvd.INSERT_USER_FULLNAME,tvd.INSERT_USER,INSERT_USER_USERROLE
-												ORDER BY comp.comp_code,tvd.BA_CODE,afd_code,tvd.INSERT_USER_FULLNAME ASC
+		$reg = strlen($reg)<1?'':"WHERE comp.REGION_CODE = '$reg'";
+		$comp = strlen($comp)<1?'':"WHERE COMP.ID_CC = '$comp'";
+		$get = $this->db_mobile_ins->select("SELECT to_char(TGL_PANEN,'DD-MON-YYYY') TANGGAL, (comp.comp_code || ' - ' || comp.comp_name) comp, head.BA, head.AFD_PANEN AFD,COUNT(DISTINCT head.NIK_MANDOR) MANDOR, 
+											(tvd.INSERT_USER_FULLNAME || ' - ' || tvd.INSERT_USER) pic,
+											INSERT_USER_USERROLE job,
+											to_char(MIN(tvd.INSERT_TIME),'HH:mi') mulai,
+											to_char(MAX(tvd.INSERT_TIME),'HH:mi') selesai,
+											(24* 60*(TO_DATE(TO_CHAR(MAX(tvd.INSERT_TIME), 'YYYY-MM-DD hh24:mi'), 'YYYY-MM-DD hh24:mi') - TO_DATE(TO_CHAR(MIN(tvd.INSERT_TIME), 'YYYY-MM-DD hh24:mi'), 'YYYY-MM-DD hh24:mi'))) durasi,
+											COUNT(head.NO_BCC) BCC
+											FROM (
+													SELECT 	THRP.TANGGAL_RENCANA as TGL_PANEN,
+															COMP.ID_CC,
+															COMP.ID_CC || ' - ' || COMP.COMP_NAME as COMP,
+															BA.ID_BA || ' - ' || NAMA_BA as BA,
+															AFD.ID_AFD as AFD_PANEN,
+															EMP.EMP_NAME || ' - ' || THRP.NIK_KERANI_BUAH as PIC,
+															EMP.JOB_CODE as JABATAN,
+															THRP.NIK_MANDOR,
+															TDRP.ID_BA_AFD_BLOK,
+															THP.NO_TPH,
+															THP.NO_BCC,
+															THP.KODE_DELIVERY_TICKET
+													FROM(
+														SELECT *
+														FROM EBCC.T_HEADER_RENCANA_PANEN@proddb_link 
+														/* FILTER TANGGAL DISINI */
+														WHERE TANGGAL_RENCANA = TO_DATE ('$tgl', 'dd-mm-yyyy')
+													) THRP
+													INNER JOIN EBCC.T_DETAIL_RENCANA_PANEN@proddb_link TDRP
+														ON TDRP.ID_RENCANA = THRP. ID_RENCANA
+													INNER JOIN EBCC.T_HASIL_PANEN@proddb_link THP
+														ON THP.ID_RENCANA = TDRP.ID_RENCANA
+														AND THP.NO_REKAP_BCC = TDRP.NO_REKAP_BCC
+													LEFT JOIN EBCC.T_BLOK@proddb_link BLK
+														ON BLK.ID_BA_AFD_BLOK = TDRP.ID_BA_AFD_BLOK
+													LEFT JOIN EBCC.T_AFDELING@proddb_link AFD
+														ON AFD.ID_BA_AFD = BLK.ID_BA_AFD
+													LEFT JOIN EBCC.T_BUSSINESSAREA@proddb_link BA
+														ON BA.ID_BA = AFD.ID_BA
+													LEFT JOIN EBCC.T_COMPANYCODE@proddb_link COMP
+														ON COMP.ID_CC = BA.ID_CC
+													LEFT JOIN EBCC.T_EMPLOYEE@proddb_link EMP
+														ON EMP.NIK = THRP.NIK_KERANI_BUAH
+													$comp
+													/* FILTER LOKASI DISINI */
+													--WHERE BA.ID_BA = '2121' AND AFD.ID_AFD = 'C' AND THRP.NIK_KERANI_BUAH = '21/2121/0500/214'
+													GROUP BY THRP.TANGGAL_RENCANA,
+															COMP.ID_CC,
+															COMP.ID_CC || ' - ' || COMP.COMP_NAME,
+															BA.ID_BA || ' - ' || NAMA_BA,
+															AFD.ID_AFD,
+															THRP.NIK_KERANI_BUAH,
+															EMP.EMP_NAME, 
+															EMP.JOB_CODE,
+															THRP.NIK_MANDOR,
+															TDRP.ID_BA_AFD_BLOK,
+															THP.NO_TPH,
+															THP.NO_BCC,
+															THP.KODE_DELIVERY_TICKET
+												) head 
+											LEFT JOIN tap_dw.tm_comp@dwh_link comp ON comp.comp_code = head.ID_CC
+											LEFT JOIN MOBILE_INSPECTION.TR_VALIDASI_DETAIL@proddb_link tvd  
+											ON tvd.NO_BCC = head.NO_BCC
+											AND tvd.DATA_SOURCE IS NULL
+											$reg
+											GROUP BY TGL_PANEN, COMP, BA,AFD_PANEN, (comp.comp_code || ' - ' || comp.comp_name),
+											(tvd.INSERT_USER_FULLNAME || ' - ' || tvd.INSERT_USER), INSERT_USER_USERROLE
+											ORDER BY 1,2,3,4 ASC
 		");
 		return $get;
 	}

@@ -116,6 +116,7 @@ class ValidationController extends Controller {
                                                                GROUP BY TANGGAL
                                                                ORDER BY TANGGAL DESC FETCH NEXT 1 ROWS ONLY");
       $data['last_work_daily'] = isset($last_work_daily[0])?$last_work_daily[0]->diff:'-1';
+      $data['last_work_daily'] = '-7';
       return view( 'validasi.listheader', $data );
    }
 

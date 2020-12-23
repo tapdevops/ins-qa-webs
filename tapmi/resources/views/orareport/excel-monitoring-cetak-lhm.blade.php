@@ -2,7 +2,7 @@
 <html>
 <table>
 	<tr>
-		<th colspan="10">MONITORING SYNC MI</th>
+		<th colspan="10">MONITORING CETAK LHM</th>
 	</tr>
 	<tr>
 		<td colspan="10">REGION : {{ $region }}</td>

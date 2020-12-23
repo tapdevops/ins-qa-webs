@@ -630,6 +630,21 @@ class ReportOracleController extends Controller {
 			// dd();
 		}
 
+		# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+		# REPORT REGISTRASI THP
+		# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+		else if ( $REPORT_TYPE == 'REGISTRASI_THP' ) {
+			$url_region_data = APISetup::ins_rest_client('GET', $this->url_api_ins_msa_hectarestatement . '/api/v2.2/tph' );
+			$results['data'] = $url_region_data['data'];
+			$results['date'] = date('d M Y');
+			$file_name = 'Registrasi TPH - '.date( 'd M Y');
+			$results['sheet_name'] = 'Registrasi TPH';
+			$results['view'] = 'orareport.excel-registrasi-tph';
+
+			// return view( 'orareport.excel-pencapaian-inspeksi', $results );
+			// dd();
+		}
+
 		if( $file_name && $REPORT_TYPE != 'INSPEKSI' AND $REPORT_TYPE != 'EBCC_COMPARE_ESTATE' AND $REPORT_TYPE != 'EBCC_COMPARE_MILL') {
 			
 			Excel::create( $file_name, function( $excel ) use ( $results ) {

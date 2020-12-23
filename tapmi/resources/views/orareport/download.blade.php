@@ -48,6 +48,8 @@
 					<option value="MONITORING_SYNC_MI">MONTORING SYNC MI</option>
 					<option value="MONITORING_CETAK_LHM">MONITORING CETAK LHM</option>
 					<option value="MONITORING_VALIDASI_DESKTOP">MONITORING VALIDASI DESKTOP</option>
+					<option value="VALIDASI_EBCC_COMPARE_EHARVESTING">VALIDASI EBCC COMPARE EHARVESTING</option>
+					<option value="REGISTRASI_THP">REGISTRASI THP</option>
 				</select>
 			</div>
 		</div>
@@ -352,6 +354,28 @@
 				$("#report-hs-afd").hide();
 				$("#report-hs-block").hide();
 				break;	
+			case 'VALIDASI_EBCC_COMPARE_EHARVESTING':
+				$("#report-date-month").hide();
+				$("#report-date-full").show();
+				$("#report-start-date").show();
+				$("#report-end-date").hide();
+				$("#report-hs-region").show();
+				$("#report-hs-comp").show();
+				$("#report-hs-est").hide();
+				$("#report-hs-afd").hide();
+				$("#report-hs-block").hide();
+				break;	
+			case 'REGISTRASI_THP':
+				$("#report-date-month").hide();
+				$("#report-date-full").hide();
+				$("#report-start-date").hide();
+				$("#report-end-date").hide();
+				$("#report-hs-region").hide();
+				$("#report-hs-comp").hide();
+				$("#report-hs-est").hide();
+				$("#report-hs-afd").hide();
+				$("#report-hs-block").hide();
+				break;	
 			default:	
 				$("#report-date-month").hide();
 				$("#report-date-full").show();
@@ -453,7 +477,7 @@
 			}
 			
 			if ($("#report-select").val() != 'CLASS_BLOCK_AFD_ESTATE' && $("#report-select").val() != 'POINT_BULANAN' && $("#report-select").val() != 'PENCAPAIAN_INSPEKSI') {
-				if ($("#report-start-date").val() != '' && $("#report-end-date").val() != '') {
+				if (($("#report-start-date").val() != '' && $("#report-end-date").val() != '') || $("#report-select").val() == 'REGISTRASI_THP') {
 					next = true;
 				} else {
 					toastr.error("Periksa kembali inputan tanggal anda.", "Validasi Gagal!");
