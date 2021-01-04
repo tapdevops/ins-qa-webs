@@ -184,29 +184,32 @@ class ValidationController extends Controller {
                 'insert_user_userrole' => $value['val_jabatan_validator']
               ]);
   
+            // NOTE : DISABLE INSERT TO EBCC 2020-01-04
               // INSERT LOG TO EBCC
-              if(substr($value['val_jabatan_validator'],0,7)=='ASISTEN')
-              {
-                 $this->db_ebcc->table('T_VALIDASI')->insert([
-                    'TANGGAL_EBCC'=>$value['val_date_time'],
-                    'NO_BCC'=>$value['ebcc_no_bcc'],
-                    'TANGGAL_VALIDASI' => date('Y-m-d H:i:s'),
-                    'ROLES' => $value['val_jabatan_validator'],
-                    'NIK' => $value['val_nik_validator'],
-                    'NAMA' => $value['val_nama_validator'],
-                    'NIK_KRANI_BUAH' => $value['ebcc_nik_kerani_buah'],
-                    'NIK_MANDOR' => $value['ebcc_nik_mandor']
-                 ]);
-              }
-              $check_kabun_validation = $this->db_ebcc->table('T_VALIDASI')->
-                                                        where(['NO_BCC'=>$value['ebcc_no_bcc']])->
-                                                        whereIn('ROLES',[ 'KEPALA KEBUN',
-                                                                          'KEPALA_KEBUN',
-                                                                          'ASISTEN KEPALA',
-                                                                          'ASISTEN_KEPALA',
-                                                                          'EM',
-                                                                          'SEM GM',
-                                                                          'SENIOR ESTATE MANAGER'])->first();
+            //   if(substr($value['val_jabatan_validator'],0,7)=='ASISTEN')
+            //   {
+            //      $this->db_ebcc->table('T_VALIDASI')->insert([
+            //         'TANGGAL_EBCC'=>$value['val_date_time'],
+            //         'NO_BCC'=>$value['ebcc_no_bcc'],
+            //         'TANGGAL_VALIDASI' => date('Y-m-d H:i:s'),
+            //         'ROLES' => $value['val_jabatan_validator'],
+            //         'NIK' => $value['val_nik_validator'],
+            //         'NAMA' => $value['val_nama_validator'],
+            //         'NIK_KRANI_BUAH' => $value['ebcc_nik_kerani_buah'],
+            //         'NIK_MANDOR' => $value['ebcc_nik_mandor']
+            //      ]);
+            //   }
+            //   $check_kabun_validation = $this->db_ebcc->table('T_VALIDASI')->
+            //                                             where(['NO_BCC'=>$value['ebcc_no_bcc']])->
+            //                                             whereIn('ROLES',[ 'KEPALA KEBUN',
+            //                                                               'KEPALA_KEBUN',
+            //                                                               'ASISTEN KEPALA',
+            //                                                               'ASISTEN_KEPALA',
+            //                                                               'EM',
+            //                                                               'SEM GM',
+            //                                                               'SENIOR ESTATE MANAGER'])->first();
+
+
             // NOTE : DISABLE REPLACE DATA PANEN EBCC 2020-10-12
               // UPDATE BCC HASIL PANEN KUALITAS IF KABUN NEVER VALIDATE
             //   if(!$check_kabun_validation)
