@@ -684,8 +684,8 @@ class ReportOracleController extends Controller {
 
 			$url_region_data = APISetup::ins_rest_client('GET', $this->url_api_ins_msa_hectarestatement . '/api/v2.2/tph',$filter);
 			$results['data'] = $url_region_data['data'];
-			$results['date'] = date('d M Y');
-			$file_name = 'Registrasi TPH - '.date( 'd M Y');
+			$results['date'] = date('d M Y',( strtotime ( $START_DATE)));
+			$file_name = 'Registrasi TPH - '.date( 'd M Y',( strtotime ( $START_DATE)));
 			$results['sheet_name'] = 'Registrasi TPH';
 			$results['view'] = 'orareport.excel-registrasi-tph';
 
