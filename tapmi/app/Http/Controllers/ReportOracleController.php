@@ -521,10 +521,10 @@ class ReportOracleController extends Controller {
 				$region_name = $reg->region_name;
 			}
 			$results['region'] = $region_name;
-			$company = $this->db_mobile_ins->select("SELECT COMP_NAME FROM tap_dw.tm_comp@dwh_link WHERE COMP_CODE = '$REGION_CODE'");
+			$company = $this->db_mobile_ins->select("SELECT COMP_NAME FROM tap_dw.tm_comp@dwh_link WHERE COMP_CODE = '$COMP_CODE'");
 			$company_name='ALL';
 			foreach ($company as $reg) {
-				$company_name = $reg->company_name;
+				$company_name = $reg->comp_name;
 			}
 			$results['company'] = $company_name;
 			$results['data'] = json_decode( json_encode( $results['data'] ), true );
@@ -552,10 +552,10 @@ class ReportOracleController extends Controller {
 				$region_name = $reg->region_name;
 			}
 			$results['region'] = $region_name;
-			$company = $this->db_mobile_ins->select("SELECT COMP_NAME FROM tap_dw.tm_comp@dwh_link WHERE COMP_CODE = '$REGION_CODE'");
+			$company = $this->db_mobile_ins->select("SELECT COMP_NAME FROM tap_dw.tm_comp@dwh_link WHERE COMP_CODE = '$COMP_CODE'");
 			$company_name='ALL';
 			foreach ($company as $reg) {
-				$company_name = $reg->company_name;
+				$company_name = $reg->comp_name;
 			}
 			$results['company'] = $company_name;
 			$results['data'] = json_decode( json_encode( $results['data'] ), true );
@@ -583,10 +583,10 @@ class ReportOracleController extends Controller {
 				$region_name = $reg->region_name;
 			}
 			$results['region'] = $region_name;
-			$company = $this->db_mobile_ins->select("SELECT COMP_NAME FROM tap_dw.tm_comp@dwh_link WHERE COMP_CODE = '$REGION_CODE'");
+			$company = $this->db_mobile_ins->select("SELECT COMP_NAME FROM tap_dw.tm_comp@dwh_link WHERE COMP_CODE = '$COMP_CODE'");
 			$company_name='ALL';
 			foreach ($company as $reg) {
-				$company_name = $reg->company_name;
+				$company_name = $reg->comp_name;
 			}
 			$results['company'] = $company_name;
 			$results['data'] = json_decode( json_encode( $results['data'] ), true );
@@ -614,10 +614,10 @@ class ReportOracleController extends Controller {
 				$region_name = $reg->region_name;
 			}
 			$results['region'] = $region_name;
-			$company = $this->db_mobile_ins->select("SELECT COMP_NAME FROM tap_dw.tm_comp@dwh_link WHERE COMP_CODE = '$REGION_CODE'");
+			$company = $this->db_mobile_ins->select("SELECT COMP_NAME FROM tap_dw.tm_comp@dwh_link WHERE COMP_CODE = '$COMP_CODE'");
 			$company_name='ALL';
 			foreach ($company as $reg) {
-				$company_name = $reg->company_name;
+				$company_name = $reg->comp_name;
 			}
 			$results['company'] = $company_name;
 			$results['data'] = json_decode( json_encode( $results['data'] ), true );
@@ -631,10 +631,58 @@ class ReportOracleController extends Controller {
 		}
 
 		# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-		# REPORT REGISTRASI THP
+		# REPORT REGISTRASI_TPH
 		# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-		else if ( $REPORT_TYPE == 'REGISTRASI_THP' ) {
-			$url_region_data = APISetup::ins_rest_client('GET', $this->url_api_ins_msa_hectarestatement . '/api/v2.2/tph' );
+		else if ( $REPORT_TYPE == 'REGISTRASI_TPH' ) {
+			
+			$region = $this->db_mobile_ins->select("SELECT REGION_NAME FROM tap_dw.tm_region@dwh_link WHERE REGION_CODE = '$REGION_CODE'");
+			$region_name='ALL';
+			foreach ($region as $reg) {
+				$region_name = $reg->region_name;
+			}
+			$results['region'] = $region_name;
+			$company = $this->db_mobile_ins->select("SELECT COMP_NAME,REGION_CODE,COMP_CODE FROM tap_dw.tm_comp@dwh_link WHERE COMP_CODE = '$COMP_CODE'");
+			$company_name='ALL';
+			foreach ($company as $reg) {
+				$company_name = $reg->comp_name;
+			}
+			$results['company'] = $company_name;
+			$BA_NAME = $this->db_mobile_ins->select("select est_name from tap_dw.tm_est@proddw_link where werks = '$BA_CODE'");
+			$EST_NAME='ALL';
+			foreach ($BA_NAME as $ba) {
+				$EST_NAME = $ba->est_name;
+			}
+			$company_region = $this->db_mobile_ins->select("SELECT COMP_NAME,REGION_CODE,COMP_CODE FROM tap_dw.tm_comp@dwh_link");
+			$list_company_region_code = [];
+			foreach ($company_region as $reg) {
+				if($REGION_CODE!=null)
+				{
+					if($REGION_CODE==$reg->region_code && $COMP_CODE==null)
+					{
+						$list_company_region_code[$reg->comp_code] = $reg->region_code;
+					}
+				}
+				if($COMP_CODE!=null)
+				{
+					if($COMP_CODE==$reg->comp_code)
+					{
+						$list_company_region_code[$reg->comp_code] = $reg->region_code;
+					}
+				}
+			}
+			$results['list_company_region_code'] = $list_company_region_code;
+			$results['ba'] = $EST_NAME;
+			$results['afd'] = $AFD_CODE!=null?$AFD_CODE:'ALL';
+			$results['block'] = $BLOCK_CODE!=null?$BLOCK_CODE:'ALL';
+			$filter['INSERT_TIME_FROM'] = intval(date('Ymd000000',( strtotime ( $START_DATE))));
+			$filter['INSERT_TIME_TO'] = intval(date('Ymd999999',( strtotime ( $START_DATE))));
+			if($REGION_CODE!=null){ $filter['REGION_CODE'] = $REGION_CODE; }
+			if($COMP_CODE!=null){ $filter['COMP_CODE'] = $COMP_CODE; }
+			if($BA_CODE!=null){ $filter['WERKS'] = $BA_CODE; }
+			if($AFD_CODE!=null){ $filter['AFD_CODE'] = substr($AFD_CODE,-1); }
+			if($BLOCK_CODE!=null){ $filter['BLOCK_CODE'] = substr($BLOCK_CODE,-3); }
+
+			$url_region_data = APISetup::ins_rest_client('GET', $this->url_api_ins_msa_hectarestatement . '/api/v2.2/tph',$filter);
 			$results['data'] = $url_region_data['data'];
 			$results['date'] = date('d M Y');
 			$file_name = 'Registrasi TPH - '.date( 'd M Y');

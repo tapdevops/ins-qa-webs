@@ -49,7 +49,7 @@
 					<option value="MONITORING_CETAK_LHM">MONITORING CETAK LHM</option>
 					<option value="MONITORING_VALIDASI_DESKTOP">MONITORING VALIDASI DESKTOP</option>
 					<option value="VALIDASI_EBCC_COMPARE_EHARVESTING">VALIDASI EBCC COMPARE EHARVESTING</option>
-					<option value="REGISTRASI_THP">REGISTRASI THP</option>
+					<option value="REGISTRASI_TPH">REGISTRASI TPH</option>
 				</select>
 			</div>
 		</div>
@@ -365,16 +365,16 @@
 				$("#report-hs-afd").hide();
 				$("#report-hs-block").hide();
 				break;	
-			case 'REGISTRASI_THP':
+			case 'REGISTRASI_TPH':
 				$("#report-date-month").hide();
-				$("#report-date-full").hide();
-				$("#report-start-date").hide();
+				$("#report-date-full").show();
+				$("#report-start-date").show();
 				$("#report-end-date").hide();
-				$("#report-hs-region").hide();
-				$("#report-hs-comp").hide();
-				$("#report-hs-est").hide();
-				$("#report-hs-afd").hide();
-				$("#report-hs-block").hide();
+				$("#report-hs-region").show();
+				$("#report-hs-comp").show();
+				$("#report-hs-est").show();
+				$("#report-hs-afd").show();
+				$("#report-hs-block").show();
 				break;	
 			default:	
 				$("#report-date-month").hide();

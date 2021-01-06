@@ -97,7 +97,8 @@ class APISetup extends Model
 		switch ($method) {
 			case 'GET':
 				$init = array(
-					"headers" => $init_headers
+					"headers" => $init_headers,
+					"json" => $init_body
 				);
 				break;
 			case 'POST':
