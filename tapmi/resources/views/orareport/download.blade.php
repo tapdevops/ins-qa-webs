@@ -354,17 +354,17 @@
 				$("#report-hs-afd").hide();
 				$("#report-hs-block").hide();
 				break;	
-			case 'VALIDASI_EBCC_COMPARE_EHARVESTING':
-				$("#report-date-month").hide();
-				$("#report-date-full").show();
-				$("#report-start-date").show();
-				$("#report-end-date").hide();
-				$("#report-hs-region").show();
-				$("#report-hs-comp").show();
-				$("#report-hs-est").hide();
-				$("#report-hs-afd").hide();
-				$("#report-hs-block").hide();
-				break;	
+			// case 'VALIDASI_EBCC_COMPARE_EHARVESTING':
+			// 	$("#report-date-month").hide();
+			// 	$("#report-date-full").show();
+			// 	$("#report-start-date").show();
+			// 	$("#report-end-date").hide();
+			// 	$("#report-hs-region").show();
+			// 	$("#report-hs-comp").show();
+			// 	$("#report-hs-est").hide();
+			// 	$("#report-hs-afd").hide();
+			// 	$("#report-hs-block").hide();
+			// 	break;	
 			case 'REGISTRASI_TPH':
 				$("#report-date-month").hide();
 				$("#report-date-full").show();
