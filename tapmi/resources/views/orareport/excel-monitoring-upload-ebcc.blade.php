@@ -74,8 +74,8 @@
 					@endisset
 				</td>
 				<td>
-					@isset($dt['count1'])
-						{{ $dt['count1']+$dt['count2'] }}
+					@isset($dt['total'])
+						{{ $dt['total'] }}
 					@endisset
 				</td>
 			</tr>
