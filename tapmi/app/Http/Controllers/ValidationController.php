@@ -49,7 +49,40 @@ class ValidationController extends Controller {
     # -------------------------------------------------------------------------------------
    
    public function index(Request $request,$tgl = null){
-      
+      //GET BA USING SESSION
+      $substr_id_ba_afd_blok = 5;
+      $ba_afd_code = explode(",",session('LOCATION_CODE'));
+      $code = implode("','", $ba_afd_code);
+      if(session('REFFERENCE_ROLE')=='COMP_CODE')
+      {
+         $substr_id_ba_afd_blok = 2;
+      }
+      if(session('REFFERENCE_ROLE')=='BA_CODE')
+      {
+         $substr_id_ba_afd_blok = 4;
+      }
+      if(session('REFFERENCE_ROLE')=='REGION_CODE')
+      {
+         $substr_id_ba_afd_blok = 2;
+      }
+      $data['ba_data'] = $this->db_ebcc->table('T_DETAIL_RENCANA_PANEN')
+                                       ->select(DB::raw("SUBSTR (id_ba_afd_blok, 1, 5) AS ba"))
+                                       ->whereRaw("SUBSTR (id_ba_afd_blok, 1,$substr_id_ba_afd_blok) IN('$code')")
+                                       ->groupBy(DB::raw("SUBSTR (id_ba_afd_blok, 1, 5)"))
+                                       ->orderBy('ba')->get();
+      // SET FIRST BA
+      session()->put(['werks'=>substr($data['ba_data'][0]->ba,0,4),'afd'=>'']);
+      // SET ALL AFDELING
+      $ba_afd_data = array();
+      foreach ($data['ba_data'] as $key) {
+         if(!isset($ba_afd_data[substr($key->ba,0,4)])){
+            $ba_afd_data[substr($key->ba,0,4)] = "'".substr($key->ba,-1)."'";
+         }else{
+            $ba_afd_data[substr($key->ba,0,4)] .= ",'".substr($key->ba,-1)."'";
+         }
+      }
+      session()->put(['ba_afd_data'=>$ba_afd_data]);
+
       $data['nodata'] = $request->nodata?1:0;
       if(empty($tgl)){
          $day =  date("Y-m-d", strtotime("yesterday"));
@@ -88,26 +121,6 @@ class ValidationController extends Controller {
          $status_validasi = 1;
       }
       $data['status'] = $status_validasi;
-      $substr_id_ba_afd_blok = 5;
-      $ba_afd_code = explode(",",session('LOCATION_CODE'));
-      $code = implode("','", $ba_afd_code);
-      if(session('REFFERENCE_ROLE')=='COMP_CODE')
-      {
-         $substr_id_ba_afd_blok = 2;
-      }
-      if(session('REFFERENCE_ROLE')=='BA_CODE')
-      {
-         $substr_id_ba_afd_blok = 4;
-      }
-      if(session('REFFERENCE_ROLE')=='REGION_CODE')
-      {
-         $substr_id_ba_afd_blok = 2;
-      }
-      $data['ba_data'] = $this->db_ebcc->table('T_DETAIL_RENCANA_PANEN')
-                                       ->select(DB::raw("SUBSTR (id_ba_afd_blok, 1, 5) AS ba"))
-                                       ->whereRaw("SUBSTR (id_ba_afd_blok, 1,$substr_id_ba_afd_blok) IN('$code')")
-                                       ->groupBy(DB::raw("SUBSTR (id_ba_afd_blok, 1, 5)"))
-                                       ->orderBy('ba')->get();
       // dd(session()->all());
       $last_work_daily = $this->db_mobile_ins->select("SELECT trunc(TANGGAL) - trunc(sysdate) AS DIFF,MIN(FLAG_HK),MIN(NAMA_HARI) 
                                                                FROM TM_TIME_DAILY@DWH_LINK 

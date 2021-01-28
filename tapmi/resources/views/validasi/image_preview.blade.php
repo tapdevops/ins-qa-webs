@@ -29,12 +29,8 @@ input[type="radio"]{
   color: black;
 }
 
-.btnselect:focus {
-  background-color:#4d9925;
-  color: white;
-}
-.btnselect:focus:active{
-  background-color:#4d9925;
+.btn_select .active{
+  background-color:#4d9925 !important;
   color: white;
 }
 
@@ -47,14 +43,13 @@ tr
 }
 
 #container {
-  width: 620px;
+  width: 500px;
   height: 500px;
   overflow: hidden;
 }
 #container.rotate90,
 #container.rotate270 {
   width: 500px;
-  height: 620px
 }
 #image {
   transform-origin: top left;
@@ -153,7 +148,14 @@ tr
 						}
 						else 
 						{
-							$img = 'http://tap-motion.tap-agri.com/ebcc/array/uploads/'.$img;
+							if($q['primary_source']=='EBCC')
+							{
+								$img = 'http://tap-motion.tap-agri.com/ebcc/array/uploads/'.$img;
+							}
+							else 
+							{
+								$img = $q['picture_name'];
+							}
 						}
 							if(isset($_GET['image']))
 							{
@@ -165,7 +167,7 @@ tr
 					</div>
 					<!-- <img onerror="this.onerror=null;this.src='https://webhostingmedia.net/wp-content/uploads/2018/01/http-error-404-not-found.png'"  src="http://10.20.1.59/ebcc/array/uploads/{{$img}}" style="display:block;" width="80%" height="80%" > -->
 					<div id="container"  style="background-position: center center; background-repeat: no-repeat;overflow: hidden;">
-					<img onerror="this.onerror=null;this.src='http://inspectiondev.tap-agri.com/storage/notfound.jpg'"  src="{{$img}}" style="display:block;" width="80%" height="80%" id="image" >
+					<img onerror="this.onerror=null;this.src='http://inspectiondev.tap-agri.com/storage/notfound.jpg'"  src="{{$img}}" style="display:block;" width="100%" id="image" >
 					</div> 
 					
 				</div>
@@ -220,36 +222,36 @@ tr
 		<tr>
 			<td>
 				<div data-toggle="buttons">
-					<div class="row">
+					<div class="row btn_select">
 						<div class="col-md-3">
-							<button class="btn btn-radio btnselect" id="btnr">
+							<button class="btn btn-radio btnselect">
 								<input  type="radio"  name="kondisi_foto" value="Foto Tidak Muncul">Foto Tidak Muncul</button>
 						</div>
 						<div class="col-md-3">
-							<button class="btn btn-radio btnselect" id="btnr">
+							<button class="btn btn-radio btnselect">
 								<input  type="radio"  name="kondisi_foto" value="Blur">Blur</button>
 						</div>
 						<div class="col-md-3">
-							<button class="btn btn-radio btnselect" id="btnr">
+							<button class="btn btn-radio btnselect">
 								<input  type="radio"  name="kondisi_foto" value="Jauh">Jauh</button>
 						</div>
 						<div class="col-md-3">
-							<button class="btn btn-radio btnselect" id="btnr">
+							<button class="btn btn-radio btnselect">
 								<input  type="radio"  name="kondisi_foto" value="Gambar Terpotong">Gambar Terpotong</button>
 							</div>
 					</div>
 					<br>
-					<div class="row">
+					<div class="row btn_select">
 						<div class="col-md-3">
-							<button class="btn btn-radio btnselect" id="btnr">
+							<button class="btn btn-radio btnselect">
 								<input  type="radio"  name="kondisi_foto" value="Gelap/ Tidak Terlihat">Gelap/ Tidak Terlihat</button>
 						</div>
 						<div class="col-md-3">
-							<button class="btn btn-radio btnselect" id="btnr">
+							<button class="btn btn-radio btnselect">
 								<input  type="radio"  name="kondisi_foto" value="Angle Pengambilan Gambar">Angle Pengambilan Gambar</button>
 						</div>
 						<div class="col-md-3">
-							<button class="btn btn-radio btnselect" id="btnr">
+							<button class="btn btn-radio btnselect">
 								<input  type="radio"  name="kondisi_foto" value="Penyusunan TBS tidak sesuai SOP">Penyusunan TBS tidak sesuai SOP</button>
 						</div>
 						</div>
@@ -310,9 +312,19 @@ tr
 		$('.fields').val('');
 		// $('#total_jjg').val('');
 	});
+   $('.btnselect').click(function(){
+		$('.fields').removeAttr('required');
+		$('.fields').val('');
+		// $('#total_jjg').val('');
+	});
 
 	$("input").change(function () {
 		$("input.fields").prop('required',true);
+		$(".btnselect").removeClass('active');
+	});
+	$("input").keyup(function () {
+		$("input.fields").prop('required',true);
+		$(".btnselect").removeClass('active');
 	});
 
 	

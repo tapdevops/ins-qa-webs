@@ -21,9 +21,8 @@
 						}
 					?>
 					<select name="werks" class="form-control m-input" id="werks">
-						<option value="" selected="">Semua</option>
 						@foreach($werks_data as $key)
-						<option value="{{$key}}">{{$key}}</option>
+						<option value="{{$key}}" {{session('werks')==$key?'selected':''}}>{{$key}}</option>
 						@endforeach
 					</select>
 					<select name="afd" class="form-control m-input" id="afd">
@@ -231,6 +230,7 @@
         $('#afd .'+val).show();
         $("#afd").val($("#afd ."+$("#werks").val()+":first").val());
     });
+ 	$('#afd .'+$("#werks").val()).show();
 	// $(document).ready(function () {
 	// 	$('#generalSearch').datepicker().on('click', function(){
 	// 			var selected = $(this).val();
