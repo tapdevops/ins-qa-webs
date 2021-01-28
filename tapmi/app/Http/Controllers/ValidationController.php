@@ -71,7 +71,9 @@ class ValidationController extends Controller {
                                        ->groupBy(DB::raw("SUBSTR (id_ba_afd_blok, 1, 5)"))
                                        ->orderBy('ba')->get();
       // SET FIRST BA
-      session()->put(['werks'=>substr($data['ba_data'][0]->ba,0,4),'afd'=>'']);
+      if(!session('werks')){
+         session()->put(['werks'=>substr($data['ba_data'][0]->ba,0,4),'afd'=>'']);
+      }
       // SET ALL AFDELING
       $ba_afd_data = array();
       foreach ($data['ba_data'] as $key) {
