@@ -481,9 +481,12 @@ class ValidationController extends Controller {
             $invalid = 'TIDAK BISA';
             $count_not_valid = TRValidasiDetail::where('id_validasi', $request->id_validasi)->where('kondisi_foto','like',$invalid.'%')->get();
             $count = count($count_not_valid);
-            if($foto!="BISA DIVALIDASI" && $count==9){
-               $jml_validate++;
+            if($foto!="BISA DIVALIDASI" && $count==0){
+               $target = TMParameter::select('PARAMETER_DESC')->where('PARAMETER_NAME','TARGET_VALIDASI')->get();
+               $target_validasi = intval($target[0]->parameter_desc);
+               $jml_validate = $target_validasi;
             }
+            
             $jmlh['jumlah_ebcc_validated'] = $jml_validate;
             // $result1 =TRValidasiHeader::firstOrCreate($request->only('id_validasi','last_update')+$jmlh);     
             // dd($request);       
