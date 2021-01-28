@@ -476,7 +476,14 @@ class ValidationController extends Controller {
                 $jml_validate = $jml - 1;
                 // $jml_validate = $jml;
             }
-            
+
+            // SKIP VALIDASI JIKA SUDAH 10X TIDAK BISA DIVALIDASI
+            $invalid = 'TIDAK BISA';
+            $count_not_valid = TRValidasiDetail::where('id_validasi', $request->id_validasi)->where('kondisi_foto','like',$invalid.'%')->get();
+            $count = count($count_not_valid);
+            if($foto!="BISA DIVALIDASI" && $count==9){
+               $jml_validate++;
+            }
             $jmlh['jumlah_ebcc_validated'] = $jml_validate;
             // $result1 =TRValidasiHeader::firstOrCreate($request->only('id_validasi','last_update')+$jmlh);     
             // dd($request);       
