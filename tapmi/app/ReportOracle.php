@@ -123,7 +123,7 @@ class ReportOracle extends Model{
 									   land_use.spmon AS val_spmon,
 									   subblock.block_name AS val_block_name,
 									   ebcc_header.lat_tph AS val_lat_tph,
-									   ebcc_header.lat_tph AS val_lon_tph
+									   ebcc_header.lon_tph AS val_lon_tph
 								  FROM mobile_inspection.tr_ebcc_validation_h ebcc_header
 									   LEFT JOIN mobile_inspection.tm_user_auth user_auth
 										  ON user_auth.user_auth_code = (CASE WHEN LENGTH (ebcc_header.insert_user) = 3 THEN '0' || ebcc_header.insert_user ELSE ebcc_header.insert_user END)
@@ -195,7 +195,7 @@ class ReportOracle extends Model{
 											FROM tap_dw.t_kualitas_panen@dwh_link kualitas LEFT JOIN mobile_inspection.tr_ebcc_validation_d ebcc_detail
 													ON ebcc_detail.id_kualitas = kualitas.id_kualitas
 										   WHERE kualitas.active_status = 'YES'
-										ORDER BY kualitas.group_kualitas ASC, kualitas.uom ASC, kualitas.nama_kualitas ASC) PIVOT (SUM (jumlah)
+										) PIVOT (SUM (jumlah)
 																															FOR idk
 																															IN ('1' AS jml_1,
 																															'2' AS jml_2,
@@ -216,7 +216,7 @@ class ReportOracle extends Model{
 								 WHERE ebcc_validation_code IS NOT NULL) detail
 						ON header.val_ebcc_code = detail.ebcc_validation_code
 					 LEFT JOIN (SELECT *
-								  FROM ebcc.tm_status_tph
+								  FROM mobile_inspection.tm_status_tph
 								 WHERE status = 'INACTIVE') tph
 						ON     header.val_werks = tph.werks
 						   AND header.val_afd_code = tph.afd_code
@@ -491,6 +491,7 @@ class ReportOracle extends Model{
 			
 			if ( $get->ebcc_no_bcc != null ) {
 				$sql_ebcc = "SELECT
+						'EBCC' source,
 						HDP.ID_RENCANA,
 						HDP.TANGGAL_RENCANA,
 						HDP.NIK_KERANI_BUAH,
@@ -536,7 +537,42 @@ class ReportOracle extends Model{
 						LEFT JOIN EBCC.T_BUSSINESSAREA TBA ON TBA.ID_BA = TA.ID_BA
 						LEFT JOIN EBCC.T_EMPLOYEE EMP_EBCC ON EMP_EBCC.NIK = HDP.NIK_KERANI_BUAH 
 					WHERE
-						HP.NO_BCC = '{$get->ebcc_no_bcc}'";
+						HP.NO_BCC = '{$get->ebcc_no_bcc}'
+						
+					UNION 
+					SELECT
+					    'EHARVESTING' source,
+						TO_CHAR(thah.TRANSACTION_TIME,'YYYYMMDD') || 
+						MAX (CASE WHEN thaud.activity_user_type = 'MANDOR' THEN thaud.user_nik ELSE NULL END ) ||
+						MAX (CASE WHEN thaud.activity_user_type = 'KRANI' THEN thaud.user_nik ELSE NULL END ) id_rencana,
+						TRUNC(thah.TRANSACTION_TIME) tanggal_rencana,
+						MAX (CASE WHEN thaud.activity_user_type = 'KRANI' THEN thaud.user_nik ELSE NULL END ) nik_kerani_buah,
+						MAX (CASE WHEN thaud.activity_user_type = 'KRANI' THEN thaud.user_fullname ELSE NULL END ) EMP_NAME,
+						thah.BLOCK_CODE ID_BA_AFD_BLOK,
+						MAX (SUBSTR(REPLACE(thah.HARVEST_ACTIVITY_CODE,'.'),1,11)) NO_REKAP_BCC,
+						thah.TPH_NAME NO_TPH,
+						MAX (REPLACE(thah.HARVEST_ACTIVITY_CODE,'.'))  NO_BCC,
+						MAX (CASE WHEN thah.TPH_REMARK IS NULL THEN 'AUTOMATIC' ELSE NULL END) STATUS_TPH,
+						MAX (TO_CHAR(ATTACHMENT)) PICTURE_NAME,
+						MAX (TO_CHAR(thah.TPH_REMARK)) KETERANGAN_QRCODE,
+                         SUM (CASE WHEN thaid.CATEGORY_CODE IN('BM','BK','MS','OR','BB','JK','BA') THEN thaid.HARVEST_ACTIVITY_ITEM_VALUE ELSE 0 END) JJG_PANEN,
+                         SUM (CASE WHEN thaid.CATEGORY_CODE = 'BM' THEN thaid.HARVEST_ACTIVITY_ITEM_VALUE ELSE 0 END) EBCC_JML_BM,
+                         SUM (CASE WHEN thaid.CATEGORY_CODE = 'BK' THEN thaid.HARVEST_ACTIVITY_ITEM_VALUE ELSE 0 END) EBCC_JML_BK,
+                         SUM (CASE WHEN thaid.CATEGORY_CODE = 'MS' THEN thaid.HARVEST_ACTIVITY_ITEM_VALUE ELSE 0 END) EBCC_JML_MS,
+                         SUM (CASE WHEN thaid.CATEGORY_CODE = 'OR' THEN thaid.HARVEST_ACTIVITY_ITEM_VALUE ELSE 0 END) EBCC_JML_OR,
+                         SUM (CASE WHEN thaid.CATEGORY_CODE = 'BB' THEN thaid.HARVEST_ACTIVITY_ITEM_VALUE ELSE 0 END) EBCC_JML_BB,
+                         SUM (CASE WHEN thaid.CATEGORY_CODE = 'JK' THEN thaid.HARVEST_ACTIVITY_ITEM_VALUE ELSE 0 END) EBCC_JML_JK,
+                         SUM (CASE WHEN thaid.CATEGORY_CODE = 'BA' THEN thaid.HARVEST_ACTIVITY_ITEM_VALUE ELSE 0 END) EBCC_JML_BA,
+                         SUM (CASE WHEN thaid.CATEGORY_CODE = 'BRD' THEN thaid.HARVEST_ACTIVITY_ITEM_VALUE ELSE 0 END) EBCC_JML_BRD
+					FROM EHARVESTING.TR_HARVEST_ACTIVITY_H thah
+                     LEFT JOIN EHARVESTING.TR_HARVEST_ACTIVITY_USER_D thaud
+                        ON thaud.HARVEST_ACTIVITY_ID = thah.ID 
+                     LEFT JOIN EHARVESTING.TR_HARVEST_ACTIVITY_ITEM_D thaid 
+                        ON thaid.HARVEST_ACTIVITY_ID = thah.ID AND thaid.HARVEST_ACTIVITY_ITEM_TYPE = 'HRV' AND CATEGORY_IS_HARVESTED = 1
+					WHERE
+						REPLACE(thah.HARVEST_ACTIVITY_CODE,'.') = '{$get->ebcc_no_bcc}'
+					GROUP BY TO_CHAR(thah.TRANSACTION_TIME,'YYYYMMDD'),TRUNC(thah.TRANSACTION_TIME),thah.BLOCK_CODE,thah.TPH_NAME,thah.HARVEST_ACTIVITY_CODE,
+	                                          thah.BLOCK_NAME,thah.BA_NAME,thah.AFDELING_NAME ";
 						
 				$query_ebcc = collect( $this->db_mobile_ins->select( $sql_ebcc ) )->first();
 				$joindata['ebcc_nik_kerani_buah'] = $query_ebcc->nik_kerani_buah;
@@ -553,7 +589,11 @@ class ReportOracle extends Model{
 				$joindata['ebcc_jjg_panen'] = $query_ebcc->jjg_panen;
 				$joindata['ebcc_status_tph'] = $query_ebcc->status_tph;
 				$joindata['ebcc_keterangan_qrcode'] = $query_ebcc->keterangan_qrcode;
-				$joindata['ebcc_picture_name'] = ( $query_ebcc->picture_name != null ? 'http://tap-motion.tap-agri.com/ebcc/array/uploads'.$query_ebcc->picture_name : url( 'assets/dummy-janjang.jpg' ) );
+				if($query_ebcc->source=='EBCC'){
+					$joindata['ebcc_picture_name'] = ( $query_ebcc->picture_name != null ? 'http://tap-motion.tap-agri.com/ebcc/array/uploads'.$query_ebcc->picture_name : url( 'assets/dummy-janjang.jpg' ) );
+				}else{
+					$joindata['ebcc_picture_name'] = ( $query_ebcc->picture_name != null ? $query_ebcc->picture_name : url( 'assets/dummy-janjang.jpg' ) );
+				}
 				$joindata['match_status'] = ( intval( $query_ebcc->jjg_panen ) == intval( $get->val_total_jjg ) ? 'MATCH' : 'NOT MATCH' );
 				$akurasi_kualitas_ms = intval( $query_ebcc->ebcc_jml_ms ) - intval( $get->val_jml_3 );
 				$joindata['akurasi_kualitas_ms'] = ( $akurasi_kualitas_ms > 0 ? $akurasi_kualitas_ms : 0 );
@@ -593,294 +633,8 @@ class ReportOracle extends Model{
 		$where2 .= ( $BA_CODE != "" && $AFD_CODE == "" ) ? " AND SUBSTR (id_ba_afd_blok, 1, 4) = '$BA_CODE'  ": "";
 		$where2 .= ( $AFD_CODE != "" && $BLOCK_CODE == "" ) ? " AND SUBSTR (id_ba_afd_blok, 1, 5) = '$AFD_CODE'  ": "";
 		$where2 .= ( $AFD_CODE != "" && $BLOCK_CODE != "" ) ? " AND id_ba_afd_blok = '$BLOCK_CODE'  ": "";
+		$where2_hrv = str_replace('id_ba_afd_blok','thah.BLOCK_CODE',$where2);
 		
-		$sql_lama_405 = "
-				SELECT header.*,
-                       NVL (detail.jml_1, 0) AS val_jml_1,
-                       NVL (detail.jml_2, 0) AS val_jml_2,
-                       NVL (detail.jml_3, 0) AS val_jml_3,
-                       NVL (detail.jml_4, 0) AS val_jml_4,
-                       NVL (detail.jml_5, 0) AS val_jml_5,
-                       NVL (detail.jml_6, 0) AS val_jml_6,
-                       NVL (detail.jml_7, 0) AS val_jml_7,
-                       NVL (detail.jml_8, 0) AS val_jml_8,
-                       NVL (detail.jml_9, 0) AS val_jml_9,
-                       NVL (detail.jml_10, 0) AS val_jml_10,
-                       NVL (detail.jml_11, 0) AS val_jml_11,
-                       NVL (detail.jml_12, 0) AS val_jml_12,
-                       NVL (detail.jml_13, 0) AS val_jml_13,
-                       NVL (detail.jml_14, 0) AS val_jml_14,
-                       NVL (detail.jml_15, 0) AS val_jml_15,
-                       NVL (detail.jml_16, 0) AS val_jml_16,
-                       (  NVL (detail.jml_1, 0)
-                        + NVL (detail.jml_2, 0)
-                        + NVL (detail.jml_3, 0)
-                        + NVL (detail.jml_4, 0)
-                        + NVL (detail.jml_6, 0)
-                        + NVL (detail.jml_15, 0)
-                        + NVL (detail.jml_16, 0))
-                          AS val_total_jjg,
-                       ebcc.jlh_ebcc ebcc_count,
-                       CASE WHEN ebcc.jlh_ebcc = 1 THEN ebcc.nik_kerani_buah END ebcc_nik_kerani_buah,
-                       CASE WHEN ebcc.jlh_ebcc = 1 THEN ebcc.nama_kerani_buah END ebcc_nama_kerani_buah,
-                       CASE WHEN ebcc.jlh_ebcc = 1 THEN ebcc.no_bcc END ebcc_no_bcc,
-                       CASE WHEN ebcc.jlh_ebcc = 1 THEN ebcc.status_tph END ebcc_status_tph,
-                       CASE WHEN ebcc.jlh_ebcc = 1 THEN ebcc.ebcc_jml_bm END ebcc_jml_bm,
-                       CASE WHEN ebcc.jlh_ebcc = 1 THEN ebcc.ebcc_jml_bk END ebcc_jml_bk,
-                       CASE WHEN ebcc.jlh_ebcc = 1 THEN ebcc.ebcc_jml_ms END ebcc_jml_ms,
-                       CASE WHEN ebcc.jlh_ebcc = 1 THEN ebcc.ebcc_jml_or END ebcc_jml_or,
-                       CASE WHEN ebcc.jlh_ebcc = 1 THEN ebcc.ebcc_jml_bb END ebcc_jml_bb,
-                       CASE WHEN ebcc.jlh_ebcc = 1 THEN ebcc.ebcc_jml_jk END ebcc_jml_jk,
-                       CASE WHEN ebcc.jlh_ebcc = 1 THEN ebcc.ebcc_jml_ba END ebcc_jml_ba,
-                       CASE WHEN ebcc.jlh_ebcc = 1 THEN ebcc.jjg_panen END ebcc_jjg_panen,
-                       DECODE (ebcc.jlh_ebcc, 1, 'MATCH', 'NOT MATCH') akurasi_sampling_ebcc,
-                       CASE
-                          WHEN ebcc.jlh_ebcc = 1
-                               AND (  NVL (detail.jml_1, 0)
-                                    + NVL (detail.jml_2, 0)
-                                    + NVL (detail.jml_3, 0)
-                                    + NVL (detail.jml_4, 0)
-                                    + NVL (detail.jml_6, 0)
-                                    + NVL (detail.jml_15, 0)
-                                    + NVL (detail.jml_16, 0)) = ebcc.jjg_panen
-                          THEN
-                             'MATCH'
-                          ELSE
-                             'NOT_MATCH'
-                       END
-                          akurasi_kuantitas,
-                       CASE
-                          WHEN ebcc.jlh_ebcc = 1
-                               AND (  NVL (detail.jml_1, 0)
-                                    + NVL (detail.jml_2, 0)
-                                    + NVL (detail.jml_3, 0)
-                                    + NVL (detail.jml_4, 0)
-                                    + NVL (detail.jml_6, 0)
-                                    + NVL (detail.jml_15, 0)
-                                    + NVL (detail.jml_16, 0)) = ebcc.jjg_panen
-                          THEN
-                             CASE
-                                WHEN NVL (detail.jml_3, 0) = NVL (ebcc.ebcc_jml_ms, 0) THEN 0
-                                ELSE ABS (NVL (detail.jml_3, 0) - NVL (ebcc.ebcc_jml_ms, 0))
-                             END
-                       END
-                          akurasi_kualitas_ms
-                  FROM (SELECT ebcc_val.val_ebcc_code,
-                               ebcc_val.val_werks,
-                               ebcc_val.val_est_name,
-                               ebcc_val.val_nik_validator,
-                               ebcc_val.val_nama_validator,
-                               ebcc_val.val_jabatan_validator,
-                               ebcc_val.val_status_tph_scan,
-                               ebcc_val.val_lat_tph,
-                               ebcc_val.val_lon_tph,
-                               ebcc_val.val_maturity_status,
-                               CASE
-                                  WHEN ebcc_val.val_alasan_manual IS NULL
-                                  THEN
-                                     ''
-                                  ELSE
-                                     CASE
-                                        WHEN ebcc_val.val_alasan_manual = '1' THEN 'QR Codenya Hilang'
-                                        WHEN ebcc_val.val_alasan_manual = '2' THEN 'QR Codenya Rusak'
-                                     END
-                               END
-                                  AS val_alasan_manual,
-                               ebcc_val.val_afd_code,
-                               ebcc_val.val_block_code,
-                               ebcc_val.val_date_time AS val_date_time,
-                               ebcc_val.val_block_name,
-                               ebcc_val.val_tph_code,
-                               ebcc_val.val_delivery_ticket
-                          FROM (SELECT ebcc_header.ebcc_validation_code AS val_ebcc_code,
-                                       est.werks AS val_werks,
-                                       est.est_name AS val_est_name,
-                                       ebcc_header.afd_code AS val_afd_code,
-                                       ebcc_header.insert_time AS val_date_time,
-                                       ebcc_header.block_code AS val_block_code,
-                                       ebcc_header.status_tph_scan AS val_status_tph_scan,
-                                       ebcc_header.alasan_manual AS val_alasan_manual,
-                                       ebcc_header.no_tph AS val_tph_code,
-                                       ebcc_header.delivery_code AS val_delivery_ticket,
-                                       user_auth.employee_nik AS val_nik_validator,
-                                       emp.employee_fullname AS val_nama_validator,
-                                       REPLACE (user_auth.user_role, '_', ' ') AS val_jabatan_validator,
-                                       land_use.maturity_status AS val_maturity_status,
-                                       land_use.spmon AS val_spmon,
-                                       subblock.block_name AS val_block_name,
-                                       ebcc_header.lat_tph AS val_lat_tph,
-                                       ebcc_header.lat_tph AS val_lon_tph
-                                  FROM mobile_inspection.tr_ebcc_validation_h ebcc_header
-                                       LEFT JOIN mobile_inspection.tm_user_auth user_auth
-                                          ON user_auth.user_auth_code =
-                                                (CASE
-                                                    WHEN LENGTH (ebcc_header.insert_user) = 3 THEN '0' || ebcc_header.insert_user
-                                                    ELSE ebcc_header.insert_user
-                                                 END)
-                                       LEFT JOIN (SELECT employee_nik,
-                                                         employee_fullname,
-                                                         employee_position,
-                                                         employee_joindate AS start_date,
-                                                         CASE
-                                                            WHEN employee_resigndate IS NULL THEN TO_DATE ('99991231', 'RRRRMMDD')
-                                                            ELSE employee_resigndate
-                                                         END
-                                                            AS end_date
-                                                    FROM tap_dw.tm_employee_hris@dwh_link
-                                                  UNION ALL
-                                                  SELECT nik,
-                                                         employee_name,
-                                                         job_code,
-                                                         start_valid,
-                                                         CASE WHEN res_date IS NOT NULL THEN res_date ELSE end_valid END end_valid
-                                                    FROM tap_dw.tm_employee_sap@dwh_link) emp
-                                          ON emp.employee_nik = user_auth.employee_nik
-                                             AND TRUNC (ebcc_header.insert_time) BETWEEN TRUNC (emp.start_date) AND TRUNC (emp.end_date)
-                                       LEFT JOIN tap_dw.tm_est@dwh_link est
-                                          ON est.werks = ebcc_header.werks AND SYSDATE BETWEEN est.start_valid AND est.end_valid
-                                       LEFT JOIN (SELECT werks,
-                                                         afd_code,
-                                                         block_code,
-                                                         block_name,
-                                                         maturity_status,
-                                                         spmon
-                                                    FROM tap_dw.tr_hs_land_use@dwh_link
-                                                   WHERE 1 = 1 AND ROWNUM < 2 AND maturity_status IS NOT NULL
-                                                         AND spmon BETWEEN (SELECT CASE
-                                                                                      WHEN TO_CHAR (TO_DATE ('$END_DATE', 'RRRR-MM-DD'), 'MM') = '01'
-                                                                                      THEN
-                                                                                         TRUNC (TO_DATE ('$END_DATE', 'RRRR-MM-DD'), 'MM')
-                                                                                      ELSE
-                                                                                         TRUNC (ADD_MONTHS (TO_DATE ('$END_DATE', 'RRRR-MM-DD'), -1), 'MM')
-                                                                                   END
-                                                                              FROM DUAL)
-                                                                       AND  ( (SELECT CASE
-                                                                                         WHEN TO_CHAR (TO_DATE ('$END_DATE', 'RRRR-MM-DD'), 'MM') = '01'
-                                                                                         THEN
-                                                                                            LAST_DAY (TO_DATE ('$END_DATE', 'RRRR-MM-DD'))
-                                                                                         ELSE
-                                                                                            LAST_DAY (ADD_MONTHS (TO_DATE ('$END_DATE', 'RRRR-MM-DD'), -1))
-                                                                                      END
-                                                                                 FROM DUAL))) land_use
-                                          ON     land_use.werks = ebcc_header.werks
-                                             AND land_use.afd_code = ebcc_header.afd_code
-                                             AND land_use.block_code = ebcc_header.block_code
-                                       LEFT JOIN tap_dw.tm_sub_block@dwh_link subblock
-                                          ON subblock.werks = ebcc_header.werks 
-										  AND subblock.afd_code= ebcc_header.afd_code 
-										  AND subblock.sub_block_code = ebcc_header.block_code
-										  AND TRUNC (ebcc_header.insert_time) BETWEEN subblock.start_valid AND subblock.end_valid
-                                 WHERE 1 = 1 AND SUBSTR (ebcc_header.ebcc_validation_code, 0, 1) = '$REPORT_TYPE'
-                                       AND TRUNC (ebcc_header.insert_time) BETWEEN TRUNC (TO_DATE ('$START_DATE', 'RRRR-MM-DD'))
-                                                                               AND  TRUNC (TO_DATE ('$END_DATE', 'RRRR-MM-DD'))
-                                                                                 $where
-                                                                                                                                 ) ebcc_val
-                        group by ebcc_val.val_ebcc_code,
-                                 ebcc_val.val_werks,
-                                 ebcc_val.val_est_name,
-                                 ebcc_val.val_nik_validator,
-                                 ebcc_val.val_nama_validator,
-                                 ebcc_val.val_jabatan_validator,
-                                 ebcc_val.val_status_tph_scan,
-                                 ebcc_val.val_alasan_manual,
-                                 ebcc_val.val_date_time,
-                                 ebcc_val.val_afd_code,
-                                 ebcc_val.val_block_code,
-                                 ebcc_val.val_block_name,
-                                 ebcc_val.val_tph_code,
-                                 ebcc_val.val_delivery_ticket,
-                                 ebcc_val.val_lat_tph,
-                                 ebcc_val.val_lon_tph,
-                                 ebcc_val.val_maturity_status,
-                                 ebcc_val.val_spmon) header
-                       left join (select *
-                                    from (select kualitas.id_kualitas as idk, ebcc_detail.ebcc_validation_code, ebcc_detail.jumlah
-                                            from    tap_dw.t_kualitas_panen@dwh_link kualitas
-                                                 left join
-                                                    mobile_inspection.tr_ebcc_validation_d ebcc_detail
-                                                 on ebcc_detail.id_kualitas = kualitas.id_kualitas
-                                           where kualitas.active_status = 'YES'
-										     and ebcc_detail.ebcc_validation_code is NOT NULL) pivot (SUM (jumlah)
-                                                                                 for idk
-                                                                                 in ('1' as jml_1,
-                                                                                 '2' as jml_2,
-                                                                                 '3' as jml_3,
-                                                                                 '4' as jml_4,
-                                                                                 '5' as jml_5,
-                                                                                 '6' as jml_6,
-                                                                                 '7' as jml_7,
-                                                                                 '8' as jml_8,
-                                                                                 '9' as jml_9,
-                                                                                 '10' as jml_10,
-                                                                                 '11' as jml_11,
-                                                                                 '12' as jml_12,
-                                                                                 '13' as jml_13,
-                                                                                 '14' as jml_14,
-                                                                                 '15' as jml_15,
-                                                                                 '16' as jml_16))) detail
-                          on header.val_ebcc_code = detail.ebcc_validation_code
-                       left join (select tanggal_rencana,
-                                         id_ba,
-                                         id_afd,
-                                         id_blok,
-                                         no_tph,
-                                         jlh_ebcc,
-                                         nik_kerani_buah,
-                                         nama_kerani_buah,
-                                         no_bcc,
-                                         status_tph,
-                                         NVL (ebcc.f_get_hasil_panen_bunch (id_ba,
-                                                                                        no_rekap_bcc,
-                                                                                        no_bcc,
-                                                                                        'BUNCH_HARVEST'), 0)
-                                            as jjg_panen,
-                                         ebcc_jml_bm,
-                                         ebcc_jml_bk,
-                                         ebcc_jml_ms,
-                                         ebcc_jml_or,
-                                         ebcc_jml_bb,
-                                         ebcc_jml_jk,
-                                         ebcc_jml_ba
-                                    from (  select hrp.tanggal_rencana,
-                                                   substr(ID_BA_AFD_BLOK,1,4) id_ba,
-                                                   substr(ID_BA_AFD_BLOK,5,1) id_afd,
-                                                   substr(ID_BA_AFD_BLOK,6,3)id_blok,
-                                                   /*SUBSTR (no_bcc, 12, 3) no_tph,*/
-												   hp.no_tph no_tph,
-                                                   COUNT (distinct hp.no_bcc) jlh_ebcc,
-                                                   MAX (hrp.nik_kerani_buah) nik_kerani_buah,
-                                                   MAX (emp_ebcc.emp_name) nama_kerani_buah,
-                                                   MAX (no_bcc) no_bcc,
-                                                   MAX (hp.status_tph) status_tph,
-                                                   MAX (hp.no_rekap_bcc) no_rekap_bcc,
-                                                   SUM (CASE when thk.id_kualitas = 1 then thk.qty end) ebcc_jml_bm,
-                                                   SUM (CASE when thk.id_kualitas = 2 then thk.qty end) ebcc_jml_bk,
-                                                   SUM (CASE when thk.id_kualitas = 3 then thk.qty end) ebcc_jml_ms,
-                                                   SUM (CASE when thk.id_kualitas = 4 then thk.qty end) ebcc_jml_or,
-                                                   SUM (CASE when thk.id_kualitas = 6 then thk.qty end) ebcc_jml_bb,
-                                                   SUM (CASE when thk.id_kualitas = 15 then thk.qty end) ebcc_jml_jk,
-                                                   SUM (CASE when thk.id_kualitas = 16 then thk.qty end) ebcc_jml_ba
-                                              from ebcc.t_header_rencana_panen hrp
-                                                   left join ebcc.t_detail_rencana_panen drp
-                                                      on hrp.id_rencana = drp.id_rencana
-                                                   left join ebcc.t_hasil_panen hp
-                                                      on hp.id_rencana = drp.id_rencana and hp.no_rekap_bcc = drp.no_rekap_bcc
-                                                   left join ebcc.t_employee emp_ebcc
-                                                      on emp_ebcc.nik = hrp.nik_kerani_buah
-                                                   left join ebcc.t_hasilpanen_kualtas thk
-                                                      on hp.no_bcc = thk.id_bcc and hp.id_rencana = thk.id_rencana
-                                             where hrp.tanggal_rencana between TO_DATE ('$START_DATE', 'YYYY-MM-DD')
-                                                                               and  TO_DATE ('$END_DATE', 'YYYY-MM-DD')
-												   $where2
-                                          group by hrp.tanggal_rencana, id_ba_afd_blok,
-												   hp.no_tph)) ebcc
-                          on     TRUNC (ebcc.tanggal_rencana) = TRUNC (val_date_time)
-                             and ebcc.id_ba = val_werks
-                             and ebcc.id_afd = val_afd_code
-                             and ebcc.id_blok = val_block_code
-                             and ebcc.no_tph = val_tph_code
-                             order by trunc(header.val_date_time) ASC, header.val_nik_validator ASC, header.val_afd_code ASC
-		";
 		$sql = "WITH tbl
                 AS (        
                 SELECT header.*,
@@ -999,7 +753,7 @@ class ReportOracle extends Model{
                                                      TO_NUMBER (ebcc_header.alasan_manual) alasan_manual,
                                                      user_auth.user_role,
                                                      'MI' sumber
-                                                FROM mobile_inspection.tr_ebcc_validation_h/*@proddb_link*/ ebcc_header LEFT JOIN mobile_inspection.tm_user_auth/*@proddb_link*/ user_auth
+                                                FROM mobile_inspection.tr_ebcc_validation_h/**/ ebcc_header LEFT JOIN mobile_inspection.tm_user_auth/**/ user_auth
                                                         ON user_auth.user_auth_code = (CASE WHEN LENGTH (ebcc_header.insert_user) = 3 THEN '0' || ebcc_header.insert_user ELSE ebcc_header.insert_user END)
                                                WHERE TRUNC (ebcc_header.insert_time) BETWEEN TRUNC (TO_DATE ('$START_DATE', 'RRRR-MM-DD')) AND TRUNC (TO_DATE ('$END_DATE', 'RRRR-MM-DD'))
                                                      AND SUBSTR (ebcc_header.ebcc_validation_code, 0, 1) = '$REPORT_TYPE'                                                    
@@ -1048,7 +802,7 @@ class ReportOracle extends Model{
                                      ebcc_val.val_sumber) header
                            LEFT JOIN (SELECT *
                                         FROM (SELECT kualitas.id_kualitas AS idk, ebcc_detail.ebcc_validation_code, ebcc_detail.jumlah
-                                                FROM tap_dw.t_kualitas_panen@dwh_link kualitas LEFT JOIN mobile_inspection.tr_ebcc_validation_d/*@proddb_link*/ ebcc_detail
+                                                FROM tap_dw.t_kualitas_panen@dwh_link kualitas LEFT JOIN mobile_inspection.tr_ebcc_validation_d/**/ ebcc_detail
                                                         ON ebcc_detail.id_kualitas = kualitas.id_kualitas
                                                WHERE kualitas.active_status = 'YES' and ebcc_detail.ebcc_validation_code IS NOT NULL
                                              ) PIVOT (SUM (jumlah)
@@ -1071,83 +825,165 @@ class ReportOracle extends Model{
                                                '16' AS jml_16))) detail
                               ON header.val_ebcc_code = detail.ebcc_validation_code
                            LEFT JOIN (SELECT tanggal_rencana,
-                                             id_ba,
-                                             id_afd,
-                                             id_blok,
-                                             no_tph,
-                                             kode_delivery_ticket,
-                                             jlh_ebcc,
-                                             nik_kerani_buah,
-                                             nama_kerani_buah,
-                                             nik_mandor,
-                                             nama_mandor,
-                                             no_bcc,
-                                             status_tph,
-                                             NVL (ebcc.f_get_hasil_panen_bunch/*@proddb_link*/ (id_ba,
-                                                                                            no_rekap_bcc,
-                                                                                            no_bcc,
-                                                                                            'BUNCH_HARVEST'), 0)
-                                                AS jjg_panen,
-                                             ebcc_jml_bm,
-                                             ebcc_jml_bk,
-                                             ebcc_jml_ms,
-                                             ebcc_jml_or,
-                                             ebcc_jml_bb,
-                                             ebcc_jml_jk,
-                                             ebcc_jml_ba,
-                                             cut_off_date
-                                        FROM (  SELECT hrp.tanggal_rencana,
-                                                       SUBSTR (id_ba_afd_blok, 1, 4) id_ba,
-                                                       SUBSTR (id_ba_afd_blok, 5, 1) id_afd,
-                                                       SUBSTR (id_ba_afd_blok, 6, 3) id_blok,
-                                                       /*SUBSTR (no_bcc, 12, 3) no_tph,*/
-                                                       hp.no_tph no_tph,
-                                                       NVL (hp.kode_delivery_ticket, '-') kode_delivery_ticket,
-                                                       COUNT (DISTINCT hp.no_bcc) jlh_ebcc,
-                                                       MAX (hrp.nik_kerani_buah) nik_kerani_buah,
-                                                       MAX (emp_ebcc.emp_name) nama_kerani_buah,
-                                                       MAX (hrp.nik_mandor) nik_mandor,
-                                                       MAX (emp_ebcc1.emp_name) nama_mandor,
-                                                       MAX (no_bcc) no_bcc,
-                                                       MAX (hp.status_tph) status_tph,
-                                                       MAX (hp.no_rekap_bcc) no_rekap_bcc,
-                                                       SUM (CASE WHEN thk.id_kualitas = 1 THEN thk.qty END) ebcc_jml_bm,
-                                                       SUM (CASE WHEN thk.id_kualitas = 2 THEN thk.qty END) ebcc_jml_bk,
-                                                       SUM (CASE WHEN thk.id_kualitas = 3 THEN thk.qty END) ebcc_jml_ms,
-                                                       SUM (CASE WHEN thk.id_kualitas = 4 THEN thk.qty END) ebcc_jml_or,
-                                                       SUM (CASE WHEN thk.id_kualitas = 6 THEN thk.qty END) ebcc_jml_bb,
-                                                       SUM (CASE WHEN thk.id_kualitas = 15 THEN thk.qty END) ebcc_jml_jk,
-                                                       SUM (CASE WHEN thk.id_kualitas = 16 THEN thk.qty END) ebcc_jml_ba,
-                                                       MAX (param.cut_off_date) cut_off_date
-                                                  FROM ebcc.t_header_rencana_panen/*@proddb_link*/ hrp
-                                                       LEFT JOIN ebcc.t_detail_rencana_panen/*@proddb_link*/ drp
-                                                          ON hrp.id_rencana = drp.id_rencana
-                                                       LEFT JOIN ebcc.t_hasil_panen/*@proddb_link*/ hp
-                                                          ON hp.id_rencana = drp.id_rencana AND hp.no_rekap_bcc = drp.no_rekap_bcc
-                                                       LEFT JOIN ebcc.t_employee/*@proddb_link*/ emp_ebcc
-                                                          ON emp_ebcc.nik = hrp.nik_kerani_buah
-                                                       LEFT JOIN ebcc.t_employee/*@proddb_link*/ emp_ebcc1
-                                                          ON emp_ebcc1.nik = hrp.nik_mandor
-                                                       LEFT JOIN ebcc.t_hasilpanen_kualtas/*@proddb_link*/ thk
-                                                          ON hp.no_bcc = thk.id_bcc AND hp.id_rencana = thk.id_rencana
-                                                       LEFT JOIN (SELECT TO_DATE (parameter_desc, 'dd-mon-yyyy') cut_off_date
-                                                                    FROM tm_parameter
-                                                                   WHERE parameter_name = 'CUT_OFF_DELIVERY_TICKET') param
-                                                          ON 1 = 1
-                                                 WHERE hrp.tanggal_rencana BETWEEN TO_DATE ('$START_DATE', 'YYYY-MM-DD') AND TO_DATE ('$END_DATE', 'YYYY-MM-DD')
-                                                 AND SUBSTR (id_ba_afd_blok, 1, 4) = nvl('$BA_CODE',SUBSTR (id_ba_afd_blok, 1, 4))
-                                                 $where2
-                                              GROUP BY hrp.tanggal_rencana,
-                                                       id_ba_afd_blok,
-                                                       hp.no_tph,
-                                                       NVL (hp.kode_delivery_ticket, '-'))) ebcc_me
+       id_ba,
+       id_afd,
+       id_blok,
+       no_tph,
+       kode_delivery_ticket,
+       jlh_ebcc,
+       nik_kerani_buah,
+       nama_kerani_buah,
+       nik_mandor,
+       nama_mandor,
+       no_bcc,
+       status_tph,
+       NVL (ebcc.f_get_hasil_panen_bunch                                                                                                                                                            /**/
+                                         (id_ba,
+                                          no_rekap_bcc,
+                                          no_bcc,
+                                          'BUNCH_HARVEST'), 0)
+          AS jjg_panen,
+       ebcc_jml_bm,
+       ebcc_jml_bk,
+       ebcc_jml_ms,
+       ebcc_jml_or,
+       ebcc_jml_bb,
+       ebcc_jml_jk,
+       ebcc_jml_ba,
+       cut_off_date
+  FROM    (  SELECT hrp.tanggal_rencana,
+                    SUBSTR (id_ba_afd_blok, 1, 4) id_ba,
+                    SUBSTR (id_ba_afd_blok, 5, 1) id_afd,
+                    SUBSTR (id_ba_afd_blok, 6, 3) id_blok,
+                    /*SUBSTR (no_bcc, 12, 3) no_tph,*/
+                    hp.no_tph no_tph,
+                    CASE WHEN hrp.tanggal_rencana <= cut_off_date THEN NULL ELSE NVL (hp.kode_delivery_ticket, '-') END kode_delivery_ticket,
+                    COUNT (DISTINCT hp.no_bcc) jlh_ebcc,
+                    MAX (hrp.nik_kerani_buah) nik_kerani_buah,
+                    MAX (emp_ebcc.emp_name) nama_kerani_buah,
+                    MAX (hrp.nik_mandor) nik_mandor,
+                    MAX (emp_ebcc1.emp_name) nama_mandor,
+                    MAX (no_bcc) no_bcc,
+                    MAX (hp.status_tph) status_tph,
+                    MAX (hp.no_rekap_bcc) no_rekap_bcc,
+                    SUM (CASE WHEN thk.id_kualitas = 1 THEN thk.qty END) ebcc_jml_bm,
+                    SUM (CASE WHEN thk.id_kualitas = 2 THEN thk.qty END) ebcc_jml_bk,
+                    SUM (CASE WHEN thk.id_kualitas = 3 THEN thk.qty END) ebcc_jml_ms,
+                    SUM (CASE WHEN thk.id_kualitas = 4 THEN thk.qty END) ebcc_jml_or,
+                    SUM (CASE WHEN thk.id_kualitas = 6 THEN thk.qty END) ebcc_jml_bb,
+                    SUM (CASE WHEN thk.id_kualitas = 15 THEN thk.qty END) ebcc_jml_jk,
+                    SUM (CASE WHEN thk.id_kualitas = 16 THEN thk.qty END) ebcc_jml_ba,
+                    MAX (param.cut_off_date) cut_off_date
+               FROM ebcc.t_header_rencana_panen                                                                                                                                                     /**/
+                                               hrp
+                    LEFT JOIN ebcc.t_detail_rencana_panen                                                                                                                                           /**/
+                                                         drp
+                       ON hrp.id_rencana = drp.id_rencana
+                    LEFT JOIN ebcc.t_hasil_panen                                                                                                                                                    /**/
+                                                hp
+                       ON hp.id_rencana = drp.id_rencana AND hp.no_rekap_bcc = drp.no_rekap_bcc
+                    LEFT JOIN ebcc.t_employee                                                                                                                                                       /**/
+                                             emp_ebcc
+                       ON emp_ebcc.nik = hrp.nik_kerani_buah
+                    LEFT JOIN ebcc.t_employee                                                                                                                                                       /**/
+                                             emp_ebcc1
+                       ON emp_ebcc1.nik = hrp.nik_mandor
+                    LEFT JOIN ebcc.t_hasilpanen_kualtas                                                                                                                                             /**/
+                                                       thk
+                       ON hp.no_bcc = thk.id_bcc AND hp.id_rencana = thk.id_rencana
+                    LEFT JOIN (SELECT TO_DATE (parameter_desc, 'dd-mon-yyyy') cut_off_date
+                                 FROM tm_parameter
+                                WHERE parameter_name = 'CUT_OFF_DELIVERY_TICKET') param
+                       ON 1 = 1
+              WHERE hrp.tanggal_rencana BETWEEN TO_DATE ('$START_DATE', 'YYYY-MM-DD') AND TO_DATE ('$END_DATE', 'YYYY-MM-DD')
+                    AND SUBSTR (id_ba_afd_blok, 1, 4) = NVL ('$BA_CODE', SUBSTR (id_ba_afd_blok, 1, 4))
+                    $where2
+           GROUP BY hrp.tanggal_rencana,
+                    id_ba_afd_blok,
+                    hp.no_tph,
+                    CASE WHEN hrp.tanggal_rencana <= cut_off_date THEN NULL ELSE NVL (hp.kode_delivery_ticket, '-') END) ebcc_hrv
+       LEFT JOIN
+          mobile_inspection.tm_parameter param_hrv
+       ON ebcc_hrv.tanggal_rencana >= TO_DATE (parameter_desc, 'dd-mon-yyyy') AND ebcc_hrv.id_ba = param_hrv.parameter_name AND param_hrv.parameter_group = 'VALIDASI_ASKEP_EHARVESTING'
+ WHERE param_hrv.parameter_name IS NULL
+UNION
+SELECT tanggal_rencana,
+       id_ba,
+       id_afd,
+       id_blok,
+       no_tph,
+       kode_delivery_ticket,
+       jlh_ebcc,
+       nik_kerani_buah,
+       nama_kerani_buah,
+       nik_mandor,
+       nama_mandor,
+       no_bcc,
+       status_tph,
+       ebcc_jjg_panen jjg_panen,
+       ebcc_jml_bm,
+       ebcc_jml_bk,
+       ebcc_jml_ms,
+       ebcc_jml_or,
+       ebcc_jml_bb,
+       ebcc_jml_jk,
+       ebcc_jml_ba,
+       cut_off_date
+  FROM (  SELECT TRUNC (thah.TRANSACTION_TIME) tanggal_rencana,
+                 thah.BA_CODE id_ba,
+                 SUBSTR (thah.BLOCK_CODE, 5, 1) id_afd,
+                 SUBSTR (thah.BLOCK_CODE, 6, 3) id_blok,
+                 /*SUBSTR (no_bcc, 12, 3) no_tph,*/
+                 thah.TPH_NAME no_tph,
+                 NVL (thah.DELIVERY_TICKET_CODE, '-') kode_delivery_ticket,
+                 COUNT (DISTINCT thah.HARVEST_ACTIVITY_CODE) jlh_ebcc,
+                 thaud_krani.user_nik nik_kerani_buah,
+                 thaud_krani.user_fullname nama_kerani_buah,
+                 thaud_mandor.user_nik nik_mandor,
+                 thaud_mandor.user_fullname nama_mandor,
+                 MAX (REPLACE (thah.HARVEST_ACTIVITY_CODE, '.')) no_bcc,
+                 MAX (CASE WHEN thah.TPH_REMARK IS NULL THEN 'AUTOMATIC' ELSE NULL END) status_tph,
+                 MAX (SUBSTR (REPLACE (thah.HARVEST_ACTIVITY_CODE, '.'), 1, 11)) no_rekap_bcc,
+                 SUM (CASE WHEN thaid.CATEGORY_CODE = 'BM' THEN thaid.HARVEST_ACTIVITY_ITEM_VALUE ELSE 0 END) ebcc_jml_bm,
+                 SUM (CASE WHEN thaid.CATEGORY_CODE = 'BK' THEN thaid.HARVEST_ACTIVITY_ITEM_VALUE ELSE 0 END) ebcc_jml_bk,
+                 SUM (CASE WHEN thaid.CATEGORY_CODE = 'MS' THEN thaid.HARVEST_ACTIVITY_ITEM_VALUE ELSE 0 END) ebcc_jml_ms,
+                 SUM (CASE WHEN thaid.CATEGORY_CODE = 'OR' THEN thaid.HARVEST_ACTIVITY_ITEM_VALUE ELSE 0 END) ebcc_jml_or,
+                 SUM (CASE WHEN thaid.CATEGORY_CODE = 'BB' THEN thaid.HARVEST_ACTIVITY_ITEM_VALUE ELSE 0 END) ebcc_jml_bb,
+                 SUM (CASE WHEN thaid.CATEGORY_CODE = 'JK' THEN thaid.HARVEST_ACTIVITY_ITEM_VALUE ELSE 0 END) ebcc_jml_jk,
+                 SUM (CASE WHEN thaid.CATEGORY_CODE = 'BA' THEN thaid.HARVEST_ACTIVITY_ITEM_VALUE ELSE 0 END) ebcc_jml_ba,
+                 SUM (thaid.HARVEST_ACTIVITY_ITEM_VALUE) ebcc_jjg_panen,
+                 cut_off_date
+            FROM EHARVESTING.TR_HARVEST_ACTIVITY_H thah
+                 LEFT JOIN EHARVESTING.TR_HARVEST_ACTIVITY_ITEM_D thaid
+                    ON thaid.HARVEST_ACTIVITY_ID = thah.ID AND thaid.HARVEST_ACTIVITY_ITEM_TYPE = 'HRV' AND CATEGORY_IS_HARVESTED = 1
+                 LEFT JOIN EHARVESTING.TR_HARVEST_ACTIVITY_USER_D thaud_krani
+                    ON thaud_krani.HARVEST_ACTIVITY_ID = thah.ID AND thaud_krani.ACTIVITY_USER_TYPE = 'KRANI'
+                 LEFT JOIN EHARVESTING.TR_HARVEST_ACTIVITY_USER_D thaud_mandor
+                    ON thaud_mandor.HARVEST_ACTIVITY_ID = thah.ID AND thaud_mandor.ACTIVITY_USER_TYPE = 'MANDOR'
+                 LEFT JOIN (SELECT TO_DATE (parameter_desc, 'dd-mon-yyyy') cut_off_date
+                              FROM tm_parameter
+                             WHERE parameter_name = 'CUT_OFF_DELIVERY_TICKET') param
+                    ON 1 = 1
+           WHERE TRUNC (thah.TRANSACTION_TIME) BETWEEN TO_DATE ('$START_DATE', 'YYYY-MM-DD') AND TO_DATE ('$END_DATE', 'YYYY-MM-DD') AND thah.BA_CODE = NVL ('$BA_CODE', thah.BA_CODE)
+                 $where2_hrv
+        GROUP BY TRUNC (thah.TRANSACTION_TIME),
+                 thah.BA_CODE,
+                 BLOCK_CODE,
+                 thah.tph_name,
+                 NVL (thah.DELIVERY_TICKET_CODE, '-'),
+                 thaud_krani.user_nik,
+                 thaud_krani.user_fullname,
+                 thaud_mandor.user_nik,
+                 thaud_mandor.user_fullname,
+                 cut_off_date) ebcc_hrv LEFT JOIN mobile_inspection.tm_parameter param_hrv
+          ON ebcc_hrv.tanggal_rencana >= TO_DATE (parameter_desc, 'dd-mon-yyyy') AND ebcc_hrv.id_ba = param_hrv.parameter_name AND param_hrv.parameter_group = 'VALIDASI_ASKEP_EHARVESTING'
+ WHERE param_hrv.parameter_name IS NOT NULL) ebcc_me
                               ON     TRUNC (ebcc_me.tanggal_rencana) = TRUNC (val_date_time)
                                  AND ebcc_me.id_ba = val_werks                                                                                     
                                  AND ebcc_me.id_afd = val_afd_code
                                  AND ebcc_me.id_blok = val_block_code
                                  AND ebcc_me.no_tph = val_tph_code
-                                 AND CASE WHEN TRUNC (ebcc_me.tanggal_rencana) <= TRUNC (cut_off_date) THEN NVL (val_delivery_ticket, '-') ELSE nvl(ebcc_me.kode_delivery_ticket,'-') END =
-									 NVL (val_delivery_ticket, '-')
+                                 AND CASE WHEN TRUNC (ebcc_me.tanggal_rencana) <= TRUNC (cut_off_date) THEN NVL (val_delivery_ticket, '-') ELSE nvl(ebcc_me.kode_delivery_ticket,'-') END = NVL (val_delivery_ticket, '-')
                                        )
         SELECT val_ebcc_code,
                val_werks,
@@ -1212,70 +1048,10 @@ class ReportOracle extends Model{
                 AND hd.val_tph_code = tph.no_tph
                 AND hd.val_date_time BETWEEN tph.start_valid AND nvl(tph.end_valid,sysdate)
 				LEFT JOIN ebcc.t_timestamp
-			 ON ebcc_no_bcc = id_timestamp   
-
-                
+			 ON ebcc_no_bcc = id_timestamp           
 ";
-		$sql_helpdesk = " SELECT val_ebcc_code,
-       val_werks,
-       val_est_name,
-       val_nik_validator,
-       val_nama_validator,
-       val_jabatan_validator,
-       val_status_tph_scan,
-       TRIM (TO_CHAR (val_lat_tph)) val_lat_tph,
-       TRIM (TO_CHAR (val_lon_tph)) val_lon_tph,
-       NULL val_maturity_status,
-       val_alasan_manual,
-       val_afd_code,
-       val_block_code,
-       val_date_time,
-       val_block_name,
-       val_tph_code,
-       val_delivery_ticket,
-       val_jml_1,
-       val_jml_2,
-       val_jml_3,
-       val_jml_4,
-       val_jml_5,
-       val_jml_6,
-       val_jml_7,
-       val_jml_8,
-       val_jml_9,
-       val_jml_10,
-       val_jml_11,
-       val_jml_12,
-       val_jml_13,
-       val_jml_14,
-       val_jml_15,
-       val_jml_16,
-       val_total_jjg,
-       ebcc_count,
-       ebcc_nik_kerani_buah,
-       ebcc_nama_kerani_buah,
-       ebcc_no_bcc,
-       ebcc_status_tph,
-       ebcc_jml_bm,
-       ebcc_jml_bk,
-       ebcc_jml_ms,
-       ebcc_jml_or,
-       ebcc_jml_bb,
-       ebcc_jml_jk,
-       ebcc_jml_ba,
-       ebcc_jjg_panen,
-       akurasi_sampling_ebcc,
-       akurasi_kuantitas,
-       akurasi_kualitas_ms,
-       'ACTIVE' status_tph,
-	   end_ins_time jam_input_ebcc
-  FROM mobile_inspection.tr_ebcc_compare@proddb_link hd
-  LEFT JOIN ebcc.t_timestamp@proddb_link
-	ON ebcc_no_bcc = id_timestamp
- WHERE TO_CHAR (hd.val_date_time, 'RRRRMMDD') BETWEEN '20200701' AND '20201130'
- and val_sumber = 'ME'
- and val_werks in ('5921', '5931', '5932')";				
-				 // echo $sql_helpdesk;
-				 // die;
+
+
 		$get = $this->db_mobile_ins->select( $sql );
 		$joindata = array();
 		$summary_data = array();
@@ -1332,7 +1108,6 @@ class ReportOracle extends Model{
 				$joindata[$i]['link_foto'] = url( 'preview/compare-ebcc/'.$ec->val_ebcc_code );
 				$joindata[$i]['jam_input_sampling'] = date( 'Y-m-d H:i:s', strtotime( $ec->val_date_time ) );
 				$joindata[$i]['jam_input_ebcc'] = $ec->jam_input_ebcc;
-
 				/* // Data Summary
 				if ( !isset( $summary_data[$summary_code] ) ) {
 					$summary_data[$summary_code] = array();
@@ -1462,6 +1237,7 @@ class ReportOracle extends Model{
 				$i++;
 			}
 		}
+
 		return array(
 			"data" => $joindata,
 			//"summary" => $summary_data
@@ -1688,6 +1464,7 @@ class ReportOracle extends Model{
 				FINDING.STATUS ASC,
 				FINDING.TANGGAL_TEMUAN ASC
 		";
+
 		$get = $this->db_mobile_ins->select( $sql );
 		return $get;
 	}
@@ -1986,7 +1763,7 @@ class ReportOracle extends Model{
 		return $get;
 	}
 
-	public function view_page_report_ebcc_compare( $REPORT_TYPE , $START_DATE , $END_DATE , $REGION_CODE , $COMP_CODE , $BA_CODE , $AFD_CODE , $BLOCK_CODE ) {
+	public function INSPECTION_HEADER( $REPORT_TYPE , $START_DATE , $END_DATE , $REGION_CODE , $COMP_CODE , $BA_CODE , $AFD_CODE , $BLOCK_CODE ) {
 		$START_DATE = date( 'Y-m-d', strtotime( $START_DATE ) );
 		$END_DATE = date( 'Y-m-d', strtotime( $END_DATE ) );
 		$where = "";
@@ -2545,6 +2322,8 @@ class ReportOracle extends Model{
 				\"Tanggal Inspeksi\" ASC, 
 				\"Nama Reporter\" ASC
 		";
+		// echo $sql;
+		// die;
 		
 		$get = $this->db_mobile_ins->select( $sql );
 
@@ -3429,7 +3208,7 @@ class ReportOracle extends Model{
 		$DATE_MONTH = $DATE_MONTH.'-01';
 		$last_day = date_create($DATE_MONTH);
 		$client = new \GuzzleHttp\Client();
-		$get = $client->request( 'GET', $this->url_api_ins_msa_point.'/api/v1.1/history/report/20201031'.date_format($last_day,'Ymt'),
+		$get = $client->request( 'GET', $this->url_api_ins_msa_point.'/api/v1.1/history/report/'.date_format($last_day,'Ymt'),
 										[
 										 'headers' => [
 											'Accept' => 'application/json',
@@ -3506,7 +3285,7 @@ class ReportOracle extends Model{
                                                          ref_role,
                                                          location_code_raw,
                                                          location_code
-                                                    FROM mobile_inspection.v_tm_user_auth/*@proddb_link*/ hd
+                                                    FROM mobile_inspection.v_tm_user_auth/**/ hd
                                                    WHERE (delete_time IS NULL OR delete_time > TO_DATE ('$START_DATE', 'dd-mm-yyyy'))
                                                          AND (   CASE
                                                                     WHEN hd.ref_role = 'AFD_CODE' THEN SUBSTR (location_code, 1, 4)
@@ -3563,7 +3342,7 @@ class ReportOracle extends Model{
                                                                  comp_code,
                                                                  werks,
                                                                  afd_code,
-                                                                 spmon         ) lu
+                                                                 spmon) lu
                                                 ON TRUNC (LAST_DAY (TO_DATE ('$START_DATE', 'dd-mm-yyyy'))) = lu.spmon
                                                    AND CASE
                                                          WHEN hd.ref_role = 'AFD_CODE' THEN lu.werks || lu.afd_code
@@ -3583,9 +3362,9 @@ class ReportOracle extends Model{
                                      ref_role,
                                      location_code_raw) hd
                            LEFT JOIN (  SELECT insp_h.insert_user, COUNT (DISTINCT TRUNC (insp_h.inspection_date) || werks || afd_code || block_code) jlh_inspeksi
-                                          FROM mobile_inspection.tr_block_inspection_h/*@proddb_link*/ insp_h LEFT JOIN mobile_inspection.tm_user_auth/*@proddb_link*/ user_auth
+                                          FROM mobile_inspection.tr_block_inspection_h/**/ insp_h LEFT JOIN mobile_inspection.tm_user_auth/**/ user_auth
                                                   ON insp_h.insert_user = user_auth.user_auth_code
-                                                LEFT JOIN (  SELECT DISTINCT block_inspection_code FROM mobile_inspection.tr_inspection_genba/*@proddb_link*/) genba
+                                                LEFT JOIN (  SELECT DISTINCT block_inspection_code FROM mobile_inspection.tr_inspection_genba/**/) genba
                                                 ON insp_h.block_inspection_code = genba.block_inspection_code  
                                          WHERE     insp_h.block_inspection_code NOT IN (  SELECT block_inspection_code FROM mobile_inspection.tr_inspection_genba)
                                                AND genba.block_inspection_code is null
@@ -3601,10 +3380,10 @@ class ReportOracle extends Model{
                                                                 TO_CHAR (insp_h.inspection_date, 'dd-mm-yyyy') inspection_date,
                                                                 genba.genba_user,
                                                                 user_auth.user_role
-                                                  FROM (SELECT DISTINCT block_inspection_code, genba_user FROM mobile_inspection.tr_inspection_genba/*@proddb_link*/
+                                                  FROM (SELECT DISTINCT block_inspection_code, genba_user FROM mobile_inspection.tr_inspection_genba/**/
                                                         UNION
                                                         SELECT DISTINCT hd.block_inspection_code, insert_user
-                                                          FROM mobile_inspection.tr_block_inspection_h/*@proddb_link*/ hd JOIN mobile_inspection.tr_inspection_genba/*@proddb_link*/ genba
+                                                          FROM mobile_inspection.tr_block_inspection_h/**/ hd JOIN mobile_inspection.tr_inspection_genba/**/ genba
                                                                   ON hd.block_inspection_code = genba.block_inspection_code
                                                          WHERE     1 = 1
                                                                AND TRUNC (inspection_date) BETWEEN TO_DATE ('$START_DATE', 'dd-mm-yyyy') - 7 AND TO_DATE ('$START_DATE', 'dd-mm-yyyy') - 1
@@ -3612,7 +3391,7 @@ class ReportOracle extends Model{
                                                                AND hd.afd_code = NVL ('$AFD_CODE', hd.afd_code)
                                                                AND hd.block_code = NVL ('$BLOCK_CODE', hd.block_code)) genba
                                                        INNER JOIN (SELECT DISTINCT werks, TRUNC (inspection_date) inspection_date, block_inspection_code
-                                                                     FROM mobile_inspection.tr_block_inspection_h/*@proddb_link*/ hd
+                                                                     FROM mobile_inspection.tr_block_inspection_h/**/ hd
                                                                     WHERE     TRUNC (hd.inspection_date) BETWEEN TO_DATE ('$START_DATE', 'dd-mm-yyyy') - 7 AND TO_DATE ('$START_DATE', 'dd-mm-yyyy') - 1
                                                                           AND hd.werks = NVL ('$BA_CODE', hd.werks)
                                                                           AND hd.afd_code = NVL ('$AFD_CODE', hd.afd_code)
@@ -3835,12 +3614,14 @@ class ReportOracle extends Model{
 			$joindata['image'] = ( isset( $image_finding['data'] ) ? $image_finding['data'] : url( 'assets/user.jpg' ) );
 		}
 		return $joindata;
-	}
+	} 
 	
 	public function MONITORING_UPLOAD_EBCC($tgl,$reg,$comp) {
+		$reg_hrv = strlen($reg)<1?'':"AND thah.REGION_CODE = '$reg'";
+		$comp_hrv = strlen($comp)<1?'':"AND thah.COMPANY_CODE = '$comp'";
 		$reg = strlen($reg)<1?'':"AND comp.REGION_CODE = '$reg'";
 		$comp = strlen($comp)<1?'':"AND COMP.comp_code = '$comp'";
-		$get = $this->db_ebcc->select("SELECT 	to_char(TANGGAL_RENCANA,'DD-MON') TANGGAL, COMP_NAME, ID_BA, AFD, NIK_KERANI_BUAH,COUNT(DISTINCT NIK_MANDOR) MANDOR,
+		$get = $this->db_mobile_ins->select("SELECT to_char(TANGGAL_RENCANA,'DD-MON') TANGGAL, COMP_NAME, ID_BA, AFD, NIK_KERANI_BUAH,COUNT(DISTINCT NIK_MANDOR) MANDOR,
 												EMPLOYEE_NAME NAME,
 												JOB_CODE USER_ROLE,
 												SUM(CASE WHEN SYNC_SERVER BETWEEN TRUNC(TANGGAL_RENCANA) AND TRUNC(TANGGAL_RENCANA)+1+1/24 THEN 1 ELSE 0 END) COUNT1,
@@ -3858,19 +3639,43 @@ class ReportOracle extends Model{
 													JOB_CODE,
 													(EMPLOYEE_NAME || ' - ' || thrp.NIK_KERANI_BUAH) EMPLOYEE_NAME,
 													THP.NO_BCC 
-												FROM EBCC.T_HASIL_PANEN@proddb_link thp 
-												INNER JOIN EBCC.T_HEADER_RENCANA_PANEN@proddb_link thrp ON thrp.ID_RENCANA = thp.ID_RENCANA  
-												INNER JOIN EBCC.T_DETAIL_RENCANA_PANEN@proddb_link tdrp ON tdrp.ID_RENCANA = thrp.ID_RENCANA 
-												INNER JOIN EBCC.T_BUSSINESSAREA@proddb_link tb ON tb.ID_BA = SUBSTR(tdrp.ID_BA_AFD_BLOK,1,4) 
-												LEFT JOIN EBCC.T_LOG_HASIL_PANEN@proddb_link tlhp ON tlhp.ON_NO_BCC = thp.NO_BCC AND tlhp.INSERTUPDATE = 'INSERT'
+												FROM EBCC.T_HASIL_PANEN thp 
+												INNER JOIN EBCC.T_HEADER_RENCANA_PANEN thrp ON thrp.ID_RENCANA = thp.ID_RENCANA  
+												INNER JOIN EBCC.T_DETAIL_RENCANA_PANEN tdrp ON tdrp.ID_RENCANA = thrp.ID_RENCANA 
+												INNER JOIN EBCC.T_BUSSINESSAREA tb ON tb.ID_BA = SUBSTR(tdrp.ID_BA_AFD_BLOK,1,4) 
+												LEFT JOIN EBCC.T_LOG_HASIL_PANEN tlhp ON tlhp.ON_NO_BCC = thp.NO_BCC AND tlhp.INSERTUPDATE = 'INSERT'
 												LEFT JOIN tap_dw.tm_comp@dwh_link comp ON comp.comp_code = SUBSTR(tdrp.ID_BA_AFD_BLOK,1,2)
 												LEFT JOIN tap_dw.tm_employee_sap@dwh_link emp ON emp.NIK = NIK_KERANI_BUAH AND start_valid <= sysdate AND end_valid >= sysdate 
 												WHERE 
 													thrp.TANGGAL_RENCANA = TO_DATE ('$tgl', 'dd-mm-yyyy')  $reg $comp
 												GROUP BY tlhp.SYNC_SERVER,NAMA_BA,thrp.TANGGAL_RENCANA,thrp.NIK_KERANI_BUAH,thrp.NIK_MANDOR,JOB_CODE,EMPLOYEE_NAME,thp.NO_BCC,comp.COMP_CODE,comp.COMP_NAME,THP.NO_BCC,SUBSTR(tdrp.ID_BA_AFD_BLOK,1,5) 
+
+												UNION 
+																							        
+												SELECT 
+													thah.SYNC_TIME SYNC_SERVER, 
+													TRUNC(thah.TRANSACTION_TIME) TANGGAL_RENCANA,
+													(SUBSTR(thah.BLOCK_CODE,1,4) || ' - ' || thah.BA_NAME) ID_BA,
+													SUBSTR(thah.BLOCK_CODE,5,1) AFD,
+													MAX (CASE WHEN thaud.activity_user_type = 'KRANI' THEN thaud.user_nik ELSE NULL END ) NIK_KERANI_BUAH,
+													MAX (CASE WHEN thaud.activity_user_type = 'MANDOR' THEN thaud.user_nik ELSE NULL END ) NIK_MANDOR,
+													(thah.COMPANY_CODE || ' - ' || thah.COMPANY_NAME) COMP_NAME,
+													MAX (CASE WHEN thaud.activity_user_type = 'KRANI' THEN thaud.JOB_CODE ELSE NULL END ) JOB_CODE,
+													MAX (CASE WHEN thaud.activity_user_type = 'KRANI' THEN thaud.user_fullname ELSE NULL END ) || ' - ' || 
+														MAX (CASE WHEN thaud.activity_user_type = 'KRANI' THEN thaud.user_nik ELSE NULL END ) EMPLOYEE_NAME,
+													REPLACE(thah.HARVEST_ACTIVITY_CODE,'.') NO_BCC 
+												FROM EHARVESTING.TR_HARVEST_ACTIVITY_H thah
+									            LEFT JOIN EHARVESTING.TR_HARVEST_ACTIVITY_USER_D thaud
+									            ON thaud.HARVEST_ACTIVITY_ID = thah.ID  
+												WHERE 
+													TRUNC(thah.TRANSACTION_TIME) = TO_DATE ('$tgl', 'dd-mm-yyyy')  $reg_hrv $comp_hrv
+												GROUP BY thah.SYNC_TIME,
+														 thah.HARVEST_ACTIVITY_CODE,thah.LHM_PRINTED_TIME,
+												         thah.TRANSACTION_TIME,thah.BLOCK_CODE,thah.BA_NAME,
+												         thah.COMPANY_CODE,thah.COMPANY_NAME
 											) head
 										GROUP BY TANGGAL_RENCANA, COMP_NAME, ID_BA,AFD,NIK_KERANI_BUAH,EMPLOYEE_NAME,JOB_CODE
-										ORDER BY 1, 2,3,4,5 ASC
+										ORDER BY 1,2,3,4,5 ASC
 		");
 		return $get;
 	}
@@ -3932,11 +3737,11 @@ class ReportOracle extends Model{
 																	HEADER.SYNC_TIME as SYNC_SERVER
 															FROM(
 																SELECT *
-																FROM MOBILE_INSPECTION.TR_EBCC_VALIDATION_H@proddb_link
+																FROM MOBILE_INSPECTION.TR_EBCC_VALIDATION_H
 																/* FILTER TANGGAL & LOKASI DISINI */
 																WHERE TRUNC(INSERT_TIME) = TO_DATE ('$tgl', 'dd-mm-yyyy')
 															) HEADER
-															LEFT JOIN MOBILE_INSPECTION.TM_USER_AUTH@proddb_link AUTH
+															LEFT JOIN MOBILE_INSPECTION.TM_USER_AUTH AUTH
 																ON AUTH.USER_AUTH_CODE =
 																(CASE
 																	WHEN LENGTH (HEADER.INSERT_USER) = 3 THEN '0' || HEADER.INSERT_USER
@@ -3998,13 +3803,30 @@ class ReportOracle extends Model{
 																	NIK_MANDOR
 															FROM(
 																SELECT *
-																FROM EBCC.T_HEADER_RENCANA_PANEN@proddb_link 
+																FROM EBCC.T_HEADER_RENCANA_PANEN 
 																/* FILTER TANGGAL */
 																WHERE TRUNC(TANGGAL_RENCANA) = TO_DATE ('$tgl', 'dd-mm-yyyy')
 															) THRP
-															INNER JOIN EBCC.T_DETAIL_RENCANA_PANEN@proddb_link TDRP
+															INNER JOIN EBCC.T_DETAIL_RENCANA_PANEN TDRP
 																ON TDRP.ID_RENCANA = THRP. ID_RENCANA
 															GROUP BY SUBSTR(ID_BA_AFD_BLOK,1,5), NIK_MANDOR
+														)
+														/* FILTER LOKASI DISINI */
+														GROUP BY BA_AFD
+														UNION 
+														SELECT 	BA_AFD, COUNT(1) as JML_KEMANDORAN
+														FROM (
+															SELECT 	SUBSTR(thah.BLOCK_CODE,1,5) as BA_AFD, 
+																	thaud.user_nik NIK_MANDOR
+															FROM(
+																SELECT *
+																FROM EHARVESTING.TR_HARVEST_ACTIVITY_H
+																/* FILTER TANGGAL */
+																WHERE TRUNC(TRANSACTION_TIME) = TO_DATE ('$tgl', 'dd-mm-yyyy')
+															) thah
+															INNER JOIN EHARVESTING.TR_HARVEST_ACTIVITY_USER_D thaud
+																ON thaud.HARVEST_ACTIVITY_ID = thah.ID AND thaud.activity_user_type = 'MANDOR'
+															GROUP BY SUBSTR(thah.BLOCK_CODE,1,5), thaud.user_nik
 														)
 														/* FILTER LOKASI DISINI */
 														GROUP BY BA_AFD
@@ -4023,9 +3845,11 @@ class ReportOracle extends Model{
 	}
 	
 	public function MONITORING_CETAK_LHM($tgl,$reg,$comp) {
+		$reg_hrv = strlen($reg)<1?'':"AND thah.REGION_CODE = '$reg'";
+		$comp_hrv = strlen($comp)<1?'':"AND thah.COMPANY_CODE = '$comp'";
 		$reg = strlen($reg)<1?'':"AND comp.REGION_CODE = '$reg'";
 		$comp = strlen($comp)<1?'':"AND comp.COMP_CODE = '$comp'";
-		$get = $this->db_ebcc->select("SELECT TANGGAL,COMP_NAME,ID_BA,AFD,MANDOR,EM_EXCEPTION,
+		$get = $this->db_mobile_ins->select("SELECT TANGGAL,COMP_NAME,ID_BA,AFD,MANDOR,EM_EXCEPTION,
 												SUM(CASE WHEN VALIDATION.USER_ROLE IS NULL THEN 0 WHEN VALIDATION.USER_ROLE LIKE 'ASISTEN%' THEN 1 ELSE 0 end) ASLAP, 
 												SUM(CASE WHEN VALIDATION.USER_ROLE IS NULL THEN 0 WHEN VALIDATION.USER_ROLE IN('SEM_GM', 'EM', 'KEPALA_KEBUN') THEN 1 ELSE 0 end) KABUN,
 												ALASAN,CETAK
@@ -4049,29 +3873,50 @@ class ReportOracle extends Model{
 														(comp.COMP_CODE || ' - ' || comp.COMP_NAME) COMP_NAME,
 														JOB_CODE,
 														(EMPLOYEE_NAME || ' - ' || thrp.NIK_KERANI_BUAH) EMPLOYEE_NAME
-													FROM EBCC.T_HASIL_PANEN@proddb_link thp 
-													LEFT JOIN EBCC.T_HEADER_RENCANA_PANEN@proddb_link thrp ON thrp.ID_RENCANA = thp.ID_RENCANA  
-													INNER JOIN EBCC.T_DETAIL_RENCANA_PANEN@proddb_link tdrp ON tdrp.ID_RENCANA = thrp.ID_RENCANA 
-													INNER JOIN EBCC.T_BUSSINESSAREA@proddb_link tb ON tb.ID_BA = SUBSTR(tdrp.ID_BA_AFD_BLOK,1,4) 
-													INNER JOIN EBCC.T_LOG_HASIL_PANEN@proddb_link tlhp ON tlhp.ON_NO_BCC = thp.NO_BCC AND tlhp.INSERTUPDATE = 'INSERT'
+													FROM EBCC.T_HASIL_PANEN thp 
+													LEFT JOIN EBCC.T_HEADER_RENCANA_PANEN thrp ON thrp.ID_RENCANA = thp.ID_RENCANA  
+													INNER JOIN EBCC.T_DETAIL_RENCANA_PANEN tdrp ON tdrp.ID_RENCANA = thrp.ID_RENCANA 
+													INNER JOIN EBCC.T_BUSSINESSAREA tb ON tb.ID_BA = SUBSTR(tdrp.ID_BA_AFD_BLOK,1,4) 
+													INNER JOIN EBCC.T_LOG_HASIL_PANEN tlhp ON tlhp.ON_NO_BCC = thp.NO_BCC AND tlhp.INSERTUPDATE = 'INSERT'
 													INNER JOIN tap_dw.tm_comp@dwh_link comp ON comp.comp_code = SUBSTR(tdrp.ID_BA_AFD_BLOK,1,2)
 													LEFT JOIN tap_dw.tm_employee_sap@dwh_link emp ON emp.NIK = NIK_KERANI_BUAH AND start_valid <= sysdate AND end_valid >= sysdate 
 													WHERE 
 														thrp.TANGGAL_RENCANA = TO_DATE ('$tgl', 'dd-mm-yyyy')  $reg $comp
 														GROUP BY thp.CETAK_DATE,(SUBSTR(tdrp.ID_BA_AFD_BLOK,1,4) || ' - ' || NAMA_BA),SUBSTR(tdrp.ID_BA_AFD_BLOK,1,4), 
 														SUBSTR(tdrp.ID_BA_AFD_BLOK,5,1) ,NAMA_BA,thrp.TANGGAL_RENCANA,thrp.NIK_KERANI_BUAH,thrp.NIK_MANDOR,JOB_CODE,EMPLOYEE_NAME,thp.NO_BCC,comp.COMP_CODE,comp.COMP_NAME
+													UNION 
+													SELECT 
+														REPLACE(thah.HARVEST_ACTIVITY_CODE,'.') NO_BCC,
+														thah.LHM_PRINTED_TIME CETAK_DATE, 
+														TRUNC(thah.TRANSACTION_TIME) TANGGAL_RENCANA,
+														SUBSTR(thah.BLOCK_CODE,1,4) WERKS,
+														(SUBSTR(thah.BLOCK_CODE,1,4) || ' - ' || thah.BA_NAME) ID_BA,
+														SUBSTR(thah.BLOCK_CODE,5,1) AFD,
+														MAX (CASE WHEN thaud.activity_user_type = 'KRANI' THEN thaud.user_nik ELSE NULL END ) NIK_KERANI_BUAH,
+														MAX (CASE WHEN thaud.activity_user_type = 'MANDOR' THEN thaud.user_nik ELSE NULL END ) NIK_MANDOR,
+														(thah.COMPANY_CODE || ' - ' || thah.COMPANY_NAME) COMP_NAME,
+														MAX (CASE WHEN thaud.activity_user_type = 'KRANI' THEN thaud.JOB_CODE ELSE NULL END ) JOB_CODE,
+														MAX (CASE WHEN thaud.activity_user_type = 'KRANI' THEN thaud.user_fullname ELSE NULL END ) || ' - ' || 
+														MAX (CASE WHEN thaud.activity_user_type = 'KRANI' THEN thaud.user_nik ELSE NULL END ) EMPLOYEE_NAME
+													FROM EHARVESTING.TR_HARVEST_ACTIVITY_H thah
+									                LEFT JOIN EHARVESTING.TR_HARVEST_ACTIVITY_USER_D thaud
+									                ON thaud.HARVEST_ACTIVITY_ID = thah.ID 
+													WHERE trunc(thah.TRANSACTION_TIME) = TO_DATE ('$tgl', 'dd-mm-yyyy') $comp_hrv $reg_hrv
+													GROUP BY thah.HARVEST_ACTIVITY_CODE,thah.LHM_PRINTED_TIME,
+													         thah.TRANSACTION_TIME,thah.BLOCK_CODE,thah.BA_NAME,
+													         thah.COMPANY_CODE,thah.COMPANY_NAME
 												) head  
-											--LEFT JOIN MOBILE_INSPECTION.TR_EBCC_COMPARE@proddb_link compare ON compare.EBCC_NO_BCC = head.NO_BCC 
-											LEFT JOIN EBCC.T_APPROVAL_CETAK_LHM@proddb_link approval_em ON approval_em.BA = head.WERKS AND approval_em.AFDELING = head.AFD AND TRUNC(approval_em.TANGGAL_EBCC) = TRUNC(head.TANGGAL_RENCANA)
+											--LEFT JOIN MOBILE_INSPECTION.TR_EBCC_COMPARE compare ON compare.EBCC_NO_BCC = head.NO_BCC 
+											LEFT JOIN EBCC.T_APPROVAL_CETAK_LHM approval_em ON approval_em.BA = head.WERKS AND approval_em.AFDELING = head.AFD AND TRUNC(approval_em.TANGGAL_EBCC) = TRUNC(head.TANGGAL_RENCANA)
 											GROUP BY TANGGAL_RENCANA, COMP_NAME, ID_BA,AFD,head.WERKS || head.AFD
 										)
 										LEFT JOIN 
 											( SELECT EBCC_VALIDATION_CODE,AUTH.USER_ROLE, WERKS, AFD_CODE
-											FROM MOBILE_INSPECTION.TR_EBCC_VALIDATION_H@proddb_link tevh
-											LEFT JOIN MOBILE_INSPECTION.TM_USER_AUTH@proddb_link AUTH ON AUTH.USER_AUTH_CODE = (CASE
-																																WHEN LENGTH (tevh.INSERT_USER) = 3 THEN '0' || tevh.INSERT_USER
-																																ELSE tevh.INSERT_USER
-																															END)
+											FROM MOBILE_INSPECTION.TR_EBCC_VALIDATION_H tevh
+											LEFT JOIN MOBILE_INSPECTION.TM_USER_AUTH AUTH ON AUTH.USER_AUTH_CODE = (CASE
+																														WHEN LENGTH (tevh.INSERT_USER) = 3 THEN '0' || tevh.INSERT_USER
+																														ELSE tevh.INSERT_USER
+																													END)
 											WHERE TRUNC(tevh.INSERT_TIME) =  TRUNC(TO_DATE ('$tgl', 'dd-mm-yyyy'))
 											GROUP BY EBCC_VALIDATION_CODE,AUTH.USER_ROLE, WERKS, AFD_CODE
 											) VALIDATION
@@ -4083,6 +3928,8 @@ class ReportOracle extends Model{
 	}
 	
 	public function MONITORING_VALIDASI_DESKTOP($tgl,$reg,$comp) {
+		$reg_hrv = strlen($reg)<1?'':"AND thah.REGION_CODE = '$reg'";
+		$comp_hrv = strlen($comp)<1?'':"AND thah.COMPANY_CODE = '$comp'";
 		$reg = strlen($reg)<1?'':"WHERE comp.REGION_CODE = '$reg'";
 		$comp = strlen($comp)<1?'':"WHERE COMP.ID_CC = '$comp'";
 		$get = $this->db_mobile_ins->select("SELECT TANGGAL,
@@ -4125,25 +3972,25 @@ class ReportOracle extends Model{
 																THP.KODE_DELIVERY_TICKET
 														FROM(
 															SELECT *
-															FROM EBCC.T_HEADER_RENCANA_PANEN@proddb_link
+															FROM EBCC.T_HEADER_RENCANA_PANEN
 															WHERE TANGGAL_RENCANA = TO_DATE ('$tgl', 'dd-mm-yyyy')
 														) THRP
-														INNER JOIN EBCC.T_DETAIL_RENCANA_PANEN@proddb_link TDRP
+														INNER JOIN EBCC.T_DETAIL_RENCANA_PANEN TDRP
 															ON TDRP.ID_RENCANA = THRP. ID_RENCANA
-														INNER JOIN EBCC.T_HASIL_PANEN@proddb_link THP
+														INNER JOIN EBCC.T_HASIL_PANEN THP
 															ON THP.ID_RENCANA = TDRP.ID_RENCANA
 															AND THP.NO_REKAP_BCC = TDRP.NO_REKAP_BCC
-														LEFT JOIN EBCC.T_BLOK@proddb_link BLK
+														LEFT JOIN EBCC.T_BLOK BLK
 															ON BLK.ID_BA_AFD_BLOK = TDRP.ID_BA_AFD_BLOK
-														LEFT JOIN EBCC.T_AFDELING@proddb_link AFD
+														LEFT JOIN EBCC.T_AFDELING AFD
 															ON AFD.ID_BA_AFD = BLK.ID_BA_AFD
-														LEFT JOIN EBCC.T_BUSSINESSAREA@proddb_link BA
+														LEFT JOIN EBCC.T_BUSSINESSAREA BA
 															ON BA.ID_BA = AFD.ID_BA
-														LEFT JOIN EBCC.T_COMPANYCODE@proddb_link COMP
+														LEFT JOIN EBCC.T_COMPANYCODE COMP
 															ON COMP.ID_CC = BA.ID_CC
-														LEFT JOIN EBCC.T_EMPLOYEE@proddb_link EMP
+														LEFT JOIN EBCC.T_EMPLOYEE EMP
 															ON EMP.NIK = THRP.NIK_KERANI_BUAH
-											--													$comp
+														$comp
 														GROUP BY THRP.TANGGAL_RENCANA,
 																COMP.ID_CC,
 																COMP.ID_CC || ' - ' || COMP.COMP_NAME,
@@ -4157,12 +4004,40 @@ class ReportOracle extends Model{
 																THP.NO_TPH,
 																THP.NO_BCC,
 																THP.KODE_DELIVERY_TICKET
+														UNION  
+														SELECT 	TRUNC(thah.TRANSACTION_TIME) as TGL_PANEN,
+																thah.COMPANY_CODE ID_CC,
+																thah.COMPANY_CODE || ' - ' || thah.COMPANY_NAME as COMP,
+																thah.BA_CODE || ' - ' || thah.BA_NAME as BA,
+																thah.AFDELING_NAME as AFD_PANEN,
+																MAX (CASE WHEN thaud.activity_user_type = 'KRANI' THEN thaud.user_fullname ELSE NULL END ) || ' - ' || 
+																MAX (CASE WHEN thaud.activity_user_type = 'KRANI' THEN thaud.user_nik ELSE NULL END ) as PIC,
+																MAX (CASE WHEN thaud.activity_user_type = 'KRANI' THEN thaud.JOB_CODE ELSE NULL END ) as JABATAN,
+																MAX (CASE WHEN thaud.activity_user_type = 'MANDOR' THEN thaud.user_nik ELSE NULL END ) NIK_MANDOR,
+																thah.BLOCK_CODE ID_BA_AFD_BLOK,
+																thah.TPH_NAME NO_TPH,
+																MAX (REPLACE(thah.HARVEST_ACTIVITY_CODE,'.')) NO_BCC,
+																thah.DELIVERY_TICKET_CODE
+														FROM EHARVESTING.TR_HARVEST_ACTIVITY_H thah
+									                    LEFT JOIN EHARVESTING.TR_HARVEST_ACTIVITY_USER_D thaud
+									                    ON thaud.HARVEST_ACTIVITY_ID = thah.ID 
+									                    WHERE trunc(thah.TRANSACTION_TIME) = TO_DATE ('$tgl', 'dd-mm-yyyy')
+														$comp_hrv $reg_hrv
+														GROUP BY TRUNC(thah.TRANSACTION_TIME),
+																thah.COMPANY_CODE,
+																thah.COMPANY_NAME,
+																thah.BA_CODE || ' - ' || thah.BA_NAME,
+																thah.AFDELING_NAME,
+																thah.BLOCK_CODE,
+																thah.TPH_NAME,
+																thah.HARVEST_ACTIVITY_CODE,
+																thah.DELIVERY_TICKET_CODE
 													) head 
 												LEFT JOIN tap_dw.tm_comp@dwh_link comp ON comp.comp_code = head.ID_CC
-												LEFT JOIN MOBILE_INSPECTION.TR_VALIDASI_DETAIL@proddb_link tvd  
+												LEFT JOIN MOBILE_INSPECTION.TR_VALIDASI_DETAIL tvd  
 												ON tvd.NO_BCC = head.NO_BCC
 												AND tvd.KONDISI_FOTO IS NOT NULL 
-											--											$reg
+											    $reg
 												GROUP BY TGL_PANEN, COMP, BA,AFD_PANEN, (comp.comp_code || ' - ' || comp.comp_name),head.NIK_MANDOR
 											) GROUP BY TANGGAL,comp,BA,AFD
 											ORDER BY 1,2,3,4 ASC

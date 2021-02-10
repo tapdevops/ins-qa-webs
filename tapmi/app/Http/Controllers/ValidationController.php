@@ -434,7 +434,7 @@ class ValidationController extends Controller {
                }
                $valid_data = json_encode(( new ValidasiHeader() )->validasi_askep($ba_code_val,$afd_val,$nik_kerani_val,$nik_mandor_val,$tgl_rencana_val,$val));
                $data_validasi = json_decode( $valid_data,true );
-
+               $data['image_service'] = APISetup::url()['msa']['ins']['image'];
                $data['data_validasi'] = $data_validasi;
                $data['no_validasi'] = $val;
                $data['target'] = $trg;

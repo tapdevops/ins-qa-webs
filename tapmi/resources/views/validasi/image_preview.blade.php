@@ -127,8 +127,8 @@ tr
 						{
 							if($q['data_source']=='MI')
 							{
-								$data = json_decode(file_get_contents("http://image.tap-agri.com:3012/api/v2.0/foto-transaksi/".$q['val_ebcc_code']."?status_image=JANJANG"),true);
-								$img = isset($data['data']['http'][0])?$data['data']['http'][0]:'http://inspectiondev.tap-agri.com/storage/notfound.jpg';
+								$data = json_decode(file_get_contents($image_service."/api/v2.0/foto-transaksi/".$q['val_ebcc_code']."?status_image=JANJANG"),true);
+								$img = isset($data['data']['http'][0])?$data['data']['http'][0]:url('storage/notfound.jpg');
 							}
 							elseif($q['data_source']=='ME')
 							{
@@ -163,11 +163,11 @@ tr
 							}
 				?>
 					<div style="position:absolute;z-index: 1000">
-					<input id="button" type="image" src="http://inspectiondev.tap-agri.com/storage/rotate_45.png" >
+					<input id="button" type="image" src="{{url('storage/rotate_45.png')}}" >
 					</div>
 					<!-- <img onerror="this.onerror=null;this.src='https://webhostingmedia.net/wp-content/uploads/2018/01/http-error-404-not-found.png'"  src="http://10.20.1.59/ebcc/array/uploads/{{$img}}" style="display:block;" width="80%" height="80%" > -->
 					<div id="container"  style="background-position: center center; background-repeat: no-repeat;overflow: hidden;">
-					<img onerror="this.onerror=null;this.src='http://inspectiondev.tap-agri.com/storage/notfound.jpg'"  src="{{$img}}" style="display:block;" width="100%" id="image" >
+					<img onerror="this.onerror=null;this.src='{{url('storage/notfound.jpg')}}'"  src="{{$img}}" style="display:block;" width="100%" id="image" >
 					</div> 
 					
 				</div>

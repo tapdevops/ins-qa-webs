@@ -29,7 +29,7 @@
 						<option value="" selected="">Semua</option>
 						@foreach($afd_data_by_werks as $key1 => $afd_data)
 							@foreach($afd_data as $key2 => $val)
-							<option value="{{$val}}" {{session('werks')==$key1?(session('afd')==$val?'selected':'selected'):''}} class="{{$key1}} data-afd">{{$val}}</option>
+							<option value="{{$val}}" {{session('werks')==$key1?(session('afd')==$val?'selected':''):''}} class="{{$key1}} data-afd">{{$val}}</option>
 							@endforeach
 						@endforeach
 					</select>
