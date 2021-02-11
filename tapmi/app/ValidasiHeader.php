@@ -48,16 +48,16 @@ class ValidasiHeader extends Model{
                      FROM (SELECT thah.BA_CODE id_ba,
 		                          thah.AFDELING_NAME id_afd,
 		                          to_char(thah.TRANSACTION_TIME,'DD-MON-YYYY') AS tanggal_rencana,
-		                          MAX (CASE WHEN thaud.activity_user_type = 'KRANI' THEN thaud.user_nik ELSE NULL END) nik_kerani_buah,
-		                          MAX (CASE WHEN thaud.activity_user_type = 'KRANI' THEN thaud.user_fullname ELSE NULL END ) nama_krani_buah,
-		                          MAX (CASE WHEN thaud.activity_user_type = 'MANDOR' THEN thaud.user_nik ELSE NULL END ) nik_mandor,
-		                          MAX (CASE WHEN thaud.activity_user_type = 'MANDOR' THEN thaud.user_fullname ELSE NULL END ) nama_mandor,
-		                          MAX (CASE WHEN thaud.activity_user_type = 'KRANI' THEN thaud.user_nik ELSE NULL END) || '-' ||
-		                          MAX (CASE WHEN thaud.activity_user_type = 'MANDOR' THEN thaud.user_nik ELSE NULL END ) || '-' || 
-		                          to_char(thah.TRANSACTION_TIME,'YYYYMMDD') id_validasi
+		                          thaud_krani.user_nik nik_kerani_buah,
+		                          thaud_krani.user_fullname nama_krani_buah,
+		                          thaud_mandor.user_nik nik_mandor,
+		                          thaud_mandor.user_fullname nama_mandor,
+		                          thaud_krani.user_nik || '-' || thaud_mandor.user_nik  || '-' || to_char(thah.TRANSACTION_TIME,'YYYYMMDD') id_validasi
                            FROM EHARVESTING.TR_HARVEST_ACTIVITY_H thah
-	                       LEFT JOIN EHARVESTING.TR_HARVEST_ACTIVITY_USER_D thaud
-	                       ON thaud.HARVEST_ACTIVITY_ID = thah.ID 
+	                        LEFT JOIN EHARVESTING.TR_HARVEST_ACTIVITY_USER_D thaud_krani
+                           ON thaud_krani.HARVEST_ACTIVITY_ID = thah.ID AND thaud_krani.ACTIVITY_USER_TYPE = 'KRANI'
+                           LEFT JOIN EHARVESTING.TR_HARVEST_ACTIVITY_USER_D thaud_mandor
+                           ON thaud_mandor.HARVEST_ACTIVITY_ID = thah.ID AND thaud_mandor.ACTIVITY_USER_TYPE = 'MANDOR'
                            WHERE thah.COMPANY_CODE IN (SELECT comp_code FROM tap_dw.tm_comp@dwh_link)
                                  AND TRUNC(thah.TRANSACTION_TIME) = TO_DATE ('$day', 'YYYY-MM-DD')
                                  AND SUBSTR (thah.AFDELING_CODE, 1, $substr_id_ba_afd_blok) IN('$code')
@@ -66,7 +66,11 @@ class ValidasiHeader extends Model{
                            GROUP BY thah.BA_CODE,
                                  thah.AFDELING_NAME,
                                  to_char(thah.TRANSACTION_TIME,'DD-MON-YYYY'),
-                                 to_char(thah.TRANSACTION_TIME,'YYYYMMDD')
+                                 to_char(thah.TRANSACTION_TIME,'YYYYMMDD'),
+                                 thaud_krani.user_nik,
+		                           thaud_krani.user_fullname,
+		                           thaud_mandor.user_nik,
+		                           thaud_mandor.user_fullname
                            order by to_char(thah.TRANSACTION_TIME,'DD-MON-YYYY') desc
                                  ) hrv
                         LEFT JOIN mobile_inspection.tr_validasi_header valid
