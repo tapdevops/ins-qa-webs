@@ -20,7 +20,8 @@ class Kernel extends ConsoleKernel
 		\App\Console\Commands\INS_MSA_INSPECTION_TR_INSPECTION_GENBA::class,
 		\App\Console\Commands\INS_MSA_INSPECTION_TR_BLOCK_INSPECTION_H::class,
 		\App\Console\Commands\INS_MSA_INSPECTION_TR_BLOCK_INSPECTION_D::class,
-		\App\Console\Commands\INS_MSA_INSPECTION_TR_TRACK_INSPECTION::class
+		\App\Console\Commands\INS_MSA_INSPECTION_TR_TRACK_INSPECTION::class,
+		\App\Console\Commands\INS_IDMS_TM_ROAD::class
 	];
 
 	/**

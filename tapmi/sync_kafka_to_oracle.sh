@@ -24,6 +24,7 @@ pkill -f "php artisan Kafka:"
  nohup php artisan Kafka:INS_MSA_INSPECTION_TR_BLOCK_INSPECTION_H &
  nohup php artisan Kafka:INS_MSA_INSPECTION_TR_BLOCK_INSPECTION_D &
  nohup php artisan Kafka:INS_MSA_INSPECTION_TR_TRACK_INSPECTION &
+ nohup php artisan Kafka:INS_IDMS_TM_ROAD &
 
 #sleep 1
 

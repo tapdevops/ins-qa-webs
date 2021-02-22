@@ -1095,4 +1095,169 @@ class KafkaController extends Controller {
 
 	}
 
+	# PHP Kafka TAP_DW.TM_ROAD
+	public function RUN_INS_IDMS_TM_ROAD() {
+		// Kafka Config
+		$topic = "INS_IDMS_TM_ROAD";
+		$Kafka = new RdKafka\Consumer();
+		# $Kafka->setLogLevel(LOG_DEBUG);
+		$Kafka->addBrokers( config( 'app.kafkahost' ) );
+		$Topic = $Kafka->newTopic( $topic );
+		$Topic->consumeStart( 0, RD_KAFKA_OFFSET_BEGINNING );
+
+		while ( true ) {
+			$message = $Topic->consume( 0, 1000 );
+			if ( null === $message ) {
+				continue;
+			} 
+			else if ( $message->err ) {
+				echo $message->errstr(), "\n";
+				break;
+			} 
+			else {
+				$payload = json_decode( $message->payload, true );
+				$last_offset = $this->cek_offset_payload( $topic );
+				if ( $last_offset !== false ){
+					if ( $last_offset == null ) {
+						if ( (int)$message->offset >= $last_offset ) {
+							echo $this->INSERT_TM_ROAD( $payload, (int)$message->offset );
+						}	
+					}
+					else {
+						if ( (int)$message->offset > $last_offset ) {
+							echo $this->INSERT_TM_ROAD( $payload, (int)$message->offset );
+						}	
+					}
+				}
+			}
+		}
+	}
+
+	# PHP Query TAP_DW.TM_ROAD
+	public function INSERT_TM_ROAD( $payload, $offset ) {
+		$INSTM = ( (bool) strtotime( $payload['created_at'] ) == true ? "to_date('".date( 'YmdHis', strtotime( $payload['created_at'] ) )."','YYYYMMDDHH24MISS')" : "NULL" );
+		$UPTTM = ( (bool) strtotime( $payload['updated_at'] ) == true ? "to_date('".date( 'YmdHis', strtotime( $payload['updated_at'] ) )."','YYYYMMDDHH24MISS')" : "NULL" );
+		$DLTTM = ( (bool) strtotime( $payload['deleted_at'] ) == true ? "to_date('".date( 'YmdHis', strtotime( $payload['deleted_at'] ) )."','YYYYMMDDHH24MISS')" : "NULL" );
+		$sql = '';
+		try {
+			// $check = collect( $this->db_mobile_ins->select( "
+			// 	SELECT
+			// 		COUNT( * ) AS COUNT 
+			// 	FROM 
+			// 		TAP_DW.TM_ROAD
+			// 	WHERE
+			// 		ID = '{$payload['ID']}'
+			// " ) )->first();
+
+
+			// if ( $check->count == 0 ) {
+			// 	$sql = ( "INSERT INTO 
+			// 			TAP_DW.TM_ROAD (
+			// 				ID,
+			// 				COMPANY_CODE,
+			// 				WERKS,
+			// 				AFDELING_CODE,
+			// 				BLOCK_CODE,
+			// 				ROAD_CODE,
+			// 				ROAD_NAME,
+			// 				STATUS_PEKERASAN,
+			// 				STATUS_AKTIF,
+			// 				DELETED_AT,
+			// 				CREATED_AT,
+			// 				UPDATED_AT,
+			// 				ESTATE_CODE,
+			// 				UPDATED_BY,
+			// 				TOTAL_LENGTH,
+			// 				ASSET_CODE,
+			// 				SEGMENT,
+			// 				STATUS_ID,
+			// 				CATEGORY_ID,
+			// 				COMPANY_NAME,
+			// 				ESTATE_NAME,
+			// 				AFDELING_NAME,
+			// 				BLOCK_NAME,
+			// 				BLOCK_ID
+			// 			) 
+			// 		VALUES (
+			// 			'{$payload['ID']}',
+			// 			'{$payload['COMPANY_CODE']}',
+			// 			'{$payload['WERKS']}',
+			// 			'{$payload['AFDELING_CODE']}',
+			// 			'{$payload['BLOCK_CODE']}',
+			// 			'{$payload['ROAD_CODE']}',
+			// 			'{$payload['ROAD_NAME']}',
+			// 			'{$payload['STATUS_PEKERASAN']}',
+			// 			'{$payload['STATUS_AKTIF']}',
+			// 			$DLTTM,
+			// 			$INSTM,
+			// 			$UPTTM,
+			// 			'{$payload['ESTATE_CODE']}',
+			// 			'{$payload['UPDATED_BY']}',
+			// 			'{$payload['TOTAL_LENGTH']}',
+			// 			'{$payload['ASSET_CODE']}',
+			// 			'{$payload['SEGMENT']}',
+			// 			'{$payload['STATUS_ID']}',
+			// 			'{$payload['CATEGORY_ID']}',
+			// 			'{$payload['COMPANY_NAME']}',
+			// 			'{$payload['ESTATE_NAME']}',
+			// 			'{$payload['AFDELING_NAME']}',
+			// 			'{$payload['BLOCK_NAME']}',
+			// 			'{$payload['BLOCK_ID']}'
+			// 	)" );
+			// }
+			// else {
+			// 	$sql = ( "UPDATE 
+			// 			TAP_DW.TM_ROAD
+			// 		SET
+			// 			COMPANY_CODE = '{$payload['COMPANY_CODE']}',
+			// 			WERKS = '{$payload['WERKS']}',
+			// 			AFDELING_CODE = '{$payload['AFDELING_CODE']}',
+			// 			BLOCK_CODE = '{$payload['BLOCK_CODE']}',
+			// 			ROAD_CODE = '{$payload['ROAD_CODE']}',
+			// 			ROAD_NAME = '{$payload['ROAD_NAME']}',
+			// 			STATUS_PEKERASAN = '{$payload['STATUS_PEKERASAN']}',
+			// 			STATUS_AKTIF = '{$payload['STATUS_AKTIF']}',
+			// 			DELETED_AT = $DLTTM,
+			// 			CREATED_AT = $INSTM,
+			// 			UPDATED_AT = $UPTTM,
+			// 			ESTATE_CODE = '{$payload['ESTATE_CODE']}',
+			// 			UPDATED_BY = '{$payload['UPDATED_BY']}',
+			// 			TOTAL_LENGTH = '{$payload['TOTAL_LENGTH']}',
+			// 			ASSET_CODE = '{$payload['ASSET_CODE']}',
+			// 			SEGMENT = '{$payload['SEGMENT']}',
+			// 			STATUS_ID = '{$payload['STATUS_ID']}',
+			// 			CATEGORY_ID = '{$payload['CATEGORY_ID']}',
+			// 			COMPANY_NAME = '{$payload['COMPANY_NAME']}',
+			// 			ESTATE_NAME = '{$payload['ESTATE_NAME']}',
+			// 			AFDELING_NAME = '{$payload['AFDELING_NAME']}',
+			// 			BLOCK_NAME = '{$payload['BLOCK_NAME']}',
+			// 			BLOCK_ID = '{$payload['BLOCK_ID']}'
+			// 		WHERE
+			// 			ID = '{$payload['ID']}'
+			// 	" );
+			// }
+
+			// $this->db_mobile_ins->statement( $sql );
+			// $this->db_mobile_ins->commit();
+
+			// Update Kafka Offset Payloads			
+			$this->db_mobile_ins->statement( "
+				UPDATE 
+					MOBILE_INSPECTION.TM_KAFKA_PAYLOADS
+				SET
+					OFFSET = $offset,
+					EXECUTE_DATE = SYSDATE
+				WHERE
+					TOPIC_NAME = 'INS_IDMS_TM_ROAD'
+			" );
+			$this->db_mobile_ins->commit();
+			return date( 'Y-m-d H:i:s' ).' - TM_ROAD - INSERT/UPDATE '.$payload['id'].' - SUCCESS '.PHP_EOL;
+		} 
+		catch ( \Throwable $e ) {
+			return date( 'Y-m-d H:i:s' ).' - TM_ROAD - INSERT/UPDATE '.$payload['id'].' - FAILED '.$e->getMessage().PHP_EOL;
+        }
+        catch ( \Exception $e ) {
+			return date( 'Y-m-d H:i:s' ).' - TM_ROAD - INSERT/UPDATE '.$payload['id'].' - FAILED '.$e->getMessage().PHP_EOL;
+		}
+	}
 }

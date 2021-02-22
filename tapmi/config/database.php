@@ -115,6 +115,18 @@ return [
 			'prefix'   => '',
 		],
 
+        'mongodb_hectarstatment' => [
+			'driver'   => 'mongodb',
+			'host'     => 'dbmongoqa.tap-agri.com',
+			'port'     => '4848',
+			'database' => 's_hectare_statement',
+			'username' => 's_hectare_statement',
+			'password' => 'h52019#',
+            'options' => [
+                'db' => env('DB_AUTHENTICATION_DATABASE', 's_hectare_statement'), 
+            ],
+		],
+
 		  /*'mobile_ins' => [
                         'driver'   => 'oracle',
                         'tns'      =>  '',

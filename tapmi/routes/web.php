@@ -9,6 +9,10 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::get( '/test', function(){
+	dd(DB::connection('mongodb_hectarstatment')->collection('TM_ROAD')->get());
+} );
+
 Route::group( [ 'middleware' => 'web' ], function() {
 	# Auth
 	Route::get( '/login', 'AuthController@login_form' );
