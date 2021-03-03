@@ -86,6 +86,17 @@
 			</div>
 		</div>
 
+        <div class="form-group m-form__group row" id="report-hs-finding_type">
+            <div class="col-lg-6">
+                <label>Finding Type</label>
+                <select class="form-control m-select2 mi-select2" id="finding_type" name="FINDING_TYPE" data-placeholder="...">
+                    <option selected value="">Semua Data</option>
+                    <option value="LIKE 'IF%'">INFRA</option>
+                    <option value="NOT LIKE 'IF%'">BLOCK</option>
+                </select>
+            </div>
+        </div>
+
 		<div class="form-group m-form__group row" id="report-hs-region">
 			<div class="col-lg-6">
 				<label>Pilih Region <span class="text-danger">*</span></label>
@@ -376,11 +387,24 @@
 				$("#report-hs-afd").show();
 				$("#report-hs-block").show();
 				break;	
+			case 'FINDING':
+				$("#report-date-month").hide();
+				$("#report-date-full").show();
+				$("#report-start-date").show();
+				$("#report-end-date").show();
+				$("#report-hs-finding_type").show();
+				$("#report-hs-region").show();
+				$("#report-hs-comp").show();
+				$("#report-hs-est").show();
+				$("#report-hs-afd").show();
+				$("#report-hs-block").show();
+				break;	
 			default:	
 				$("#report-date-month").hide();
 				$("#report-date-full").show();
 				$("#report-start-date").show();
 				$("#report-end-date").show();
+				$("#report-hs-finding_type").hide();
 				$("#report-hs-region").show();
 				$("#report-hs-comp").show();
 				$("#report-hs-est").show();

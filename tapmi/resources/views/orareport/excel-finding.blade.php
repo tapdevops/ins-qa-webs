@@ -14,7 +14,9 @@
 		<th style="text-align:center;">Periode</th>
 		<th style="text-align:center;">Lat</th>
 		<th style="text-align:center;">Long</th>
+		<th style="text-align:center;">Tipe Temuan</th>
 		<th style="text-align:center;">Kategori Temuan</th>
+		<th style="text-align:center;">Road</th>
 		<th style="text-align:center;">Prioritas</th>
 		<th style="text-align:center;">Batas Waktu</th>
 		<th style="text-align:center;">NIK PIC</th>
@@ -44,7 +46,9 @@
 				<td style="text-align:center;">{{ date( 'Y.m', strtotime( $finding['tanggal_temuan'] ) ) }}</td>
 				<td style="text-align:left;">{{ $finding['lat_finding'] }}</td>
 				<td style="text-align:left;">{{ $finding['long_finding'] }}</td>
+				<td style="text-align:center;">{{ isset($finding['finding_type'])?$finding['finding_type']:'' }}</td>
 				<td style="text-align:center;">{{ $finding['category_name'] }}</td>
+				<td style="text-align:center;">{{ $finding['road_code'].' - '.$finding['road_name'] }}</td>
 				<td style="text-align:center;">{{ $finding['finding_priority'] }}</td>
 				<td style="text-align:center;">{{ $finding['due_date'] }}</td>
 				<td style="text-align:center;">{{ $finding['pic_employee_nik'] }}</td>

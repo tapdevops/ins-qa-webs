@@ -216,6 +216,7 @@ class ReportOracleController extends Controller {
 	
 	public function download_proses( Request $request ) {
 		$RO = new ReportOracle;
+		$FINDING_TYPE = $request->FINDING_TYPE != '' ? $request->FINDING_TYPE :  null;
 		$REPORT_TYPE = $request->REPORT_TYPE != '' ? $request->REPORT_TYPE :  null;
 		$START_DATE = $request->START_DATE != '' ? $request->START_DATE : null;
 		$END_DATE = $request->END_DATE != '' ? $request->END_DATE : null;
@@ -310,6 +311,7 @@ class ReportOracleController extends Controller {
 									$REPORT_TYPE, 
 									$START_DATE, 
 									$END_DATE, 
+									$FINDING_TYPE, 
 									$REGION_CODE, 
 									$COMP_CODE, 
 									$BA_CODE, 

@@ -64,7 +64,7 @@ return [
 	|
 	*/
 
-	'timezone' => 'UTC',
+	'timezone' => 'Asia/Jakarta',
 
 	/*
 	|--------------------------------------------------------------------------
@@ -77,7 +77,7 @@ return [
 	|
 	*/
 
-	'locale' => 'en',
+	'locale' => 'id',
 
 	/*
 	|--------------------------------------------------------------------------
@@ -240,5 +240,5 @@ return [
 	
 	# Production = 149.129.252.13
 	# Development => 149.129.221.137
-	'kafkahost' => 'kafkadev.tap-agri.com:9092'
+	'kafkahost' => 'kafkaqa.tap-agri.com:9092'
 ];

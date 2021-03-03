@@ -1244,10 +1244,11 @@ SELECT tanggal_rencana,
 		);
 	}
 	
-	public function FINDING( $REPORT_TYPE , $START_DATE , $END_DATE , $REGION_CODE , $COMP_CODE , $BA_CODE , $AFD_CODE , $BLOCK_CODE ) {
+	public function FINDING( $REPORT_TYPE , $START_DATE , $END_DATE , $FINDING_TYPE , $REGION_CODE , $COMP_CODE , $BA_CODE , $AFD_CODE , $BLOCK_CODE ) {
 		$START_DATE = date( 'Y-m-d', strtotime( $START_DATE ) );
 		$END_DATE = $END_DATE ? date( 'Y-m-d', strtotime( $END_DATE ) ) : date( 'Y-m-d', strtotime( $START_DATE ) );
 		$where = "";
+		$where .= ( $FINDING_TYPE != "" ) ? " AND FINDING.FINDING_CATEGORY $FINDING_TYPE  ": "";
 		$where .= ( $REGION_CODE != "" && $COMP_CODE == "" ) ? " AND FINDING.REGION_CODE = '$REGION_CODE'  ": "";
 		$where .= ( $COMP_CODE != "" && $BA_CODE == "" ) ? " AND FINDING.COMP_CODE = '$COMP_CODE'  ": "";
 		$where .= ( $BA_CODE != "" && $AFD_CODE == "" ) ? " AND FINDING.WERKS = '$BA_CODE'  ": "";
@@ -1285,6 +1286,9 @@ SELECT tanggal_rencana,
 				UPDATE_TIME,
 				PROGRESS,
 				FINDING_DESC,
+                ROAD_CODE,
+                ROAD_NAME,
+                CASE WHEN FINDING_CATEGORY LIKE 'IF%' THEN 'INFRA' ELSE 'BLOCK' END finding_type,
 				STATUS, '".url( 'preview/finding/' )."/'||FINDING_CODE link_foto
 			FROM 
 				(
@@ -1319,6 +1323,9 @@ SELECT tanggal_rencana,
 						FINDING.UPDATE_TIME,
 						FINDING.PROGRESS,
 						FINDING.FINDING_DESC,
+						FINDING.ROAD_CODE,
+						FINDING.ROAD_NAME,
+                        FINDING.FINDING_CATEGORY,
 						CASE
 							WHEN FINDING.PROGRESS = 100
 							THEN 'SELESAI'
@@ -2004,7 +2011,7 @@ SELECT tanggal_rencana,
 										block_inspection_code, 
 										content_name, 
 										CASE WHEN CASE WHEN lu.maturity_status = 'TBM 0' THEN tbm0 WHEN lu.maturity_status = 'TBM 1' THEN tbm1 WHEN lu.maturity_status = 'TBM 2' THEN tbm2 WHEN lu.maturity_status = 'TBM 3' THEN tbm3 WHEN lu.maturity_status = 'TM' THEN tm END = 'NO' THEN NULL ELSE bobot END bobot, 
-										CASE WHEN CASE WHEN lu.maturity_status = 'TBM 0' THEN tbm0 WHEN lu.maturity_status = 'TBM 1' THEN tbm1 WHEN lu.maturity_status = 'TBM 2' THEN tbm2 WHEN lu.maturity_status = 'TBM 3' THEN tbm3 WHEN lu.maturity_status = 'TM' THEN tm END = 'NO' THEN NULL ELSE VALUE END VALUE 
+										regexp_replace((CASE WHEN CASE WHEN lu.maturity_status = 'TBM 0' THEN tbm0 WHEN lu.maturity_status = 'TBM 1' THEN tbm1 WHEN lu.maturity_status = 'TBM 2' THEN tbm2 WHEN lu.maturity_status = 'TBM 3' THEN tbm3 WHEN lu.maturity_status = 'TM' THEN tm END = 'NO' THEN NULL ELSE VALUE END), '[^0-9]+', '') VALUE
 									FROM 
 										(
 											SELECT 
@@ -2570,7 +2577,7 @@ SELECT tanggal_rencana,
 										block_inspection_code, 
 										content_name, 
 										CASE WHEN CASE WHEN lu.maturity_status = 'TBM 0' THEN tbm0 WHEN lu.maturity_status = 'TBM 1' THEN tbm1 WHEN lu.maturity_status = 'TBM 2' THEN tbm2 WHEN lu.maturity_status = 'TBM 3' THEN tbm3 WHEN lu.maturity_status = 'TM' THEN tm END = 'NO' THEN NULL ELSE bobot END bobot, 
-										CASE WHEN CASE WHEN lu.maturity_status = 'TBM 0' THEN tbm0 WHEN lu.maturity_status = 'TBM 1' THEN tbm1 WHEN lu.maturity_status = 'TBM 2' THEN tbm2 WHEN lu.maturity_status = 'TBM 3' THEN tbm3 WHEN lu.maturity_status = 'TM' THEN tm END = 'NO' THEN NULL ELSE VALUE END VALUE 
+										regexp_replace((CASE WHEN CASE WHEN lu.maturity_status = 'TBM 0' THEN tbm0 WHEN lu.maturity_status = 'TBM 1' THEN tbm1 WHEN lu.maturity_status = 'TBM 2' THEN tbm2 WHEN lu.maturity_status = 'TBM 3' THEN tbm3 WHEN lu.maturity_status = 'TM' THEN tm END = 'NO' THEN NULL ELSE VALUE END), '[^0-9]+', '') VALUE
 									FROM 
 										(
 											SELECT 

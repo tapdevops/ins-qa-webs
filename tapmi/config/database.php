@@ -114,18 +114,28 @@ return [
 			'charset'  => 'AL32UTF8',
 			'prefix'   => '',
 		],
-
         'mongodb_hectarstatment' => [
-			'driver'   => 'mongodb',
-			'host'     => 'dbmongoqa.tap-agri.com',
-			'port'     => '4848',
-			'database' => 's_hectare_statement',
-			'username' => 's_hectare_statement',
-			'password' => 'h52019#',
+            'driver'   => 'mongodb',
+            'host'     => env('DB_HOST', 'dbmongoqa.tap-agri.com'),
+            'port'     => env('DB_PORT', 4848),
+            'database' => env('DB_DATABASE', 's_hectare_statement'),
+            'username' => env('DB_USERNAME', 's_hectare_statement'),
+            'password' => env('DB_PASSWORD', 'h52019'),
             'options' => [
-                'db' => env('DB_AUTHENTICATION_DATABASE', 's_hectare_statement'), 
-            ],
-		],
+                'database' => 's_hectare_statement' 
+            ]
+        ],
+        'mongodb_auth' => [
+            'driver'   => 'mongodb',
+            'host'     => env('DB_HOST', 'dbmongoqa.tap-agri.com'),
+            'port'     => env('DB_PORT', 4848),
+            'database' => env('DB_DATABASE', 's_auth'),
+            'username' => env('DB_USERNAME', 's_auth'),
+            'password' => env('DB_PASSWORD', '4uth2019'),
+            'options' => [
+                'database' => 's_auth' 
+            ]
+        ],
 
 		  /*'mobile_ins' => [
                         'driver'   => 'oracle',

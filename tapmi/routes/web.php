@@ -9,9 +9,6 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::get( '/test', function(){
-	dd(DB::connection('mongodb_hectarstatment')->collection('TM_ROAD')->get());
-} );
 
 Route::group( [ 'middleware' => 'web' ], function() {
 	# Auth
@@ -76,6 +73,11 @@ Route::group( [ 'middleware' => 'web' ], function() {
 			Route::post( 'import-db', ['as'=>'orareport.import_db', 'uses'=>'ReportOracleController@import_data_process']);
 			Route::get('/summary/{ba_code}/{start_date}/{end_date}', 'TempController@download_proses')->name('download_temp/{ba_code}/{start_date}/{end_date}');
 			Route::get('/summarykrani/{ba_code}/{start_date}/{end_date}', 'Temp2Controller@download_proses')->name('download_temp2/{ba_code}/{start_date}/{end_date}');
+		});
+		
+		#master data
+		Route::group( [ 'prefix' => 'master' ], function () {
+			Route::resource( 'category-finding', 'MasterCategoryFindingController');
 		});
 
 

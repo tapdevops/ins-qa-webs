@@ -63,4 +63,18 @@
             </ul>
         </div>
     </li>
+	<li id="_0207000000_" class="m-menu__item   m-menu__item--submenu m-menu__item--tabs" m-menu-submenu-toggle="tab"
+        aria-haspopup="true"><a href="javascript:;" class="m-menu__link m-menu__toggle"><span
+                class="m-menu__link-text">Master Data</span><i class="m-menu__hor-arrow la la-angle-down"></i><i
+                class="m-menu__ver-arrow la la-angle-right"></i></a>
+        <div class="m-menu__submenu m-menu__submenu--classic m-menu__submenu--left m-menu__submenu--tabs"><span
+                class="m-menu__arrow m-menu__arrow--adjust"></span>
+            <ul class="m-menu__subnav">
+                <li class="m-menu__item " m-menu-link-redirect="1" aria-haspopup="true"><a
+                        href={{URL::to('/master/category-finding')}} class="m-menu__link "><i
+                            class="m-menu__link-icon fa fa-database"></i><span
+                            class="m-menu__link-text">Category Finding</span></a></li>	
+            </ul>
+        </div>
+    </li>
 </ul>
